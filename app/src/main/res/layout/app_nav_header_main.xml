@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/app_nav_header_vertical_spacing"
         android:text="@string/app_nav_header_title"
-        android:textColor="@color/app_white" />
+        android:textColor="@color/app_white_ee" />
 
     <TextView
         android:id="@+id/textView"

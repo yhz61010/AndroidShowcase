@@ -16,6 +16,7 @@
 
     <color name="app_black">#FF000000</color>
     <color name="app_white">#FFFFFFFF</color>
+    <color name="app_white_ee">#EEFFFFFF</color>
     <color name="app_white_dd">#DDFFFFFF</color>
     <color name="app_white_bb">#BBFFFFFF</color>
 
