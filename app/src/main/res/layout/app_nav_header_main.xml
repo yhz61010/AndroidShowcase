@@ -16,21 +16,23 @@
         android:id="@+id/imageView"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        app:shapeAppearanceOverlay="@style/app_roundedImageViewRounded"
         android:contentDescription="@string/app_nav_header_desc"
+        app:shapeAppearanceOverlay="@style/app_roundedImageViewRounded"
         app:srcCompat="@drawable/app_user_avatar" />
 
     <TextView
+        style="@style/app_textView_body1_large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/app_nav_header_vertical_spacing"
         android:text="@string/app_nav_header_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:textColor="@color/app_white" />
 
     <TextView
         android:id="@+id/textView"
+        style="@style/app_textView_body1_medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_nav_header_subtitle"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        android:textColor="@color/app_white_bb" />
 </LinearLayout>

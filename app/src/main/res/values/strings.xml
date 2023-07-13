@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_app_name">android template</string>
+    <string name="app_app_name">Leo Showcase</string>
     <string name="app_notification_channel_name">Default Channel</string>
     <string name="app_notification_channel_name_desc">Default Channel</string>
 

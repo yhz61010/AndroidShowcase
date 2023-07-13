@@ -38,7 +38,7 @@ object InitManager {
         Notify.defaultConfig {
             header {
                 icon = R.mipmap.app_ic_launcher_round
-                color = ContextCompat.getColor(app, R.color.app_purple_500)
+                color = ContextCompat.getColor(app, R.color.app_orange_500)
             }
             alerting("default-notification") {
                 channelName = app.getString(R.string.app_notification_channel_name)
