@@ -27,6 +27,6 @@
     <color name="app_quaternary_text">#FF757575</color> <!-- 600 -->
 
     <color name="app_divider">#FFBDBDBD</color>
-
+    <color name="app_error">#FFB00020</color>
 
 </resources>

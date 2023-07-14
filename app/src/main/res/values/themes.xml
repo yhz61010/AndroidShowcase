@@ -2,13 +2,25 @@
     <!-- Base application theme. -->
     <style name="app_Theme.AndroidShowcase" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
+        <!-- toolbar/actionbar/menu text color and menu selected item bg color -->
         <item name="colorPrimary">@color/app_orange_500</item>
+        <!-- status bar -->
         <item name="colorPrimaryVariant">@color/app_orange_700</item>
         <item name="colorOnPrimary">@color/app_white</item>
+
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/app_amber_500</item> <!-- FAB -->
+        <!--
+        Secondary colors are best for:
+        - Floating action buttons
+        - Selection controls, like sliders and switches
+        - Highlighting selected text
+        - Progress bars
+        - Links and headlines
+        -->
+        <item name="colorSecondary">@color/app_amber_500</item> <!-- fab -->
         <item name="colorSecondaryVariant">@color/app_amber_700</item>
-        <item name="colorOnSecondary">@color/app_black</item>
+        <item name="colorOnSecondary">@color/app_black</item> <!-- fab icon -->
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
