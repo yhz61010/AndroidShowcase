@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/app_orange_700</item>
         <item name="colorOnPrimary">@color/app_white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/app_amber_500</item>
+        <item name="colorSecondary">@color/app_amber_500</item> <!-- FAB -->
         <item name="colorSecondaryVariant">@color/app_amber_700</item>
         <item name="colorOnSecondary">@color/app_black</item>
         <!-- Status bar color. -->
@@ -16,6 +16,9 @@
         <item name="android:windowBackground">@color/app_window_background</item>
         <item name="android:textColor">@color/app_primary_text</item>
         <item name="android:textColorSecondary">@color/app_secondary_text</item>
+        <!-- Add me in order to use for support library -->
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
     </style>
 
     <style name="app_Theme.AndroidShowcase.NoActionBar">

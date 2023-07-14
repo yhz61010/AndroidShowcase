@@ -9,9 +9,8 @@
     <color name="app_orange_700">#FFF57C00</color>
     <color name="app_orange_800">#FFEF6C00</color>
 
-    <!-- FAB and etc. -->
     <color name="app_amber_200">#FFFFE082</color>
-    <color name="app_amber_500">#FFFFC107</color>
+    <color name="app_amber_500">#FFFFC107</color> <!-- FAB -->
     <color name="app_amber_700">#FFFFA000</color>
 
     <color name="app_black">#FF000000</color>
