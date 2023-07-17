@@ -1,46 +1,12 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="app_Theme.AndroidShowcase" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <!-- toolbar/actionbar/menu text color and menu selected item bg color -->
-        <item name="colorPrimary">@color/app_orange_500</item>
-        <!-- status bar -->
-        <item name="colorPrimaryVariant">@color/app_orange_700</item>
-        <item name="colorOnPrimary">@color/app_white</item>
-
-        <!-- Secondary brand color. -->
-        <!--
-        Secondary colors are best for:
-        - Floating action buttons
-        - Selection controls, like sliders and switches
-        - Highlighting selected text
-        - Progress bars
-        - Links and headlines
-        -->
-        <item name="colorSecondary">@color/app_amber_500</item> <!-- fab -->
-        <item name="colorSecondaryVariant">@color/app_amber_700</item>
-        <item name="colorOnSecondary">@color/app_black</item> <!-- fab icon -->
-
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-
-        <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/app_window_background</item>
-        <item name="android:textColor">@color/app_primary_text</item>
-        <item name="android:textColorSecondary">@color/app_secondary_text</item>
-        <!-- Add me in order to use for support library -->
-        <item name="windowActionBarOverlay">true</item>
-        <item name="android:windowActionBarOverlay">true</item>
-    </style>
-
-    <style name="app_Theme.AndroidShowcase.NoActionBar">
+    <!-- Allows us to override platform level specific attributes in their respective values-vXX folder. -->
+    <style name="app_Platform.Theme.AndroidShowcase" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="app_Theme.AndroidShowcase.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="app_Theme.AndroidShowcase.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!-- The actual theme we use. This varies for light theme (here), and values-night for dark theme. -->
+    <style name="app_Theme.AndroidShowcase" parent="app_Platform.Theme.AndroidShowcase" />
 
     <!-- Customize your theme styles here. -->
 </resources>

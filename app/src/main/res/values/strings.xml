@@ -11,6 +11,6 @@
     <string name="app_action_settings">Settings</string>
 
     <string name="app_menu_home">Home</string>
-    <string name="app_menu_gallery">Gallery</string>
-    <string name="app_menu_slideshow">Slideshow</string>
+    <string name="app_menu_interests">Interests</string>
+    <string name="app_menu_my">My</string>
 </resources>

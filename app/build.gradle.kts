@@ -29,15 +29,8 @@ android {
     /** The app's namespace. Used primarily to access app resources. */
     namespace = "com.leovp.androidshowcase"
 
-    // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
-    buildFeatures {
-        // dataBinding = true
-        // viewBinding is enabled by default. Check [build.gradle.kts] in the root folder of project.
-        // viewBinding = true
-        // aidl = true
-        // Generate BuildConfig.java file
-        buildConfig = true
-    }
+    @Suppress ("UnstableApiUsage")
+    resourcePrefix = "app_"
 
     defaultConfig {
         applicationId = namespace
@@ -61,18 +54,53 @@ android {
         testInstrumentationRunnerArguments["runnerBuilder"] = "de.mannodermaus.junit5.AndroidJUnit5Builder"
     }
 
-    val releaseSigning = signingConfigs.create("releaseSigning") {
-        keyAlias = getSignProperty("keyAlias")
-        keyPassword = getSignProperty("keyPassword")
-        storeFile = File(rootDir, getSignProperty("storeFile"))
-        storePassword = getSignProperty("storePassword")
-        enableV1Signing = true
-        enableV2Signing = true
-        enableV3Signing = true
-        enableV4Signing = true
+    // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
+    @Suppress ("UnstableApiUsage")
+    buildFeatures {
+        // dataBinding = true
+        // aidl = true
+
+        // viewBinding is enabled by default. Check [build.gradle.kts] in the root folder of project.
+        // viewBinding = true
+
+        // Enable compose feature
+        compose = true
+
+        // Generate BuildConfig.java file
+        buildConfig = true
+    }
+
+    // Compose options setting
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
+
+    signingConfigs {
+        named("debug") {
+            keyAlias = getSignProperty("keyAlias")
+            keyPassword = getSignProperty("keyPassword")
+            storeFile = File(rootDir, getSignProperty("storeFile"))
+            storePassword = getSignProperty("storePassword")
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+            enableV4Signing = true
+        }
+
+        create("release") {
+            keyAlias = getSignProperty("keyAlias")
+            keyPassword = getSignProperty("keyPassword")
+            storeFile = File(rootDir, getSignProperty("storeFile"))
+            storePassword = getSignProperty("storePassword")
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+            enableV4Signing = true
+        }
     }
 
     /** Specifies one flavor dimension. */
+    @Suppress ("UnstableApiUsage")
     flavorDimensions += "version"
 
     /**
@@ -105,7 +133,7 @@ android {
 
     buildTypes {
         getByName("debug") {
-            signingConfig = releaseSigning
+            signingConfig = signingConfigs.getByName("debug")
         }
 
         /**
@@ -115,7 +143,7 @@ android {
          * See the global configurations in top-level `build.gradle.kts`.
          */
         getByName("release") {
-            signingConfig = releaseSigning
+            signingConfig = signingConfigs.getByName("release")
         }
 
         /**
@@ -189,7 +217,7 @@ fun gitCommitCount(): Int {
  */
 fun gitVersionTag(): String {
     // https://stackoverflow.com/a/4916591/1685062
-//    val cmd = "git describe --tags"
+    // val cmd = "git describe --tags"
     val cmd = "git describe --always"
 
     val stdout = ByteArrayOutputStream()
@@ -219,16 +247,36 @@ fun Project.getSignProperty(key: String, path: String = "config/sign/keystore.pr
 }
 
 dependencies {
-    implementation(libs.android.material)
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Material Design 3
+    implementation(libs.androidx.material3)
+
+    // Android Studio Preview support
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    // debugImplementation(libs.androidx.compose.ui.graphics)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    implementation(libs.bundles.androidx.compose)
+
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material.iconsExtended)
+
+    // ----------
+
     implementation(libs.bundles.kotlin)
-    implementation(libs.bundles.androidx.main)
-    implementation(libs.bundles.navigation)
-    implementation(libs.bundles.lifecycle.full)
+    // implementation(libs.bundles.androidx.main)
+    // implementation(libs.bundles.navigation)
+    // implementation(libs.bundles.lifecycle.full)
 
     // By using `projects`, you need to enable `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`
     // in `settings.gradle.kts` where in your root folder.
-    implementation(projects.moduleCommon)
+    api(projects.featureCommon)
 
+    // ==============================
     testImplementation(libs.bundles.test)
     testRuntimeOnly(libs.bundles.test.runtime.only)
     androidTestImplementation(libs.bundles.test)
