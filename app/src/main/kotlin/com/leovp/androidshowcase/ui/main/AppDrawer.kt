@@ -4,13 +4,15 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.ExitToApp
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.ui.theme.AppTheme
+import com.leovp.module.common.res.Dimen
 
 /**
  * Author: Michael Leo
@@ -36,9 +39,7 @@ import com.leovp.androidshowcase.ui.theme.AppTheme
 @Composable
 fun AppDrawer(
     currentRoute: String,
-    navigateToHome: () -> Unit,
-    navigateToInterests: () -> Unit,
-    navigateToMy: () -> Unit,
+    navigateTo: (route: String) -> Unit,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -46,30 +47,43 @@ fun AppDrawer(
         AppLogo(
             modifier = Modifier
                 .padding(
-                    horizontal = NavigationDrawerItemDefaults.ItemPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    vertical = 24.dp
+                    start = 16.dp,
+                    top = Dimen.drawerHeaderPaddingTop,
+                    end = NavigationDrawerItemDefaults.ItemPadding.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = Dimen.drawerHeaderPaddingBottom
                 )
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.app_menu_home)) },
-            icon = { Icon(Icons.Outlined.Home, null) },
-            selected = currentRoute == AppDestinations.HOME_ROUTE,
-            onClick = { navigateToHome(); closeDrawer() },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            label = { Text(stringResource(id = R.string.app_drawer_vip_label)) },
+            icon = { Icon(Icons.Outlined.CreditCard, null) },
+            selected = currentRoute == DrawerDestinations.VIP_ROUTE,
+            onClick = { navigateTo(DrawerDestinations.VIP_ROUTE); closeDrawer() },
+            // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            modifier = Modifier.height(Dimen.drawerItemHeight)
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.app_menu_interests)) },
-            icon = { Icon(Icons.Outlined.FavoriteBorder, null) },
-            selected = currentRoute == AppDestinations.INTERESTS_ROUTE,
-            onClick = { navigateToInterests(); closeDrawer() },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            label = { Text(stringResource(id = R.string.app_drawer_message_label)) },
+            icon = { Icon(Icons.Outlined.Email, null) },
+            selected = currentRoute == DrawerDestinations.MESSAGES,
+            onClick = { navigateTo(DrawerDestinations.MESSAGES); closeDrawer() },
+            // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            modifier = Modifier.height(Dimen.drawerItemHeight)
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.app_menu_my)) },
-            icon = { Icon(Icons.Outlined.Person, null) },
-            selected = currentRoute == AppDestinations.MY_ROUTE,
-            onClick = { navigateToMy(); closeDrawer() },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            label = { Text(stringResource(id = R.string.app_drawer_settings_label)) },
+            icon = { Icon(Icons.Outlined.Settings, null) },
+            selected = currentRoute == DrawerDestinations.SETTING_ROUTE,
+            onClick = { navigateTo(DrawerDestinations.SETTING_ROUTE); closeDrawer() },
+            // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            modifier = Modifier.height(Dimen.drawerItemHeight)
+        )
+        NavigationDrawerItem(
+            label = { Text(stringResource(id = R.string.app_drawer_exit_label)) },
+            icon = { Icon(Icons.Outlined.ExitToApp, null) },
+            selected = currentRoute == DrawerDestinations.EXIT_ROUTE,
+            onClick = { navigateTo(DrawerDestinations.EXIT_ROUTE); closeDrawer() },
+            // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            modifier = Modifier.height(Dimen.drawerItemHeight)
         )
     }
 }
@@ -97,12 +111,10 @@ private fun AppLogo(modifier: Modifier = Modifier) {
 @Preview("Drawer contents (dark)", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewAppDrawer() {
-    AppTheme {
+    AppTheme(dynamicColor = false) {
         AppDrawer(
-            currentRoute = AppDestinations.HOME_ROUTE,
-            navigateToHome = {},
-            navigateToInterests = {},
-            navigateToMy = {},
+            currentRoute = DrawerDestinations.NO_ROUTE,
+            navigateTo = { },
             closeDrawer = { }
         )
     }

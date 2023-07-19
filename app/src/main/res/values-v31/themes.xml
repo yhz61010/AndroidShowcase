@@ -1,21 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Allows us to override platform level specific attributes in their respective values-vXX folder. -->
     <style name="app_Platform.Theme.AndroidShowcase" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <item name="colorPrimary">@color/app_windowBackground</item>
-        <item name="colorPrimaryDark">@color/app_windowBackground</item>
-        <!-- Prevent the issue of briefly displaying a white status bar text when launching the application. -->
-        <item name="android:windowLightStatusBar">true</item>
-
         <!-- Prevent the issue of briefly displaying a white background color when launching the application. -->
         <item name="android:colorBackground">@color/app_windowBackground</item>
         <item name="android:windowBackground">@color/app_windowBackground</item>
+
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/app_transparent_image</item>
     </style>
-
-    <!-- The actual theme we use. This varies for light theme (here), and values-night for dark theme. -->
-    <style name="app_Theme.AndroidShowcase" parent="app_Platform.Theme.AndroidShowcase" />
-
-    <!-- Customize your theme styles here. -->
 </resources>

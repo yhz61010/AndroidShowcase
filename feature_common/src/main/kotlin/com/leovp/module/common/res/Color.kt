@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.theme
+package com.leovp.module.common.res
 
 import androidx.compose.ui.graphics.Color
 

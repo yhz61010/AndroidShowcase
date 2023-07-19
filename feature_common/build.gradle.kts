@@ -15,6 +15,7 @@ android {
     namespace = "com.leovp.module.common"
 
     // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
+    @Suppress ("UnstableApiUsage")
     buildFeatures {
         // dataBinding = true
         // viewBinding is enabled by default. Check [build.gradle.kts] in the root folder of project.
@@ -52,6 +53,11 @@ android {
 
 dependencies {
     implementation(libs.bundles.kotlin)
+    // implementation(libs.bundles.androidx.main)
+    // implementation(libs.bundles.navigation)
+    // implementation(libs.bundles.lifecycle.full)
+
+    // ----------
 
     api(libs.leo.androidbase)
     api(libs.leo.pref)
@@ -61,6 +67,26 @@ dependencies {
     api(libs.mars.xlog)
     api(libs.karn.notify)
 
+    // ----------
+
+    val composeBom = platform(libs.androidx.compose.bom)
+    api(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Material Design 3
+    api(libs.androidx.material3)
+
+    // Android Studio Preview support
+    api(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    // debugImplementation(libs.androidx.compose.ui.graphics)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    api(libs.bundles.androidx.compose)
+
+    api(libs.androidx.navigation.compose)
+    api(libs.androidx.compose.material.iconsExtended)
+
     // ==============================
     testImplementation(libs.bundles.test)
     testRuntimeOnly(libs.bundles.test.runtime.only)
@@ -68,6 +94,8 @@ dependencies {
     androidTestImplementation(libs.bundles.android.test)
     // ==============================
     // The instrumentation test companion libraries
+    // https://github.com/mannodermaus/android-junit5
+    // ==============================
     androidTestImplementation(libs.mannodermaus.junit5.core)
     androidTestRuntimeOnly(libs.mannodermaus.junit5.runner)
     // ==============================

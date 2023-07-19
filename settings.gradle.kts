@@ -57,6 +57,9 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     @Suppress ("UnstableApiUsage")
     repositories {
+        // https://github.com/airbnb/lottie/blob/master/android-compose.md
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
+
         google()
         mavenCentral {
             isAllowInsecureProtocol = true

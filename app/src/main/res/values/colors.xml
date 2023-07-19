@@ -13,7 +13,6 @@
   the License.
   -->
 <resources>
-    <color name="app_orange_300">#FFFFB74D</color>
-    <color name="app_orange_500">#FFFF9800</color>
-    <color name="app_orange_800">#FFEF6C00</color>
+    <color name="app_colorPrimary">#FF8B5000</color>
+    <color name="app_windowBackground">#FFF2DFD1</color>
 </resources>

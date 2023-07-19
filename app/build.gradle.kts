@@ -247,45 +247,10 @@ fun Project.getSignProperty(key: String, path: String = "config/sign/keystore.pr
 }
 
 dependencies {
-    val composeBom = platform(libs.androidx.compose.bom)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-
-    // Material Design 3
-    implementation(libs.androidx.material3)
-
-    // Android Studio Preview support
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    // debugImplementation(libs.androidx.compose.ui.graphics)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    implementation(libs.bundles.androidx.compose)
-
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.compose.material.iconsExtended)
-
-    // ----------
-
-    implementation(libs.bundles.kotlin)
-    // implementation(libs.bundles.androidx.main)
-    // implementation(libs.bundles.navigation)
-    // implementation(libs.bundles.lifecycle.full)
-
     // By using `projects`, you need to enable `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`
     // in `settings.gradle.kts` where in your root folder.
-    api(projects.featureCommon)
+    implementation(projects.featureCommon)
 
-    // ==============================
-    testImplementation(libs.bundles.test)
-    testRuntimeOnly(libs.bundles.test.runtime.only)
-    androidTestImplementation(libs.bundles.test)
-    androidTestImplementation(libs.bundles.android.test)
-    // ==============================
-    // The instrumentation test companion libraries
-    // https://github.com/mannodermaus/android-junit5
-    // ==============================
-    androidTestImplementation(libs.mannodermaus.junit5.core)
-    androidTestRuntimeOnly(libs.mannodermaus.junit5.runner)
-    // ==============================
+    implementation(libs.lottie.compose)
+    implementation(libs.accompanist.systemuicontroller)
 }
