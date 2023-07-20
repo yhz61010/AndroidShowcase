@@ -110,7 +110,8 @@ fun MainScreen(
                         Icon(Icons.Filled.Menu, null)
                     }
                 },
-                title = { Text(stringResource(id = topBarTitleResId)) }, actions = {
+                title = { Text(stringResource(id = topBarTitleResId)) },
+                actions = {
                     IconButton(onClick = { context.toast("Search is not yet implemented.") }) {
                         Icon(Icons.Outlined.Mic, null)
                     }
@@ -132,8 +133,6 @@ fun MainScreen(
                         selected = index == pagerState.currentPage,
                         onClick = {
                             LogContext.log.i(TAG, "Selected: ${bottomItemData.screen.route}")
-                            topBarTitleResId = bottomItemData.screen.resId
-
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(
                                     page = bottomItemData.ordinal,
@@ -151,6 +150,7 @@ fun MainScreen(
                 state = pagerState,
                 modifier = newModifier
             ) { page ->
+                topBarTitleResId = pagerScreenValues[pagerState.currentPage].screen.resId
                 when (pagerScreenValues[page]) {
                     AppBottomNavigationItems.HOME -> HomeScreen()
                     AppBottomNavigationItems.INTERESTS -> InterestsScreen()
