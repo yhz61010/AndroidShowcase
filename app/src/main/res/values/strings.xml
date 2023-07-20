@@ -7,7 +7,7 @@
     <string name="app_main_tab_interests">Interests</string>
     <string name="app_main_tab_my">My</string>
 
-    <string name="app_drawer_vip_label">Member Center</string>
+    <string name="app_drawer_member_center">Member Center</string>
     <string name="app_drawer_message_label">Messages</string>
     <string name="app_drawer_settings_label">Settings</string>
     <string name="app_drawer_exit_label">Exit</string>

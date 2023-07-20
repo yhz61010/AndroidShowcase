@@ -6,5 +6,6 @@ object Dimen {
     val drawerHeaderPaddingTop = 24.dp
     val drawerHeaderPaddingBottom = 16.dp
 
-    val drawerItemHeight = 46.dp
+    val drawerItemHeight = 48.dp
+    val drawerItemHorizontalPadding = 8.dp
 }

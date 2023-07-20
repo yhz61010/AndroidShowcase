@@ -3,6 +3,7 @@ package com.leovp.androidshowcase.ui.main
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,19 +30,27 @@ fun AppNavGraph(
         }
         composable(AppDestinations.MAIN_ROUTE) {
             AppTheme(dynamicColor = false) {
-                MainScreen(widthSize = widthSizeClass, modifier, navController)
+                MainScreen(
+                    widthSize = widthSizeClass,
+                    modifier = modifier,
+                    navController = navController
+                )
             }
         }
 
-        composable(AppDestinations.HOME_ROUTE) {}
-        composable(AppDestinations.INTERESTS_ROUTE) {}
-        composable(AppDestinations.MY_ROUTE) {}
-
-        composable(DrawerDestinations.VIP_ROUTE) {
-            MemberCenterScreen(modifier, navController)
-        }
-        composable(DrawerDestinations.MESSAGES) {}
-        composable(DrawerDestinations.SETTING_ROUTE) {}
-        composable(DrawerDestinations.EXIT_ROUTE) {}
+        addAppDrawerGraph(onNavigateToRoute = {}, modifier, navController)
     }
+}
+
+fun NavGraphBuilder.addAppDrawerGraph(
+    onNavigateToRoute: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+) {
+    composable(DrawerDestinations.MEMBER_CENTER_ROUTE) {
+        MemberCenterScreen(modifier, navController)
+    }
+    composable(DrawerDestinations.MESSAGES) {}
+    composable(DrawerDestinations.SETTING_ROUTE) {}
+    composable(DrawerDestinations.EXIT_ROUTE) {}
 }

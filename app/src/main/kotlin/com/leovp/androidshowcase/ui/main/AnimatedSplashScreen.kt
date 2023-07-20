@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -34,10 +33,7 @@ fun AnimatedSplashScreen(navController: NavHostController) {
             progress = { logoAnimationState.progress }
         )
         if (logoAnimationState.isAtEnd && logoAnimationState.isPlaying) {
-            val navigationActions = remember(navController) {
-                AppNavigationActions(navController)
-            }
-            navigationActions.navigationToMain()
+            AppNavigationActions.getInstance(navController).navigate(AppDestinations.MAIN_ROUTE)
         }
     }
 }

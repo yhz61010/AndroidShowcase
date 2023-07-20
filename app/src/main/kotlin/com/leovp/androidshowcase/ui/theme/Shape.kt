@@ -1,4 +1,4 @@
-package com.leovp.module.common.res
+package com.leovp.androidshowcase.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

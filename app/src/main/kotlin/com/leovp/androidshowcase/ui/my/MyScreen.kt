@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.home
+package com.leovp.androidshowcase.ui.my
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,20 +10,20 @@ import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * Author: Michael Leo
- * Date: 2023/7/18 15:06
+ * Date: 2023/7/20 09:58
  */
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun MyScreen(modifier: Modifier = Modifier) {
     Surface(modifier = modifier.fillMaxSize()) {
         Column(modifier) {
-            Text(text = "Home Screen")
+            Text(text = "My Screen")
         }
     }
 }
 
 @Preview
 @Composable
-fun PreviewHomeScreen() {
-    HomeScreen()
+fun PreviewMyScreen() {
+    MyScreen()
 }

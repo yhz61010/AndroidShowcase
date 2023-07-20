@@ -3,16 +3,28 @@ package com.leovp.androidshowcase.ui.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Mic
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -24,12 +36,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.ui.home.HomeScreen
+import com.leovp.androidshowcase.ui.interests.InterestsScreen
+import com.leovp.androidshowcase.ui.my.MyScreen
 import com.leovp.log.LogContext
 import kotlinx.coroutines.launch
 
@@ -39,6 +55,7 @@ import kotlinx.coroutines.launch
  */
 
 private const val TAG = "MA"
+private const val TAB_SWITCH_ANIM_DURATION = 300
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -54,12 +71,11 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen(widthSize: WindowWidthSizeClass, modifier: Modifier = Modifier, navController: NavHostController) {
-    val navigationActions = remember(navController) {
-        AppNavigationActions(navController)
-    }
-
+fun MainScreen(
+    widthSize: WindowWidthSizeClass, modifier: Modifier = Modifier, navController: NavHostController
+) {
     val coroutineScope = rememberCoroutineScope()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -72,42 +88,75 @@ fun MainScreen(widthSize: WindowWidthSizeClass, modifier: Modifier = Modifier, n
         drawerContent = {
             AppDrawer(
                 currentRoute = currentRoute,
-                navigateTo = { route -> getNavigationTo(route, navigationActions)() },
+                navigateTo = { route -> AppNavigationActions.getInstance(navController).navigate(route) },
                 closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
                 modifier = Modifier.requiredWidth(300.dp)
             )
-        },
-        drawerState = sizeAwareDrawerState,
+        }, drawerState = sizeAwareDrawerState,
         // Only enable opening the drawer via gestures if the screen is not expanded
         gesturesEnabled = !isExpandedScreen
     ) {
-        // modifier.statusBarsPadding()
-        var currentSelect by remember { mutableStateOf(AppBottomNavigationItems.HOME.screen.route) }
+        val context = LocalContext.current
 
-        Scaffold(modifier = modifier, bottomBar = {
+        var topBarTitleResId by remember { mutableStateOf(AppBottomNavigationItems.HOME.screen.resId) }
+
+        val pagerState = rememberPagerState(initialPage = AppBottomNavigationItems.HOME.ordinal)
+        val pagerScreenValues = AppBottomNavigationItems.values()
+
+        Scaffold(modifier = modifier, topBar = {
+            CenterAlignedTopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = { coroutineScope.launch { sizeAwareDrawerState.open() } }) {
+                        Icon(Icons.Filled.Menu, null)
+                    }
+                },
+                title = { Text(stringResource(id = topBarTitleResId)) }, actions = {
+                    IconButton(onClick = { context.toast("Search is not yet implemented.") }) {
+                        Icon(Icons.Outlined.Mic, null)
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            )
+        }, bottomBar = {
             NavigationBar {
                 // val navBackStackEntry by navController.currentBackStackEntryAsState()
                 // val currentDestination = navBackStackEntry?.destination?.route ?: AppBottomNavigationItems.HOME.screen.route
                 // LogContext.log.d(TAG, "currentDestination=$currentDestination")
-                AppBottomNavigationItems.values().forEach { bottomItemData ->
-                    NavigationBarItem(icon = { Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId)) },
+                AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
+                    NavigationBarItem(
+                        icon = { Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId)) },
                         label = { Text(stringResource(bottomItemData.screen.resId)) },
-                        selected = currentSelect == bottomItemData.screen.route,
+                        // Here's the trick. The selected tab is based on HorizontalPager state.
+                        selected = index == pagerState.currentPage,
                         onClick = {
-                            currentSelect = bottomItemData.screen.route
-                            LogContext.log.i(TAG, "Selected: $currentSelect")
-                            // val navigationInvoke = when (currentSelect) {
-                            //     ShowcaseDestinations.HOME_ROUTE -> navigationActions.navigateToHome
-                            //     ShowcaseDestinations.INTERESTS_ROUTE -> navigationActions.navigateToInterests
-                            //     ShowcaseDestinations.MY_ROUTE -> navigationActions.navigateToMy
-                            //     else -> null
-                            // }
-                            // navigationInvoke?.invoke()
-                        })
+                            LogContext.log.i(TAG, "Selected: ${bottomItemData.screen.route}")
+                            topBarTitleResId = bottomItemData.screen.resId
+
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    page = bottomItemData.ordinal,
+                                    animationSpec = tween(TAB_SWITCH_ANIM_DURATION)
+                                )
+                            }
+                        }
+                    )
                 }
             }
         }) { contentPadding ->
-            HomeScreen(modifier = modifier.padding(contentPadding))
+            val newModifier = modifier.padding(contentPadding)
+            HorizontalPager(
+                pageCount = pagerScreenValues.size,
+                state = pagerState,
+                modifier = newModifier
+            ) { page ->
+                when (pagerScreenValues[page]) {
+                    AppBottomNavigationItems.HOME -> HomeScreen()
+                    AppBottomNavigationItems.INTERESTS -> InterestsScreen()
+                    AppBottomNavigationItems.MY -> MyScreen()
+                }
+            }
         }
     }
 }
@@ -128,21 +177,5 @@ private fun rememberSizeAwareDrawerState(isExpandedScreen: Boolean): DrawerState
         // that is locked closed. This is intentionally not remembered, because we
         // don't want to keep track of any changes and always keep it closed
         DrawerState(DrawerValue.Closed)
-    }
-}
-
-private fun getNavigationTo(route: String, navigationActions: AppNavigationActions): () -> Unit {
-    LogContext.log.i(TAG, "-> navigate to: $route")
-    return when (route) {
-        AppDestinations.HOME_ROUTE -> navigationActions.navigateToHome
-        AppDestinations.INTERESTS_ROUTE -> navigationActions.navigateToInterests
-        AppDestinations.MY_ROUTE -> navigationActions.navigateToMy
-
-        DrawerDestinations.VIP_ROUTE -> navigationActions.navigateToDrawerVip
-        DrawerDestinations.MESSAGES -> navigationActions.navigateToDrawerMessage
-        DrawerDestinations.SETTING_ROUTE -> navigationActions.navigateToDrawerSetting
-        DrawerDestinations.EXIT_ROUTE -> navigationActions.navigateToDrawerExit
-
-        else -> error("Illegal route: $route")
     }
 }

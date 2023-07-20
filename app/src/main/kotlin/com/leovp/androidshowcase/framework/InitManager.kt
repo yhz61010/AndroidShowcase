@@ -9,7 +9,7 @@ import com.leovp.androidbase.exts.android.closeAndroidPDialog
 import com.leovp.androidshowcase.R
 import com.leovp.log.LogContext
 import com.leovp.module.common.CrashHandler
-import com.leovp.module.common.GlobalConstants
+import com.leovp.module.common.GlobalConst
 import com.leovp.pref.LPref
 import com.leovp.pref.PrefContext
 import io.karn.notify.Notify
@@ -22,7 +22,7 @@ object InitManager {
     fun init(app: Application) {
         CrashHandler.initCrashHandler(app)
 
-        LeoToast.getInstance(app).init(LeoToast.ToastConfig(GlobalConstants.DEBUG, R.mipmap.app_ic_launcher_round))
+        LeoToast.getInstance(app).init(LeoToast.ToastConfig(GlobalConst.DEBUG, R.mipmap.app_ic_launcher_round))
 
         // Log must be initialized first.
         LogContext.setLogImpl(MarsXLog("AOS").apply { init(app) })

@@ -47,19 +47,21 @@ fun AppDrawer(
         AppLogo(
             modifier = Modifier
                 .padding(
-                    start = 16.dp,
+                    start = 24.dp,
                     top = Dimen.drawerHeaderPaddingTop,
                     end = NavigationDrawerItemDefaults.ItemPadding.calculateEndPadding(LayoutDirection.Ltr),
                     bottom = Dimen.drawerHeaderPaddingBottom
                 )
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.app_drawer_vip_label)) },
+            label = { Text(stringResource(id = R.string.app_drawer_member_center)) },
             icon = { Icon(Icons.Outlined.CreditCard, null) },
-            selected = currentRoute == DrawerDestinations.VIP_ROUTE,
-            onClick = { navigateTo(DrawerDestinations.VIP_ROUTE); closeDrawer() },
+            selected = currentRoute == DrawerDestinations.MEMBER_CENTER_ROUTE,
+            onClick = { navigateTo(DrawerDestinations.MEMBER_CENTER_ROUTE); closeDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-            modifier = Modifier.height(Dimen.drawerItemHeight)
+            modifier = Modifier
+                .height(Dimen.drawerItemHeight)
+                .padding(horizontal = Dimen.drawerItemHorizontalPadding)
         )
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.app_drawer_message_label)) },
@@ -67,7 +69,9 @@ fun AppDrawer(
             selected = currentRoute == DrawerDestinations.MESSAGES,
             onClick = { navigateTo(DrawerDestinations.MESSAGES); closeDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-            modifier = Modifier.height(Dimen.drawerItemHeight)
+            modifier = Modifier
+                .height(Dimen.drawerItemHeight)
+                .padding(horizontal = Dimen.drawerItemHorizontalPadding)
         )
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.app_drawer_settings_label)) },
@@ -75,7 +79,9 @@ fun AppDrawer(
             selected = currentRoute == DrawerDestinations.SETTING_ROUTE,
             onClick = { navigateTo(DrawerDestinations.SETTING_ROUTE); closeDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-            modifier = Modifier.height(Dimen.drawerItemHeight)
+            modifier = Modifier
+                .height(Dimen.drawerItemHeight)
+                .padding(horizontal = Dimen.drawerItemHorizontalPadding)
         )
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.app_drawer_exit_label)) },
@@ -83,7 +89,9 @@ fun AppDrawer(
             selected = currentRoute == DrawerDestinations.EXIT_ROUTE,
             onClick = { navigateTo(DrawerDestinations.EXIT_ROUTE); closeDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-            modifier = Modifier.height(Dimen.drawerItemHeight)
+            modifier = Modifier
+                .height(Dimen.drawerItemHeight)
+                .padding(horizontal = Dimen.drawerItemHorizontalPadding)
         )
     }
 }
