@@ -5,10 +5,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import com.leovp.androidshowcase.R
-import com.leovp.kotlin.utils.SingletonHolder
 import com.leovp.log.LogContext
 
 /**
@@ -52,10 +53,17 @@ enum class AppBottomNavigationItems(val screen: Screen, var icon: ImageVector) {
 
 /**
  * Models the navigation actions in the app.
+ *
+ * Attention:
+ * This class can't be singleton. Otherwise, it will case the following exception
+ * when you navigate to other screen after yous witch the device dark mode.
+ * ```
+ * java.lang.IllegalStateException:
+ * no event down from INITIALIZED in component NavBackStackEntry(40f53e9f-981c-4e19-bcc0-69c85ed7ce77)
+ * destination=Destination(0x88e673a4) route=app_main
+ * ```
  */
-class AppNavigationActions private constructor(private val navController: NavHostController) {
-    companion object : SingletonHolder<AppNavigationActions, NavHostController>(::AppNavigationActions)
-
+class AppNavigationActions(private val navController: NavHostController) {
     val currentRoute: String? get() = navController.currentDestination?.route
 
     fun upPress() {
@@ -98,6 +106,13 @@ class AppNavigationActions private constructor(private val navController: NavHos
             launchSingleTop = true
             restoreState = true
         }
+    }
+}
+
+@Composable
+fun getNavigationActions(navController: NavHostController): AppNavigationActions {
+    return remember(navController) {
+        AppNavigationActions(navController)
     }
 }
 

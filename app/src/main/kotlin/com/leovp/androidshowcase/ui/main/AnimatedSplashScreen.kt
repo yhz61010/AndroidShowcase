@@ -33,7 +33,7 @@ fun AnimatedSplashScreen(navController: NavHostController) {
             progress = { logoAnimationState.progress }
         )
         if (logoAnimationState.isAtEnd && logoAnimationState.isPlaying) {
-            AppNavigationActions.getInstance(navController).navigate(AppDestinations.MAIN_ROUTE)
+            getNavigationActions(navController = navController).navigate(AppDestinations.MAIN_ROUTE)
         }
     }
 }

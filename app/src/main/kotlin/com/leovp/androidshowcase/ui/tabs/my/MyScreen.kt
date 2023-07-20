@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.my
+package com.leovp.androidshowcase.ui.tabs.my
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

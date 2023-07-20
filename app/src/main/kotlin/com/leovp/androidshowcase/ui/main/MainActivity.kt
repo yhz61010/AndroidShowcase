@@ -43,9 +43,9 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.leovp.android.exts.toast
-import com.leovp.androidshowcase.ui.home.HomeScreen
-import com.leovp.androidshowcase.ui.interests.InterestsScreen
-import com.leovp.androidshowcase.ui.my.MyScreen
+import com.leovp.androidshowcase.ui.tabs.home.HomeScreen
+import com.leovp.androidshowcase.ui.tabs.interests.InterestsScreen
+import com.leovp.androidshowcase.ui.tabs.my.MyScreen
 import com.leovp.log.LogContext
 import kotlinx.coroutines.launch
 
@@ -76,6 +76,8 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     widthSize: WindowWidthSizeClass, modifier: Modifier = Modifier, navController: NavHostController
 ) {
+    val navigationActions = getNavigationActions(navController = navController)
+
     val coroutineScope = rememberCoroutineScope()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -88,7 +90,7 @@ fun MainScreen(
         drawerContent = {
             AppDrawer(
                 currentRoute = currentRoute,
-                navigateTo = { route -> AppNavigationActions.getInstance(navController).navigate(route) },
+                navigateTo = { route -> navigationActions.navigate(route) },
                 closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
                 modifier = Modifier.requiredWidth(300.dp)
             )
@@ -115,16 +117,10 @@ fun MainScreen(
                     IconButton(onClick = { context.toast("Search is not yet implemented.") }) {
                         Icon(Icons.Outlined.Mic, null)
                     }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                }
             )
         }, bottomBar = {
             NavigationBar {
-                // val navBackStackEntry by navController.currentBackStackEntryAsState()
-                // val currentDestination = navBackStackEntry?.destination?.route ?: AppBottomNavigationItems.HOME.screen.route
-                // LogContext.log.d(TAG, "currentDestination=$currentDestination")
                 AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
                     NavigationBarItem(
                         icon = { Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId)) },

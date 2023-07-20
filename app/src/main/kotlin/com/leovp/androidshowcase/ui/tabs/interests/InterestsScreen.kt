@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.interests
+package com.leovp.androidshowcase.ui.tabs.interests
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

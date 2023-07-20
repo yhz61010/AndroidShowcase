@@ -4,8 +4,13 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <item name="colorPrimary">@color/app_windowBackground</item>
-        <item name="colorPrimaryDark">@color/app_windowBackground</item>
+<!--        <item name="colorPrimary">@color/app_windowBackground</item>-->
+<!--        <item name="colorPrimaryDark">@color/app_windowBackground</item>-->
+
+        <!-- Prevent the issue of briefly displaying the default system bar color when launching the application. -->
+        <!-- There color will be override when the custom theme is activated. -->
+        <item name="android:statusBarColor">@color/app_windowBackground</item>
+        <item name="android:navigationBarColor">@color/app_windowBackground</item>
         <!-- Prevent the issue of briefly displaying a white status bar text when launching the application. -->
         <item name="android:windowLightStatusBar">true</item>
 
