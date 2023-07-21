@@ -38,14 +38,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.ui.tabs.home.HomeScreen
 import com.leovp.androidshowcase.ui.tabs.interests.InterestsScreen
 import com.leovp.androidshowcase.ui.tabs.my.MyScreen
+import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.log.LogContext
 import kotlinx.coroutines.launch
 
@@ -117,7 +120,10 @@ fun MainScreen(
                     IconButton(onClick = { context.toast("Search is not yet implemented.") }) {
                         Icon(Icons.Outlined.Mic, null)
                     }
-                }
+                },
+                colors= TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
             )
         }, bottomBar = {
             NavigationBar {
@@ -173,5 +179,16 @@ private fun rememberSizeAwareDrawerState(isExpandedScreen: Boolean): DrawerState
         // that is locked closed. This is intentionally not remembered, because we
         // don't want to keep track of any changes and always keep it closed
         DrawerState(DrawerValue.Closed)
+    }
+}
+
+@Preview
+@Composable
+fun PreviewMainScreen() {
+    AppTheme(dynamicColor = false) {
+        MainScreen(
+            widthSize = WindowWidthSizeClass.Compact,
+            navController = rememberNavController()
+        )
     }
 }

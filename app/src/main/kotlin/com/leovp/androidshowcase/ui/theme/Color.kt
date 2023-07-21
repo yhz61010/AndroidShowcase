@@ -4,6 +4,20 @@ import androidx.compose.ui.graphics.Color
 
 val immersive_sys_ui = Color(0x338B5000)
 
+val mark_hot_text_color = Color(0xffd92738)
+val mark_hot_border = Color(0xfff3e6e9)
+val mark_hot_bg = Color(0xfff3e6e9)
+
+val mark_special_text_color = Color(0xffcfb87f)
+val mark_special_border = Color(0xffe7dcc2)
+val mark_special_bg = Color.Transparent
+
+val mark_vip_text_color = Color(0xffda776c)
+val mark_vip_border = Color(0xfff1e4e4)
+val mark_vip_bg = Color.Transparent
+
+// --------------------
+
 val md_theme_light_primary = Color(0xFF8B5000)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFFFDCBE)

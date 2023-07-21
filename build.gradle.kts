@@ -66,7 +66,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.kotlin.parcelize) apply false // id("kotlin-parcelize")
     // https://stackoverflow.com/a/72508037/1685062
-    alias(libs.plugins.navigation) apply false
+    // alias(libs.plugins.navigation) apply false
 }
 
 // ********************

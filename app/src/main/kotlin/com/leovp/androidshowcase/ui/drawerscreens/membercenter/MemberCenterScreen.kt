@@ -4,8 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,40 +45,42 @@ import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemberCenterScreen(modifier: Modifier = Modifier, navController: NavHostController) {
-    Row(modifier.fillMaxSize()) {
-        val context = LocalContext.current
-        val topAppBarState = rememberTopAppBarState()
-        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
-        val navigationActions = getNavigationActions(navController)
-        Scaffold(
-            modifier = modifier,
-            topBar = {
-                val title = stringResource(id = R.string.app_drawer_member_center)
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(title)
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { navigationActions.upPress() }) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    },
-                    scrollBehavior = scrollBehavior
-                )
-            }
-        ) { contentPadding ->
-            MemberCenterContent(
-                modifier = Modifier
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    // innerPadding takes into account the top and bottom bar
-                    .padding(contentPadding),
-                state = rememberLazyListState()
+    // val context = LocalContext.current
+    val topAppBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
+    val navigationActions = getNavigationActions(navController)
+    Scaffold(
+        // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            val title = stringResource(id = R.string.app_drawer_member_center)
+            CenterAlignedTopAppBar(
+                // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                //     containerColor = Color.Cyan
+                // ),
+                // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
+                // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+                title = { Text(title) },
+                navigationIcon = {
+                    IconButton(onClick = { navigationActions.upPress() }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
+    ) { contentPadding ->
+        MemberCenterContent(
+            modifier = Modifier
+                // .nestedScroll(scrollBehavior.nestedScrollConnection)
+                // innerPadding takes into account the top and bottom bar
+                .padding(contentPadding),
+            state = rememberLazyListState()
+        )
     }
 }
 

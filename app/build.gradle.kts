@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.android.application)
 
     alias(libs.plugins.kotlin.parcelize) // id("kotlin-parcelize")
-    alias(libs.plugins.navigation)
+    // alias(libs.plugins.navigation)
 
     // https://github.com/mannodermaus/android-junit5
     alias(libs.plugins.android.junit5)
@@ -251,6 +251,7 @@ dependencies {
     // in `settings.gradle.kts` where in your root folder.
     implementation(projects.featureCommon)
 
-    implementation(libs.lottie.compose)
-    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.coil.kt.compose)
+    // implementation(libs.lottie.compose)
+    // implementation(libs.accompanist.systemuicontroller)
 }
