@@ -6,8 +6,8 @@ import com.leovp.androidshowcase.ui.tabs.home.iters.MarkType
  * Author: Michael Leo
  * Date: 2023/7/24 15:33
  */
-object HomeLocalDataSource {
-    val homeList = listOf(
+class HomeLocalDataSource {
+    val homePersonalRecommendedMusicList = listOf(
         SimpleListItemModel(
             thumbnail = "https://is1-ssl.mzstatic.com/image/thumb/Features/19/fa/5d/dj.ashmqwlx.jpg/632x632bf.webp",
             title = "The end of the world",
@@ -71,6 +71,14 @@ object HomeLocalDataSource {
             markText = "沉浸声",
             showTrailIcon = true,
             type = MarkType.Special
+        ),
+        SimpleListItemModel(
+            thumbnail = "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a5/c7/56/a5c75619-5a46-2a9b-fd82-593893abfd04/00724355696854.jpg/632x632bb.webp",
+            title = "Scarborough Fair",
+            subTitle = "Sarah Brightman",
+            markText = "小众佳作>",
+            showTrailIcon = true,
+            type = MarkType.Hot
         )
     )
 }

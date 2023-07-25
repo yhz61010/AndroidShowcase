@@ -121,7 +121,7 @@ fun MainScreen(
                         Icon(Icons.Outlined.Mic, null)
                     }
                 },
-                colors= TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )

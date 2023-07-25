@@ -1,5 +1,6 @@
 package com.leovp.androidshowcase.ui.tabs.home.data
 
+import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import com.leovp.androidshowcase.ui.tabs.home.iters.MarkType
 
@@ -7,6 +8,7 @@ import com.leovp.androidshowcase.ui.tabs.home.iters.MarkType
  * Author: Michael Leo
  * Date: 2023/7/24 15:29
  */
+@Keep
 @Immutable
 data class SimpleListItemModel(
     val thumbnail: String,

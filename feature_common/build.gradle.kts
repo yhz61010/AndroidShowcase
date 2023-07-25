@@ -86,6 +86,7 @@ dependencies {
 
     api(libs.androidx.navigation.compose)
     api(libs.androidx.compose.material.iconsExtended)
+    api(libs.androidx.lifecycle.runtime.compose)
 
     // ==============================
     testImplementation(libs.bundles.test)

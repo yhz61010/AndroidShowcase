@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -36,10 +37,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
-import com.leovp.androidshowcase.ui.tabs.home.data.HomeLocalDataSource
+import com.leovp.androidshowcase.framework.FakeDI
 import com.leovp.androidshowcase.ui.tabs.home.data.SimpleListItemModel
 import com.leovp.androidshowcase.ui.tabs.home.iters.MarkType
 import com.leovp.androidshowcase.ui.theme.mark_hot_bg
@@ -48,6 +51,7 @@ import com.leovp.androidshowcase.ui.theme.mark_special_border
 import com.leovp.androidshowcase.ui.theme.mark_special_text_color
 import com.leovp.androidshowcase.ui.theme.mark_vip_border
 import com.leovp.androidshowcase.ui.theme.mark_vip_text_color
+import com.leovp.androidshowcase.util.viewModelProviderFactoryOf
 
 /**
  * Author: Michael Leo
@@ -55,13 +59,17 @@ import com.leovp.androidshowcase.ui.theme.mark_vip_text_color
  */
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: HomeScreenVM = viewModel(factory = viewModelProviderFactoryOf { HomeScreenVM(FakeDI.homeRepository) })
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
         modifier = modifier.fillMaxSize(),
         state = rememberLazyListState()
     ) {
-        items(HomeLocalDataSource.homeList) { data ->
+        items(uiState.personalRecommends) { data ->
             HomeScreenContentItems(data)
         }
     }

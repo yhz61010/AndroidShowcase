@@ -52,6 +52,7 @@ compose-navigation = "2.6.0"
 accompanist = "0.30.1"
 lottie-compose = "6.1.0"
 lifecycle-compose = "2.6.1"
+androidx-lifecycle-runtime-compose = "2.6.1"
 androidx-constraintlayout = "1.0.1"
 
 coroutines = "1.7.1"
@@ -149,6 +150,7 @@ androidx-compose-material-iconsExtended = { module = "androidx.compose.material:
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidx-constraintlayout" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle-runtime-compose" }
 
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
