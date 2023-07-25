@@ -2,9 +2,9 @@ package com.leovp.androidshowcase.ui.main
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.LibraryMusic
+import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.outlined.SpeakerNotes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -46,9 +46,9 @@ sealed class Screen(val route: String, @StringRes val resId: Int) {
 }
 
 enum class AppBottomNavigationItems(val screen: Screen, var icon: ImageVector) {
-    DISCOVERY(Screen.Discovery, Icons.Outlined.Home),
-    MY(Screen.My, Icons.Outlined.Person),
-    COMMUNITY(Screen.Community, Icons.Outlined.FavoriteBorder)
+    DISCOVERY(Screen.Discovery, Icons.Outlined.LibraryMusic),
+    MY(Screen.My, Icons.Outlined.MusicNote),
+    COMMUNITY(Screen.Community, Icons.Outlined.SpeakerNotes)
 }
 
 /**

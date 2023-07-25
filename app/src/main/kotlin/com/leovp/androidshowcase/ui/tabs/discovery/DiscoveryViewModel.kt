@@ -18,16 +18,16 @@ import kotlinx.coroutines.launch
  */
 
 /**
- * UI state for the Home screen
+ * UI state for the Discovery screen
  */
-data class HomeUiState(
+data class DiscoveryUiState(
     val personalRecommends: List<SimpleListItemModel> = emptyList(), val loading: Boolean = false
 )
 
-class HomeScreenVM(private val repository: DiscoveryRepository) : ViewModel() {
+class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
     // UI state exposed to the UI
-    private val _uiState = MutableStateFlow(HomeUiState(loading = true))
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(DiscoveryUiState(loading = true))
+    val uiState: StateFlow<DiscoveryUiState> = _uiState.asStateFlow()
 
     init {
         refreshAll()
@@ -50,15 +50,15 @@ class HomeScreenVM(private val repository: DiscoveryRepository) : ViewModel() {
     }
 
     /**
-     * Factory for HomeScreenVM that takes HomeRepository as a dependency
+     * Factory for DiscoveryScreenVM that takes DiscoveryRepository as a dependency
      */
     // companion object {
     //     fun provideFactory(
-    //         repository: HomeRepository,
+    //         repository: DiscoveryRepository,
     //     ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
     //         @Suppress("UNCHECKED_CAST")
     //         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    //             return HomeScreenVM(repository) as T
+    //             return DiscoveryScreenVM(repository) as T
     //         }
     //     }
     // }

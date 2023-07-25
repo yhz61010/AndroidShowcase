@@ -8,7 +8,7 @@ import com.leovp.androidshowcase.ui.tabs.discovery.data.DiscoveryLocalDataSource
  * Date: 2023/7/25 10:02
  */
 object FakeDI {
-    val homeRepository by lazy {
+    val discoveryRepository by lazy {
         FakeDiscoveryRepository(DiscoveryLocalDataSource())
     }
 }

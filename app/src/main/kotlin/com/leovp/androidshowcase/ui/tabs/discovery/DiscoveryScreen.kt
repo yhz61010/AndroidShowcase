@@ -58,10 +58,12 @@ import com.leovp.androidshowcase.util.viewModelProviderFactoryOf
  * Date: 2023/7/18 15:06
  */
 
+private const val TAG = "Discovery"
+
 @Composable
-fun HomeScreen(
+fun DiscoveryScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeScreenVM = viewModel(factory = viewModelProviderFactoryOf { HomeScreenVM(FakeDI.homeRepository) })
+    viewModel: DiscoveryVM = viewModel(factory = viewModelProviderFactoryOf { DiscoveryVM(FakeDI.discoveryRepository) })
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LazyColumn(
@@ -70,13 +72,13 @@ fun HomeScreen(
         state = rememberLazyListState()
     ) {
         items(uiState.personalRecommends) { data ->
-            HomeScreenContentItems(data)
+            DiscoveryScreenContentItems(data)
         }
     }
 }
 
 @Composable
-fun HomeScreenContentItems(data: SimpleListItemModel) {
+fun DiscoveryScreenContentItems(data: SimpleListItemModel) {
     val context = LocalContext.current
     ListItem(
         modifier = Modifier.clickable { context.toast("You clicked item ${data.title}") },
@@ -149,7 +151,7 @@ fun HomeScreenContentItems(data: SimpleListItemModel) {
 }
 
 // @Composable
-// fun HomeScreenContentItems(num: Int) {
+// fun DiscoveryScreenContentItems(num: Int) {
 //     val context = LocalContext.current
 //     ConstraintLayout(
 //         modifier = Modifier
@@ -239,6 +241,6 @@ fun ListItemImage(
 
 @Preview
 @Composable
-fun PreviewHomeScreen() {
-    HomeScreen()
+fun PreviewDiscoveryScreen() {
+    DiscoveryScreen()
 }

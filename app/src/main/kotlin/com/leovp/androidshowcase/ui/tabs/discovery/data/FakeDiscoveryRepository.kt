@@ -8,6 +8,6 @@ import com.leovp.module.common.RequestResult
  */
 class FakeDiscoveryRepository(private val dataSource: DiscoveryLocalDataSource) : DiscoveryRepository {
     override suspend fun getPersonalRecommends(): RequestResult<List<SimpleListItemModel>> {
-        return RequestResult.Success(dataSource.homePersonalRecommendedMusicList)
+        return RequestResult.Success(dataSource.discoveryPersonalRecommendedMusicList)
     }
 }

@@ -7,7 +7,7 @@ import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
  * Date: 2023/7/24 15:33
  */
 class DiscoveryLocalDataSource {
-    val homePersonalRecommendedMusicList = listOf(
+    val discoveryPersonalRecommendedMusicList = listOf(
         SimpleListItemModel(
             thumbnail = "https://is1-ssl.mzstatic.com/image/thumb/Features/19/fa/5d/dj.ashmqwlx.jpg/632x632bf.webp",
             title = "The end of the world",

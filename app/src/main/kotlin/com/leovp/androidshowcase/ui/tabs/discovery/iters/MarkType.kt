@@ -21,6 +21,7 @@ enum class MarkType {
 // ----------
 // 沉浸声
 // 超清母带
+// Dolby
 
 // sealed class MarkType(val label: String, val textColor: Color, private val borderColor: Color, val bgColor: Color) {
 //     object Hot : MarkType(label, mark_hot_text_color, mark_hot_border, mark_hot_bg)
