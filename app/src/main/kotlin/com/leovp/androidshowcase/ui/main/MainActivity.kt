@@ -45,8 +45,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.leovp.android.exts.toast
-import com.leovp.androidshowcase.ui.tabs.home.HomeScreen
-import com.leovp.androidshowcase.ui.tabs.interests.InterestsScreen
+import com.leovp.androidshowcase.ui.tabs.discovery.HomeScreen
+import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
 import com.leovp.androidshowcase.ui.tabs.my.MyScreen
 import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.log.LogContext
@@ -103,9 +103,9 @@ fun MainScreen(
     ) {
         val context = LocalContext.current
 
-        var topBarTitleResId by remember { mutableStateOf(AppBottomNavigationItems.HOME.screen.resId) }
+        var topBarTitleResId by remember { mutableStateOf(AppBottomNavigationItems.DISCOVERY.screen.resId) }
 
-        val pagerState = rememberPagerState(initialPage = AppBottomNavigationItems.HOME.ordinal)
+        val pagerState = rememberPagerState(initialPage = AppBottomNavigationItems.DISCOVERY.ordinal)
         val pagerScreenValues = AppBottomNavigationItems.values()
 
         Scaffold(modifier = modifier, topBar = {
@@ -154,8 +154,8 @@ fun MainScreen(
             ) { page ->
                 topBarTitleResId = pagerScreenValues[pagerState.currentPage].screen.resId
                 when (pagerScreenValues[page]) {
-                    AppBottomNavigationItems.HOME -> HomeScreen()
-                    AppBottomNavigationItems.INTERESTS -> InterestsScreen()
+                    AppBottomNavigationItems.DISCOVERY -> HomeScreen()
+                    AppBottomNavigationItems.COMMUNITY -> CommunityScreen()
                     AppBottomNavigationItems.MY -> MyScreen()
                 }
             }

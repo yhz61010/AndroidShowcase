@@ -1,7 +1,7 @@
 package com.leovp.androidshowcase.framework
 
-import com.leovp.androidshowcase.ui.tabs.home.HomeRepository
-import com.leovp.androidshowcase.ui.tabs.home.data.HomeLocalDataSource
+import com.leovp.androidshowcase.ui.tabs.discovery.data.FakeDiscoveryRepository
+import com.leovp.androidshowcase.ui.tabs.discovery.data.DiscoveryLocalDataSource
 
 /**
  * Author: Michael Leo
@@ -9,6 +9,6 @@ import com.leovp.androidshowcase.ui.tabs.home.data.HomeLocalDataSource
  */
 object FakeDI {
     val homeRepository by lazy {
-        HomeRepository(HomeLocalDataSource())
+        FakeDiscoveryRepository(DiscoveryLocalDataSource())
     }
 }

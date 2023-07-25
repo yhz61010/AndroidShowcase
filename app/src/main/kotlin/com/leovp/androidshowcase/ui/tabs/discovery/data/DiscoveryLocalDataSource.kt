@@ -1,12 +1,12 @@
-package com.leovp.androidshowcase.ui.tabs.home.data
+package com.leovp.androidshowcase.ui.tabs.discovery.data
 
-import com.leovp.androidshowcase.ui.tabs.home.iters.MarkType
+import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
 
 /**
  * Author: Michael Leo
  * Date: 2023/7/24 15:33
  */
-class HomeLocalDataSource {
+class DiscoveryLocalDataSource {
     val homePersonalRecommendedMusicList = listOf(
         SimpleListItemModel(
             thumbnail = "https://is1-ssl.mzstatic.com/image/thumb/Features/19/fa/5d/dj.ashmqwlx.jpg/632x632bf.webp",

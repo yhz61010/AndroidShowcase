@@ -1,8 +1,11 @@
-package com.leovp.androidshowcase.ui.tabs.home
+package com.leovp.androidshowcase.ui.tabs.discovery
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leovp.androidshowcase.ui.tabs.home.data.SimpleListItemModel
+import com.leovp.androidshowcase.ui.tabs.discovery.data.DiscoveryRepository
+import com.leovp.androidshowcase.ui.tabs.discovery.data.SimpleListItemModel
+import com.leovp.module.common.successOr
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,11 +21,10 @@ import kotlinx.coroutines.launch
  * UI state for the Home screen
  */
 data class HomeUiState(
-    val personalRecommends: List<SimpleListItemModel> = emptyList(),
-    val loading: Boolean = false
+    val personalRecommends: List<SimpleListItemModel> = emptyList(), val loading: Boolean = false
 )
 
-class HomeScreenVM(private val repository: HomeRepository) : ViewModel() {
+class HomeScreenVM(private val repository: DiscoveryRepository) : ViewModel() {
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(HomeUiState(loading = true))
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -35,10 +37,13 @@ class HomeScreenVM(private val repository: HomeRepository) : ViewModel() {
         _uiState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
+            val personalRecommendsDeferred = async { repository.getPersonalRecommends() }
+
+            val personalRecommends = personalRecommendsDeferred.await().successOr(emptyList())
             _uiState.update {
                 it.copy(
                     loading = false,
-                    personalRecommends = repository.personalRecommendedMusic
+                    personalRecommends = personalRecommends
                 )
             }
         }

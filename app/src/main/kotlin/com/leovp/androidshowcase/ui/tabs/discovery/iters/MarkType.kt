@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.tabs.home.iters
+package com.leovp.androidshowcase.ui.tabs.discovery.iters
 
 /**
  * Author: Michael Leo
@@ -9,6 +9,18 @@ enum class MarkType {
     Vip,
     Special
 }
+
+// 超72%人播放>
+// 超43%人收藏>
+// 昨日万人播放>
+// 十万评论>
+// 十万红心>
+// 小众佳作>
+// ----------
+// VIP
+// ----------
+// 沉浸声
+// 超清母带
 
 // sealed class MarkType(val label: String, val textColor: Color, private val borderColor: Color, val bgColor: Color) {
 //     object Hot : MarkType(label, mark_hot_text_color, mark_hot_border, mark_hot_bg)

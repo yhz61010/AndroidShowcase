@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.tabs.interests
+package com.leovp.androidshowcase.ui.tabs.community
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,16 +14,16 @@ import androidx.compose.ui.tooling.preview.Preview
  */
 
 @Composable
-fun InterestsScreen(modifier: Modifier = Modifier) {
+fun CommunityScreen(modifier: Modifier = Modifier) {
     Surface(modifier = modifier.fillMaxSize()) {
         Column(modifier) {
-            Text(text = "Interests Screen")
+            Text(text = "Community Screen")
         }
     }
 }
 
 @Preview
 @Composable
-fun PreviewInterestsScreen() {
-    InterestsScreen()
+fun PreviewCommunityScreen() {
+    CommunityScreen()
 }

@@ -3,9 +3,9 @@
     <string name="app_notification_channel_name">Default Channel</string>
     <string name="app_notification_channel_name_desc">Default Channel</string>
 
-    <string name="app_main_tab_home">Home</string>
-    <string name="app_main_tab_interests">Interests</string>
-    <string name="app_main_tab_my">My</string>
+    <string name="app_main_tab_discovery">发现</string>
+    <string name="app_main_tab_my">我的</string>
+    <string name="app_main_tab_community">社区</string>
 
     <string name="app_drawer_member_center">Member Center</string>
     <string name="app_drawer_message_label">Messages</string>

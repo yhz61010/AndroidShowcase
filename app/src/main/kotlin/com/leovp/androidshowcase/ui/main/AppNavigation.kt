@@ -40,15 +40,15 @@ object DrawerDestinations {
 // ----------
 
 sealed class Screen(val route: String, @StringRes val resId: Int) {
-    object Home : Screen("app_home", R.string.app_main_tab_home)
-    object Interests : Screen("app_interests", R.string.app_main_tab_interests)
+    object Discovery : Screen("app_discovery", R.string.app_main_tab_discovery)
     object My : Screen("app_my", R.string.app_main_tab_my)
+    object Community : Screen("app_community", R.string.app_main_tab_community)
 }
 
 enum class AppBottomNavigationItems(val screen: Screen, var icon: ImageVector) {
-    HOME(Screen.Home, Icons.Outlined.Home),
-    INTERESTS(Screen.Interests, Icons.Outlined.FavoriteBorder),
-    MY(Screen.My, Icons.Outlined.Person)
+    DISCOVERY(Screen.Discovery, Icons.Outlined.Home),
+    MY(Screen.My, Icons.Outlined.Person),
+    COMMUNITY(Screen.Community, Icons.Outlined.FavoriteBorder)
 }
 
 /**

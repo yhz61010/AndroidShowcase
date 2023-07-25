@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.tabs.home
+package com.leovp.androidshowcase.ui.tabs.discovery
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,8 +43,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.framework.FakeDI
-import com.leovp.androidshowcase.ui.tabs.home.data.SimpleListItemModel
-import com.leovp.androidshowcase.ui.tabs.home.iters.MarkType
+import com.leovp.androidshowcase.ui.tabs.discovery.data.SimpleListItemModel
+import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
 import com.leovp.androidshowcase.ui.theme.mark_hot_bg
 import com.leovp.androidshowcase.ui.theme.mark_hot_text_color
 import com.leovp.androidshowcase.ui.theme.mark_special_border
