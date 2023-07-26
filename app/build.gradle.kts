@@ -254,4 +254,17 @@ dependencies {
     implementation(libs.coil.kt.compose)
     // implementation(libs.lottie.compose)
     // implementation(libs.accompanist.systemuicontroller)
+
+    // ==============================
+    testImplementation(libs.bundles.test)
+    testRuntimeOnly(libs.bundles.test.runtime.only)
+    androidTestImplementation(libs.bundles.test)
+    androidTestImplementation(libs.bundles.android.test)
+    // ==============================
+    // The instrumentation test companion libraries
+    // https://github.com/mannodermaus/android-junit5
+    // ==============================
+    androidTestImplementation(libs.mannodermaus.junit5.core)
+    androidTestRuntimeOnly(libs.mannodermaus.junit5.runner)
+    // ==============================
 }

@@ -39,14 +39,17 @@ leo-version = "5.12.10"
 #===================
 #===== Compile =====
 #===================
-agp = "8.0.2"
-kotlin = "1.8.10" # Compose Compiler v1.4.3 requires Kotlin version 1.8.10
+agp = "8.1.0"
+kotlin = "1.9.0"
+# Compose Compiler & Kotlin versions
+# https://androidx.dev/storage/compose-compiler/repository
+# https://developer.android.com/jetpack/androidx/releases/compose-kotlin?hl=zh-cn
+compose-compiler = "1.5.0"
 
 #=================================
 #===== Android dependencies ======
 #=================================
 compose-bom = "2023.06.01"
-compose-compiler = "1.4.3"
 compose-activity = "1.7.2"
 compose-navigation = "2.6.0"
 accompanist = "0.30.1"
@@ -55,7 +58,7 @@ lifecycle-compose = "2.6.1"
 androidx-lifecycle-runtime-compose = "2.6.1"
 androidx-constraintlayout = "1.0.1"
 
-coroutines = "1.7.1"
+coroutines = "1.7.2"
 annotation = "1.6.0"
 multidex = "2.0.1"
 
@@ -71,8 +74,8 @@ jacoco = "0.8.8"
 sonarqube = "4.2.0.3129"
 mars-xlog = "1.2.6"
 karn-notify = "1.4.0"
-xx-permissions = "16.2"
-net = "3.5.1"
+xx-permissions = "18.2"
+net = "3.5.8"
 coil = "2.4.0"
 
 #================
