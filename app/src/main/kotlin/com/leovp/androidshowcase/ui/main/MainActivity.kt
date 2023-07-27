@@ -5,14 +5,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Mic
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,17 +30,14 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -45,6 +48,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.leovp.android.exts.toast
+import com.leovp.androidshowcase.util.ui.SearchBar
 import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
 import com.leovp.androidshowcase.ui.tabs.discovery.DiscoveryScreen
 import com.leovp.androidshowcase.ui.tabs.my.MyScreen
@@ -103,28 +107,72 @@ fun MainScreen(
     ) {
         val context = LocalContext.current
 
-        var topBarTitleResId by remember { mutableStateOf(AppBottomNavigationItems.DISCOVERY.screen.resId) }
-
         val pagerState = rememberPagerState(initialPage = AppBottomNavigationItems.DISCOVERY.ordinal)
         val pagerScreenValues = AppBottomNavigationItems.values()
 
         Scaffold(modifier = modifier, topBar = {
-            CenterAlignedTopAppBar(
-                navigationIcon = {
+            Column(
+                modifier = modifier
+                    .heightIn(56.dp)
+                    .fillMaxWidth()
+                    // .background(MaterialTheme.colorScheme.primaryContainer),
+            ) {
+                Spacer(modifier = Modifier.statusBarsPadding())
+                Row(
+                    modifier = modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(onClick = { coroutineScope.launch { sizeAwareDrawerState.open() } }) {
                         Icon(Icons.Filled.Menu, null)
                     }
-                },
-                title = { Text(stringResource(id = topBarTitleResId)) },
-                actions = {
-                    IconButton(onClick = { context.toast("Search is not yet implemented.") }) {
+                    when (pagerState.currentPage) {
+                        AppBottomNavigationItems.DISCOVERY.ordinal -> {
+                            SearchBar(
+                                modifier = modifier.weight(1f),
+                                onClick = {
+                                    context.toast("Click search bar.")
+                                },
+                                onActionClick = {
+                                    context.toast("Click scan button on search bar.")
+                                }
+                            )
+                        }
+                    }
+                    IconButton(onClick = { context.toast("Recording is not yet implemented.") }) {
                         Icon(Icons.Outlined.Mic, null)
                     }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            )
+                }
+            }
+
+            // TopAppBar(
+            //     navigationIcon = {
+            //         IconButton(onClick = { coroutineScope.launch { sizeAwareDrawerState.open() } }) {
+            //             Icon(Icons.Filled.Menu, null)
+            //         }
+            //     },
+            //     title = {
+            //         when (pagerState.currentPage) {
+            //             AppBottomNavigationItems.DISCOVERY.ordinal -> {
+            //                 SearchBar(
+            //                     query = TextFieldValue(""),
+            //                     onQueryChange = { },
+            //                     searchFocused = false,
+            //                     onSearchFocusChange = { },
+            //                     onClearQuery = { },
+            //                     searching = false
+            //                 )
+            //             }
+            //         }
+            //     },
+            //     actions = {
+            //         IconButton(onClick = { context.toast("Recording is not yet implemented.") }) {
+            //             Icon(Icons.Outlined.Mic, null)
+            //         }
+            //     },
+            //     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            //         containerColor = MaterialTheme.colorScheme.primaryContainer
+            //     )
+            // )
         }, bottomBar = {
             NavigationBar {
                 AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
@@ -152,7 +200,6 @@ fun MainScreen(
                 state = pagerState,
                 modifier = newModifier
             ) { page ->
-                topBarTitleResId = pagerScreenValues[pagerState.currentPage].screen.resId
                 when (pagerScreenValues[page]) {
                     AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen()
                     AppBottomNavigationItems.COMMUNITY -> CommunityScreen()
