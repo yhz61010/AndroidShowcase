@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,10 +20,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -48,11 +45,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.leovp.android.exts.toast
-import com.leovp.androidshowcase.util.ui.SearchBar
 import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
 import com.leovp.androidshowcase.ui.tabs.discovery.DiscoveryScreen
 import com.leovp.androidshowcase.ui.tabs.my.MyScreen
 import com.leovp.androidshowcase.ui.theme.AppTheme
+import com.leovp.androidshowcase.util.ui.SearchBar
 import com.leovp.log.LogContext
 import kotlinx.coroutines.launch
 
@@ -78,7 +75,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     widthSize: WindowWidthSizeClass, modifier: Modifier = Modifier, navController: NavHostController
@@ -111,68 +108,22 @@ fun MainScreen(
         val pagerScreenValues = AppBottomNavigationItems.values()
 
         Scaffold(modifier = modifier, topBar = {
-            Column(
-                modifier = modifier
-                    .heightIn(56.dp)
-                    .fillMaxWidth()
-                    // .background(MaterialTheme.colorScheme.primaryContainer),
+            HomeTopAppBar(
+                modifier = modifier,
+                onNavigationClick = {
+                    coroutineScope.launch { sizeAwareDrawerState.open() }
+                },
+                onActionClick = { context.toast("Recording is not yet implemented.") }
             ) {
-                Spacer(modifier = Modifier.statusBarsPadding())
-                Row(
-                    modifier = modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { coroutineScope.launch { sizeAwareDrawerState.open() } }) {
-                        Icon(Icons.Filled.Menu, null)
-                    }
-                    when (pagerState.currentPage) {
-                        AppBottomNavigationItems.DISCOVERY.ordinal -> {
-                            SearchBar(
-                                modifier = modifier.weight(1f),
-                                onClick = {
-                                    context.toast("Click search bar.")
-                                },
-                                onActionClick = {
-                                    context.toast("Click scan button on search bar.")
-                                }
-                            )
-                        }
-                    }
-                    IconButton(onClick = { context.toast("Recording is not yet implemented.") }) {
-                        Icon(Icons.Outlined.Mic, null)
+                when (pagerState.currentPage) {
+                    AppBottomNavigationItems.DISCOVERY.ordinal -> {
+                        SearchBar(
+                            onClick = { context.toast("Click search bar.") },
+                            onActionClick = { context.toast("Click scan button on search bar.") }
+                        )
                     }
                 }
             }
-
-            // TopAppBar(
-            //     navigationIcon = {
-            //         IconButton(onClick = { coroutineScope.launch { sizeAwareDrawerState.open() } }) {
-            //             Icon(Icons.Filled.Menu, null)
-            //         }
-            //     },
-            //     title = {
-            //         when (pagerState.currentPage) {
-            //             AppBottomNavigationItems.DISCOVERY.ordinal -> {
-            //                 SearchBar(
-            //                     query = TextFieldValue(""),
-            //                     onQueryChange = { },
-            //                     searchFocused = false,
-            //                     onSearchFocusChange = { },
-            //                     onClearQuery = { },
-            //                     searching = false
-            //                 )
-            //             }
-            //         }
-            //     },
-            //     actions = {
-            //         IconButton(onClick = { context.toast("Recording is not yet implemented.") }) {
-            //             Icon(Icons.Outlined.Mic, null)
-            //         }
-            //     },
-            //     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            //         containerColor = MaterialTheme.colorScheme.primaryContainer
-            //     )
-            // )
         }, bottomBar = {
             NavigationBar {
                 AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
@@ -205,6 +156,37 @@ fun MainScreen(
                     AppBottomNavigationItems.COMMUNITY -> CommunityScreen()
                     AppBottomNavigationItems.MY -> MyScreen()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun HomeTopAppBar(
+    modifier: Modifier = Modifier,
+    onNavigationClick: () -> Unit,
+    onActionClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .heightIn(56.dp)
+            .fillMaxWidth()
+        // .background(MaterialTheme.colorScheme.primaryContainer),
+    ) {
+        Spacer(modifier = Modifier.statusBarsPadding())
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onNavigationClick) {
+                Icon(Icons.Filled.Menu, null)
+            }
+            Row(modifier = modifier.weight(1f)) {
+                content()
+            }
+            IconButton(onClick = onActionClick) {
+                Icon(Icons.Outlined.Mic, null)
             }
         }
     }

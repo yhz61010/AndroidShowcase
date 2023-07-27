@@ -3,6 +3,7 @@ package com.leovp.androidshowcase.util.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,60 +33,57 @@ import com.leovp.androidshowcase.ui.theme.AppTheme
  * Author: Michael Leo
  * Date: 2023/7/26 13:59
  */
+
+private val iconSize = 19.dp
+
 @Composable
 fun SearchBar(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    onActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onActionClick: () -> Unit
 ) {
     Surface(
         shape = CircleShape,
         border = BorderStroke(0.5.dp, Color.LightGray),
         modifier = modifier
+            .fillMaxWidth()
             .height(48.dp)
             .padding(horizontal = 0.dp, vertical = 8.dp)
             .noRippleClickable(onClick = onClick)
     ) {
-        SearchHint(modifier, onActionClick)
-    }
-}
-
-private val iconSize = 19.dp
-
-@Composable
-private fun SearchHint(modifier: Modifier = Modifier, onActionClick: () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-        // .wrapContentSize()
-    ) {
-        Icon(
-            modifier = Modifier.requiredSize(iconSize),
-            imageVector = Icons.Default.Search,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.surfaceTint
-        )
-        Spacer(Modifier.width(8.dp))
-        Text(
-            modifier = modifier.weight(1f),
-            text = "Wellerman Nathan Evans",
-            color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Gray,
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Spacer(Modifier.width(8.dp))
-        IconButton(
-            onClick = onActionClick,
-            modifier = Modifier.requiredSize(iconSize),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+            // .wrapContentSize()
         ) {
             Icon(
-                imageVector = Icons.Default.QrCode,
+                modifier = Modifier.requiredSize(iconSize),
+                imageVector = Icons.Default.Search,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.surfaceTint
             )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                modifier = modifier.weight(1f),
+                text = "Wellerman Nathan Evans",
+                color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Gray,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Spacer(Modifier.width(8.dp))
+            IconButton(
+                onClick = onActionClick,
+                modifier = Modifier.requiredSize(iconSize),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.QrCode,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.surfaceTint
+                )
+            }
         }
     }
 }
