@@ -27,7 +27,7 @@ data class SimpleListItemModel(
 @Immutable
 data class CarouselItemModel(
     val id: Int,
-    @DrawableRes val thumbnail: Int
+    val thumbnail: String
 )
 
 

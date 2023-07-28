@@ -3,11 +3,14 @@ package com.leovp.androidshowcase.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // --------------------
-val discovery_top_section_start_color = Color(0x408B5000)
-val discovery_top_section_middle1_color = Color(0x20D5C3B5)
-val discovery_top_section_middle2_color = Color(0x10D5C3B5)
-val discovery_top_section_middle3_color = Color(0x05D5C3B5)
+val discovery_top_section_start_color = Color(0x40A262AB) // f3dff0
+val discovery_top_section_middle1_color = Color(0x20A262AB)
+val discovery_top_section_middle2_color = Color(0x10A262AB)
+val discovery_top_section_middle3_color = Color(0x05A262AB) // e2dffa
 val discovery_top_section_end_color = Color(0x00FFFFFF)
+
+val discovery_search_bar_start_color = Color(0x20EE579C)
+val discovery_search_bar_end_color = Color(0x204DABE5)
 
 val immersive_sys_ui = Color(0x338B5000)
 

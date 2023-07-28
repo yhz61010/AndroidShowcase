@@ -31,9 +31,9 @@ class CustomApplication : MultiDexApplication(), ImageLoaderFactory {
             .crossfade(true)
             // Disable `Cache-Control` header support in order to disable disk caching.
             // .respectCacheHeaders(false)
-            .components {
-                add(UnsplashSizingInterceptor)
-            }
+            // .components {
+            //     add(UnsplashSizingInterceptor)
+            // }
             // .memoryCache {
             //     MemoryCache.Builder(this)
             //         .maxSizePercent(0.25)

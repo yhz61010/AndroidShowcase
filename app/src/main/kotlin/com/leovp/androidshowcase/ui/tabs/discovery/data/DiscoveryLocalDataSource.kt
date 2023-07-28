@@ -2,7 +2,6 @@ package com.leovp.androidshowcase.ui.tabs.discovery.data
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EventNote
-import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -18,16 +17,26 @@ private val monthDateFormat = SimpleDateFormat("MM-dd", Locale.CHINA).apply { ti
 
 class DiscoveryLocalDataSource {
     val discoveryCarouselRecommendedList = listOf(
-        CarouselItemModel(id = 1, thumbnail = R.drawable.app_carousel_4649613),
-        CarouselItemModel(id = 2, thumbnail = R.drawable.app_carousel_4655710),
-        CarouselItemModel(id = 3, thumbnail = R.drawable.app_carousel_4658295),
-        CarouselItemModel(id = 4, thumbnail = R.drawable.app_carousel_4658837),
-        CarouselItemModel(id = 5, thumbnail = R.drawable.app_carousel_4931127),
-        // CarouselItemModel(id = 6, thumbnail = R.drawable.app_carousel_4931315),
-        // CarouselItemModel(id = 7, thumbnail = R.drawable.app_carousel_4953208),
-        // CarouselItemModel(id = 8, thumbnail = R.drawable.app_carousel_4954761),
-        // CarouselItemModel(id = 9, thumbnail = R.drawable.app_carousel_4957728),
-        // CarouselItemModel(id = 10, thumbnail =R.drawable.app_carousel_4683687),
+        CarouselItemModel(
+            id = 1,
+            thumbnail = "http://p1.music.126.net/nuPhaKdShV1SbJRQxOR6uA==/109951168779030027.jpg?imageView&quality=89"
+        ),
+        CarouselItemModel(
+            id = 2,
+            thumbnail = "http://p1.music.126.net/iXS1MfFRpyjz4c8b7s1LNQ==/109951168783578441.jpg?imageView&quality=89"
+        ),
+        CarouselItemModel(
+            id = 3,
+            thumbnail = "http://p1.music.126.net/-4sI1BeEYt_tPvVn6UbTew==/109951168783491497.jpg?imageView&quality=89"
+        ),
+        CarouselItemModel(
+            id = 4,
+            thumbnail = "http://p1.music.126.net/qX05Xi8lfcDXUEgOfpGTdQ==/109951168783605345.jpg?imageView&quality=89"
+        ),
+        CarouselItemModel(
+            id = 5,
+            thumbnail = "http://p1.music.126.net/kw1TvDb83TdnCVFiMlksGw==/109951168783590288.jpg?imageView&quality=89"
+        ),
     )
 
     val discoveryEverydayRecommendedList = listOf(

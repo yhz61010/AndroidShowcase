@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -36,7 +37,11 @@ fun AppNavGraph(
             }
         }
         composable(AppDestinations.MAIN_ROUTE) {
-            AppTheme(dynamicColor = false) {
+            ImmersiveTheme(
+                color = Color.Transparent,
+                dynamicColor = false,
+                lightStatusBar = true
+            ) {
                 MainScreen(
                     widthSize = widthSizeClass,
                     modifier = modifier,
