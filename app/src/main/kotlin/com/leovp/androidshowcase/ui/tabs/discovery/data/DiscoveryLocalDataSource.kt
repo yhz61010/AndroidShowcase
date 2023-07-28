@@ -1,12 +1,21 @@
 package com.leovp.androidshowcase.ui.tabs.discovery.data
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EventNote
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 /**
  * Author: Michael Leo
  * Date: 2023/7/24 15:33
  */
+
+private val monthDateFormat = SimpleDateFormat("MM-dd", Locale.CHINA).apply { timeZone = TimeZone.getDefault() }
+
 class DiscoveryLocalDataSource {
     val discoveryCarouselRecommendedList = listOf(
         CarouselItemModel(id = 1, thumbnail = R.drawable.app_carousel_4649613),
@@ -19,6 +28,51 @@ class DiscoveryLocalDataSource {
         // CarouselItemModel(id = 8, thumbnail = R.drawable.app_carousel_4954761),
         // CarouselItemModel(id = 9, thumbnail = R.drawable.app_carousel_4957728),
         // CarouselItemModel(id = 10, thumbnail =R.drawable.app_carousel_4683687),
+    )
+
+    val discoveryEverydayRecommendedList = listOf(
+        EverydayItemModel(
+            id = 1,
+            thumbnail = "https://qpic.y.qq.com/music_cover/I28ic19Iwp8AicOQlxrIkEIia7YhYpI2c0v9DUT9JOhE0BGiayopLlnwXw/300?n=1",
+            type = monthDateFormat.format(Date()),
+            title = "每日推荐|从「是你」听起",
+            icon = Icons.Default.EventNote
+        ),
+        EverydayItemModel(
+            id = 2,
+            thumbnail = "https://qpic.y.qq.com/music_cover/iaVNVUXOg73ua71Z0dtuz7Z6ZVOdf97nUUevQmSIDyw4ZlJ6wrvAXWA/300?n=1",
+            type = "私人漫游",
+            title = "从「簇拥烈日的花」开启无限漫游",
+            icon = null
+        ),
+        EverydayItemModel(
+            id = 3,
+            thumbnail = "https://qpic.y.qq.com/music_cover/DW3wgydKNSuLicEooicQhGYvxf8xNKJZaVJla3cvpZe8icaludOwS1tKg/300?n=1",
+            type = "摇滚日推",
+            title = "带我走、情人、Episode 33",
+            icon = null
+        ),
+        EverydayItemModel(
+            id = 4,
+            thumbnail = "https://qpic.y.qq.com/music_cover/7OvyVEUhXlyQibJIaz19cNYoPhSEl6FdRsGeHxWMcVtr1qQknxib2AhA/300?n=1",
+            type = "民谣日推",
+            title = "如果有来生、The Sound Of Silence、这一生关于你的风景",
+            icon = null
+        ),
+        EverydayItemModel(
+            id = 5,
+            thumbnail = "https://qpic.y.qq.com/music_cover/hibibCWiaO6RZzGGCYYicdoVnxCjBdG4kZGhYouhAnaiarRCYbeA2E1FibYQ/300?n=1",
+            type = "二次元日推",
+            title = "ReOracle、Rolling star、summertime",
+            icon = null
+        ),
+        EverydayItemModel(
+            id = 6,
+            thumbnail = "https://qpic.y.qq.com/music_cover/icXjXNAaErryuWaGROaiandGY1TowGKgyHx141ajhrMApvsicibjQo8VejxqXI1AxZLr/300?n=1",
+            type = "乡村日推",
+            title = "El condor pass、Take Me Home Country Roads、You Can Depend On Me",
+            icon = null
+        ),
     )
 
     val discoveryPersonalRecommendedMusicList = listOf(

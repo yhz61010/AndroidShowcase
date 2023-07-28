@@ -14,4 +14,8 @@ class FakeDiscoveryRepository(private val dataSource: DiscoveryLocalDataSource) 
     override suspend fun getCarouselRecommends(): RequestResult<List<CarouselItemModel>> {
         return RequestResult.Success(dataSource.discoveryCarouselRecommendedList)
     }
+
+    override suspend fun getEverydayRecommends(): RequestResult<List<EverydayItemModel>> {
+        return RequestResult.Success(dataSource.discoveryEverydayRecommendedList)
+    }
 }

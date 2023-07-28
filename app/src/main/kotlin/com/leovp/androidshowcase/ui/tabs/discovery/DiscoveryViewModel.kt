@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leovp.androidshowcase.ui.tabs.discovery.data.CarouselItemModel
 import com.leovp.androidshowcase.ui.tabs.discovery.data.DiscoveryRepository
+import com.leovp.androidshowcase.ui.tabs.discovery.data.EverydayItemModel
 import com.leovp.androidshowcase.ui.tabs.discovery.data.SimpleListItemModel
 import com.leovp.module.common.successOr
 import kotlinx.coroutines.async
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 data class DiscoveryUiState(
     val personalRecommends: List<SimpleListItemModel> = emptyList(),
     val carouselRecommends: List<CarouselItemModel> = emptyList(),
+    val everydayRecommends: List<EverydayItemModel> = emptyList(),
     val loading: Boolean = false
 )
 
@@ -42,14 +44,17 @@ class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
         viewModelScope.launch {
             val personalRecommendsDeferred = async { repository.getPersonalRecommends() }
             val carouselRecommendsDeferred = async { repository.getCarouselRecommends() }
+            val everydayRecommendsDeferred = async { repository.getEverydayRecommends() }
 
             val personalRecommends = personalRecommendsDeferred.await().successOr(emptyList())
             val carouselRecommends = carouselRecommendsDeferred.await().successOr(emptyList())
+            val everydayRecommends = everydayRecommendsDeferred.await().successOr(emptyList())
             _uiState.update {
                 it.copy(
                     loading = false,
                     personalRecommends = personalRecommends,
-                    carouselRecommends = carouselRecommends
+                    carouselRecommends = carouselRecommends,
+                    everydayRecommends = everydayRecommends
                 )
             }
         }

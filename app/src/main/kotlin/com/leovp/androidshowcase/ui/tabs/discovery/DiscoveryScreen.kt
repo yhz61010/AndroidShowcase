@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,11 +17,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -50,6 +54,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -63,6 +68,7 @@ import coil.request.ImageRequest
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.framework.FakeDI
 import com.leovp.androidshowcase.ui.tabs.discovery.data.CarouselItemModel
+import com.leovp.androidshowcase.ui.tabs.discovery.data.EverydayItemModel
 import com.leovp.androidshowcase.ui.tabs.discovery.data.SimpleListItemModel
 import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
 import com.leovp.androidshowcase.ui.theme.mark_hot_bg
@@ -98,11 +104,87 @@ fun DiscoveryScreen(
     ) {
         item {
             CarouselHeader(uiState.carouselRecommends) { item ->
-                ctx.toast("You clicked image:$item")
+                ctx.toast("Carousel recommend item: $item")
+            }
+        }
+        item {
+            EverydayRecommendsItem(uiState.everydayRecommends) { item ->
+                ctx.toast("Everyday recommend item: $item")
             }
         }
         items(uiState.personalRecommends) { data ->
             DiscoveryScreenContentItems(data)
+        }
+    }
+}
+
+@Composable
+fun EverydayRecommendsItem(list: List<EverydayItemModel>, onItemClick: (EverydayItemModel) -> Unit) {
+    val pagerState = rememberLazyListState()
+    val cardWidth = 120.dp
+
+    LazyRow(
+        contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 8.dp),
+        modifier = Modifier.fillMaxWidth(),
+        state = pagerState
+    ) {
+        itemsIndexed(list) { idx, data ->
+            Column(
+                modifier = Modifier.padding(end = if (idx == list.lastIndex) 0.dp else 10.dp),
+            ) {
+                Card(
+                    modifier = Modifier
+                        .clickable { onItemClick(data) }
+                        // .padding(horizontal = 16.dp, vertical = 0.dp)
+                        .size(cardWidth),
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Box {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(data.thumbnail)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = null,
+                            placeholder = ColorPainter(Color.LightGray),
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                        Row(
+                            modifier = Modifier.padding(start = 8.dp, top = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            data.icon?.let { icon ->
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(end = 2.dp)
+                                        .size(16.dp),
+                                    imageVector = icon,
+                                    tint = Color.White,
+                                    contentDescription = null,
+                                )
+                            }
+                            Text(
+                                text = data.type,
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.Black
+                                )
+                            )
+                        }
+                    }
+                }
+                Text(
+                    modifier = Modifier
+                        .requiredWidth(cardWidth)
+                        .padding(top = 6.dp),
+                    style = MaterialTheme.typography.labelMedium,
+                    text = data.title,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -118,7 +200,7 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
 
     LaunchedEffect(key1 = currentTime) {
         launch {
-            delay(2000L)
+            delay(3000L)
             val target = if (pagerState.currentPage < pageCount - 1) pagerState.currentPage + 1 else 0
 
             pagerState.animateScrollToPage(
@@ -136,7 +218,7 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
     Box {
         HorizontalPager(
             contentPadding = PaddingValues(bottom = 8.dp),
-            beyondBoundsPageCount = 2,
+            beyondBoundsPageCount = 1,
             pageCount = pageCount,
             state = pagerState,
             modifier = Modifier.fillMaxWidth()
@@ -169,7 +251,7 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            repeat(list.size) { index ->
+            repeat(pageCount) { index ->
                 Box(
                     modifier = Modifier
                         .padding(start = 2.dp, end = 2.dp)
@@ -178,7 +260,7 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
                         .clip(if (index == pageCountIndex) RoundedCornerShape(2.dp) else CircleShape)
                         .background(
                             color = if (index == pageCountIndex) Color.White else Color.LightGray,
-                            shape = if (index == pageCountIndex) RoundedCornerShape(2.dp) else CircleShape
+                            // shape = if (index == pageCountIndex) RoundedCornerShape(2.dp) else CircleShape
                         )
                 )
             }
@@ -258,70 +340,6 @@ fun DiscoveryScreenContentItems(data: SimpleListItemModel) {
         }
     )
 }
-
-// @Composable
-// fun DiscoveryScreenContentItems(num: Int) {
-//     val context = LocalContext.current
-//     ConstraintLayout(
-//         modifier = Modifier
-//             .fillMaxWidth()
-//             .clickable { context.toast("Click item $num") }
-//             .padding(horizontal = 16.dp, vertical = 8.dp),
-//     ) {
-//         val (image, title, mark, subTitle) = createRefs()
-//         createVerticalChain(title, mark, chainStyle = ChainStyle.Spread)
-//
-//         ListItemImage(
-//             imageUrl = "https://picsum.photos/seed/picsum/250",
-//             contentDescription = null,
-//             modifier = Modifier
-//                 .size(56.dp)
-//                 .constrainAs(image) {
-//                     top.linkTo(parent.top, margin = 0.dp)
-//                     bottom.linkTo(parent.bottom, margin = 0.dp)
-//                     start.linkTo(parent.start, margin = 0.dp)
-//                 }
-//         )
-//         Text(
-//             text = "Title - $num",
-//             style = MaterialTheme.typography.titleMedium,
-//             color = MaterialTheme.colorScheme.secondary,
-//             modifier = Modifier.constrainAs(title) {
-//                 start.linkTo(image.end, margin = 16.dp)
-//                 end.linkTo(parent.end, margin = 0.dp)
-//                 width = Dimension.fillToConstraints
-//             },
-//             maxLines = 1,
-//             overflow = TextOverflow.Ellipsis
-//         )
-//         Text(
-//             modifier = Modifier
-//                 .background(color = subtitle_mark_bg, shape = RoundedCornerShape(4.dp))
-//                 .padding(horizontal = 4.dp)
-//                 .constrainAs(mark) {
-//                     start.linkTo(title.start, margin = 0.dp)
-//                 },
-//             text = "超" + "44%" + "人收藏 >",
-//             color = subtitle_mark_text,
-//             fontSize = TextUnit(10.0f, TextUnitType.Sp),
-//             fontWeight = FontWeight.Bold
-//         )
-//         Text(
-//             text = "Sub title - $num",
-//             style = MaterialTheme.typography.labelMedium,
-//             color = androidx.compose.ui.graphics.Color.DarkGray,
-//             modifier = Modifier.constrainAs(subTitle) {
-//                 start.linkTo(mark.end, margin = 4.dp)
-//                 end.linkTo(title.end, margin = 0.dp)
-//                 top.linkTo(mark.top, margin = 0.dp)
-//                 bottom.linkTo(mark.bottom, margin = 0.dp)
-//                 width = Dimension.fillToConstraints
-//             },
-//             maxLines = 1,
-//             overflow = TextOverflow.Ellipsis
-//         )
-//     }
-// }
 
 @Composable
 fun ListItemImage(

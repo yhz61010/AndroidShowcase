@@ -3,6 +3,7 @@ package com.leovp.androidshowcase.ui.tabs.discovery.data
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
 
 /**
@@ -27,4 +28,15 @@ data class SimpleListItemModel(
 data class CarouselItemModel(
     val id: Int,
     @DrawableRes val thumbnail: Int
+)
+
+
+@Keep
+@Immutable
+data class EverydayItemModel(
+    val id: Int,
+    val thumbnail: String,
+    val type: String,
+    val title: String,
+    val icon: ImageVector?
 )
