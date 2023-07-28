@@ -116,8 +116,37 @@ fun DiscoveryScreen(
                 ctx.toast("Everyday recommend item: $item")
             }
         }
+        item {
+            DiscoveryScreenContentHeadItem()
+        }
         items(uiState.personalRecommends) { data ->
             DiscoveryScreenContentItems(data)
+        }
+    }
+}
+
+@Composable
+fun DiscoveryScreenContentHeadItem() {
+    Row(
+        modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "华语精选",
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = FontWeight.Black
+            )
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(
+            modifier = Modifier.requiredSize(24.dp),
+            onClick = { }
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                tint = Color.Gray,
+                contentDescription = null
+            )
         }
     }
 }

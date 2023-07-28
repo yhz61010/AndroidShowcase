@@ -91,7 +91,7 @@ class DiscoveryLocalDataSource {
             title = "I Will Follow Him",
             subTitle = "Skeeter Davis",
             markText = "超43%人收藏>",
-            showTrailIcon = true,
+            showTrailIcon = false,
             type = MarkType.Hot
         ),
         SimpleListItemModel(
@@ -118,7 +118,7 @@ class DiscoveryLocalDataSource {
             title = "追梦人",
             subTitle = "凤飞飞",
             markText = "昨日万人播放>",
-            showTrailIcon = true,
+            showTrailIcon = false,
             type = MarkType.Hot
         ),
         SimpleListItemModel(
