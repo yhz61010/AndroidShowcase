@@ -9,4 +9,5 @@ import com.leovp.module.common.RequestResult
 
 interface DiscoveryRepository {
     suspend fun getPersonalRecommends(): RequestResult<List<SimpleListItemModel>>
+    suspend fun getCarouselRecommends(): RequestResult<List<CarouselItemModel>>
 }
