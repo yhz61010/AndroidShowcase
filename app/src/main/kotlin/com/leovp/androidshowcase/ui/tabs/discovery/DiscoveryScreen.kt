@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,6 +63,7 @@ private const val TAG = "Discovery"
 
 @Composable
 fun DiscoveryScreen(
+    scrollState: LazyListState,
     modifier: Modifier = Modifier,
     viewModel: DiscoveryVM = viewModel(factory = viewModelProviderFactoryOf { DiscoveryVM(FakeDI.discoveryRepository) })
 ) {
@@ -69,7 +71,7 @@ fun DiscoveryScreen(
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
         modifier = modifier.fillMaxSize(),
-        state = rememberLazyListState()
+        state = scrollState
     ) {
         items(uiState.personalRecommends) { data ->
             DiscoveryScreenContentItems(data)
@@ -242,5 +244,5 @@ fun ListItemImage(
 @Preview
 @Composable
 fun PreviewDiscoveryScreen() {
-    DiscoveryScreen()
+    DiscoveryScreen(scrollState = rememberLazyListState())
 }

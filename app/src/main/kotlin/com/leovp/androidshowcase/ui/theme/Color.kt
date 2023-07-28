@@ -2,6 +2,13 @@ package com.leovp.androidshowcase.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+// --------------------
+val discovery_top_section_start_color = Color(0x408B5000)
+val discovery_top_section_middle1_color = Color(0x20D5C3B5)
+val discovery_top_section_middle2_color = Color(0x10D5C3B5)
+val discovery_top_section_middle3_color = Color(0x05D5C3B5)
+val discovery_top_section_end_color = Color(0x00FFFFFF)
+
 val immersive_sys_ui = Color(0x338B5000)
 
 val mark_hot_text_color = Color(0xffd92738)
@@ -15,7 +22,6 @@ val mark_special_bg = Color.Transparent
 val mark_vip_text_color = Color(0xffda776c)
 val mark_vip_border = Color(0xfff1e4e4)
 val mark_vip_bg = Color.Transparent
-
 // --------------------
 
 val md_theme_light_primary = Color(0xFF8B5000)

@@ -5,14 +5,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -36,7 +41,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,6 +60,10 @@ import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
 import com.leovp.androidshowcase.ui.tabs.discovery.DiscoveryScreen
 import com.leovp.androidshowcase.ui.tabs.my.MyScreen
 import com.leovp.androidshowcase.ui.theme.AppTheme
+import com.leovp.androidshowcase.ui.theme.discovery_top_section_end_color
+import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle2_color
+import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle3_color
+import com.leovp.androidshowcase.ui.theme.discovery_top_section_start_color
 import com.leovp.androidshowcase.util.ui.SearchBar
 import com.leovp.log.LogContext
 import kotlinx.coroutines.launch
@@ -107,56 +122,102 @@ fun MainScreen(
         val pagerState = rememberPagerState(initialPage = AppBottomNavigationItems.DISCOVERY.ordinal)
         val pagerScreenValues = AppBottomNavigationItems.values()
 
-        Scaffold(modifier = modifier, topBar = {
-            HomeTopAppBar(
-                modifier = modifier,
-                onNavigationClick = {
-                    coroutineScope.launch { sizeAwareDrawerState.open() }
-                },
-                onActionClick = { context.toast("Recording is not yet implemented.") }
-            ) {
-                when (pagerState.currentPage) {
-                    AppBottomNavigationItems.DISCOVERY.ordinal -> {
-                        SearchBar(
-                            onClick = { context.toast("Click search bar.") },
-                            onActionClick = { context.toast("Click scan button on search bar.") }
+        val scrollState = rememberLazyListState()
+        val backgroundColor = Color(0xFF7F6351)
+
+        val target = LocalDensity.current.run {
+            200.dp.toPx()
+        }
+        val scrollPercent: Float = if (scrollState.firstVisibleItemIndex > 0) {
+            1f
+        } else {
+            scrollState.firstVisibleItemScrollOffset / target
+        }
+
+        Box(contentAlignment = Alignment.TopEnd) {
+            Scaffold(modifier = modifier, topBar = {
+                HomeTopAppBar(
+                    modifier = modifier,
+                    onNavigationClick = {
+                        coroutineScope.launch { sizeAwareDrawerState.open() }
+                    },
+                    onActionClick = { context.toast("Recording is not yet implemented.") }
+                ) {
+                    when (pagerState.currentPage) {
+                        AppBottomNavigationItems.DISCOVERY.ordinal -> {
+                            SearchBar(
+                                onClick = { context.toast("Click search bar.") },
+                                onActionClick = { context.toast("Click scan button on search bar.") }
+                            )
+                        }
+                    }
+                }
+            }, bottomBar = {
+                NavigationBar {
+                    AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
+                        NavigationBarItem(
+                            icon = { Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId)) },
+                            label = { Text(stringResource(bottomItemData.screen.resId)) },
+                            // Here's the trick. The selected tab is based on HorizontalPager state.
+                            selected = index == pagerState.currentPage,
+                            onClick = {
+                                LogContext.log.i(TAG, "Selected: ${bottomItemData.screen.route}")
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        page = bottomItemData.ordinal,
+                                        animationSpec = tween(TAB_SWITCH_ANIM_DURATION)
+                                    )
+                                }
+                            }
                         )
                     }
                 }
-            }
-        }, bottomBar = {
-            NavigationBar {
-                AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
-                    NavigationBarItem(
-                        icon = { Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId)) },
-                        label = { Text(stringResource(bottomItemData.screen.resId)) },
-                        // Here's the trick. The selected tab is based on HorizontalPager state.
-                        selected = index == pagerState.currentPage,
-                        onClick = {
-                            LogContext.log.i(TAG, "Selected: ${bottomItemData.screen.route}")
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(
-                                    page = bottomItemData.ordinal,
-                                    animationSpec = tween(TAB_SWITCH_ANIM_DURATION)
-                                )
-                            }
-                        }
+            }) { contentPadding ->
+                val newModifier = modifier.padding(contentPadding)
+                HorizontalPager(
+                    pageCount = pagerScreenValues.size,
+                    state = pagerState,
+                    modifier = newModifier
+                ) { page ->
+                    when (pagerScreenValues[page]) {
+                        AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(scrollState)
+                        AppBottomNavigationItems.COMMUNITY -> CommunityScreen()
+                        AppBottomNavigationItems.MY -> MyScreen()
+                    }
+                }
+            } // end of Scaffold
+            LinearGradientBox()
+        } // end of Box
+    }
+}
+
+@Composable
+fun LinearGradientBox() {
+    Box(
+        modifier = Modifier
+            .testTag("linear-gradient-box")
+            .fillMaxWidth()
+            .heightIn(400.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.linearGradient(
+                        listOf(
+                            discovery_top_section_start_color,
+                            discovery_top_section_middle2_color,
+                            discovery_top_section_middle3_color,
+                            discovery_top_section_end_color,
+                        ),
+                        start = Offset(Float.POSITIVE_INFINITY, 0f),
+                        end = Offset(0f, Float.POSITIVE_INFINITY),
+                        tileMode = TileMode.Clamp
                     )
-                }
-            }
-        }) { contentPadding ->
-            val newModifier = modifier.padding(contentPadding)
-            HorizontalPager(
-                pageCount = pagerScreenValues.size,
-                state = pagerState,
-                modifier = newModifier
-            ) { page ->
-                when (pagerScreenValues[page]) {
-                    AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen()
-                    AppBottomNavigationItems.COMMUNITY -> CommunityScreen()
-                    AppBottomNavigationItems.MY -> MyScreen()
-                }
-            }
+                )
+        ) {
+            Spacer(modifier = Modifier.statusBarsPadding())
+            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
