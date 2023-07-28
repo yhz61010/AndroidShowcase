@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,9 +32,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.SmartDisplay
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -108,12 +111,46 @@ fun DiscoveryScreen(
             }
         }
         item {
+            EverydayRecommendsHeaderItem()
             EverydayRecommendsItem(uiState.everydayRecommends) { item ->
                 ctx.toast("Everyday recommend item: $item")
             }
         }
         items(uiState.personalRecommends) { data ->
             DiscoveryScreenContentItems(data)
+        }
+    }
+}
+
+@Composable
+fun EverydayRecommendsHeaderItem() {
+    Row(
+        modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "每日推荐",
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = FontWeight.Black
+            )
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            modifier = Modifier.weight(1f),
+            text = "8939187人在听",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold
+        )
+        IconButton(
+            modifier = Modifier.requiredSize(24.dp),
+            onClick = { }
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                tint = Color.Gray,
+                contentDescription = null
+            )
         }
     }
 }
