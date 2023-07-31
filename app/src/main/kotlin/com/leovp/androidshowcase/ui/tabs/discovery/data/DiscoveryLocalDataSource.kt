@@ -19,23 +19,23 @@ class DiscoveryLocalDataSource {
     val discoveryCarouselRecommendedList = listOf(
         CarouselItemModel(
             id = 1,
-            thumbnail = "http://p1.music.126.net/nuPhaKdShV1SbJRQxOR6uA==/109951168779030027.jpg?imageView&quality=89"
+            thumbnail = "https://images.unsplash.com/photo-1584679109597-c656b19974c9?auto=crop&fit=crop&w=540&h=210&q=80"
         ),
         CarouselItemModel(
             id = 2,
-            thumbnail = "http://p1.music.126.net/iXS1MfFRpyjz4c8b7s1LNQ==/109951168783578441.jpg?imageView&quality=89"
+            thumbnail = "https://images.unsplash.com/photo-1502773860571-211a597d6e4b?auto=crop&fit=crop&w=540&h=210&q=80"
         ),
         CarouselItemModel(
             id = 3,
-            thumbnail = "http://p1.music.126.net/-4sI1BeEYt_tPvVn6UbTew==/109951168783491497.jpg?imageView&quality=89"
+            thumbnail = "https://images.unsplash.com/photo-1446057032654-9d8885db76c6?auto=crop&fit=crop&w=540&h=210&q=80"
         ),
         CarouselItemModel(
             id = 4,
-            thumbnail = "http://p1.music.126.net/qX05Xi8lfcDXUEgOfpGTdQ==/109951168783605345.jpg?imageView&quality=89"
+            thumbnail = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=crop&fit=crop&w=540&h=210&q=80"
         ),
         CarouselItemModel(
             id = 5,
-            thumbnail = "http://p1.music.126.net/kw1TvDb83TdnCVFiMlksGw==/109951168783590288.jpg?imageView&quality=89"
+            thumbnail = "https://images.unsplash.com/photo-1618972676849-feed401eacc5?auto=crop&fit=crop&w=540&h=210&q=80"
         ),
     )
 

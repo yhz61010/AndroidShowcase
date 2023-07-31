@@ -291,12 +291,12 @@ fun HomeTopAppBar(
     onActionClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    val topBarHeight = 56.dp
+    val topBarHeight = 54.dp
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(topBarHeight),
+            /*.background(color = Color.Cyan)*/,
         verticalArrangement = Arrangement.Center
     ) {
         Spacer(
@@ -305,7 +305,7 @@ fun HomeTopAppBar(
                 .statusBarsPadding()
         )
         Row(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth().heightIn(topBarHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ConstraintLayout(
@@ -313,7 +313,7 @@ fun HomeTopAppBar(
             ) {
                 val (iconBtn, badge) = createRefs()
                 IconButton(
-                    modifier = Modifier.constrainAs(iconBtn) {},
+                    modifier = Modifier.constrainAs(iconBtn) {}/*.background(color = Color.Yellow)*/,
                     onClick = onNavigationClick
                 ) {
                     Icon(Icons.Filled.Menu, null)

@@ -52,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -101,7 +102,7 @@ fun DiscoveryScreen(
     val ctx = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LazyColumn(
-        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
+        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 6.dp),
         modifier = modifier.fillMaxSize(),
         state = scrollState
     ) {
@@ -281,20 +282,20 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
         }
     }
 
-    Box {
+    Box(modifier = Modifier.padding(bottom = 6.dp)) {
         HorizontalPager(
-            contentPadding = PaddingValues(bottom = 8.dp),
             beyondBoundsPageCount = 1,
             pageCount = pageCount,
             state = pagerState,
             modifier = Modifier.fillMaxWidth()
         ) { page ->
             Card(
+                shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .clickable { onItemClick(list[page]) }
                     .padding(horizontal = 16.dp, vertical = 0.dp)
                     .fillMaxWidth()
-                    .heightIn(min = 150.dp),
+                    .heightIn(min = 140.dp),
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -312,9 +313,8 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
-                .align(Alignment.BottomCenter),
-            horizontalArrangement = Arrangement.Center,
+                .padding(horizontal = 26.dp, vertical = 10.dp)
+                .align(Alignment.BottomStart),
             verticalAlignment = Alignment.CenterVertically
         ) {
             repeat(pageCount) { index ->
