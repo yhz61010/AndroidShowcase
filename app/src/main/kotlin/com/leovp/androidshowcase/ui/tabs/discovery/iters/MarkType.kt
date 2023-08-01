@@ -15,6 +15,7 @@ enum class MarkType {
 // 昨日万人播放>
 // 十万评论>
 // 十万红心>
+// 百万红心>
 // 小众佳作>
 // ----------
 // VIP
@@ -23,11 +24,11 @@ enum class MarkType {
 // ----------
 // 沉浸声
 // 超清母带
-//
+// ----------
 // Dolby
 
 // sealed class MarkType(val label: String, val textColor: Color, private val borderColor: Color, val bgColor: Color) {
-//     object Hot : MarkType(label, mark_hot_text_color, mark_hot_border, mark_hot_bg)
-//     object Vip : MarkType("VIP", mark_vip_text_color, mark_vip_border, mark_vip_bg)
-//     object Special : MarkType(label, mark_special_text_color, mark_special_border, mark_special_bg)
+//     data object Hot : MarkType(label, mark_hot_text_color, mark_hot_border, mark_hot_bg)
+//     data object Vip : MarkType("VIP", mark_vip_text_color, mark_vip_border, mark_vip_bg)
+//     data object Special : MarkType(label, mark_special_text_color, mark_special_border, mark_special_bg)
 // }

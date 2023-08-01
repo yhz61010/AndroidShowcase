@@ -6,7 +6,6 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.compose.AsyncImage
 import coil.disk.DiskCache
-import com.leovp.androidshowcase.util.UnsplashSizingInterceptor
 
 /**
  * Author: Michael Leo

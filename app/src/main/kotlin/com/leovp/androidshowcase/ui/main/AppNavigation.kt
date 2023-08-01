@@ -40,9 +40,9 @@ object DrawerDestinations {
 // ----------
 
 sealed class Screen(val route: String, @StringRes val resId: Int) {
-    object Discovery : Screen("app_discovery", R.string.app_main_tab_discovery)
-    object My : Screen("app_my", R.string.app_main_tab_my)
-    object Community : Screen("app_community", R.string.app_main_tab_community)
+    data object Discovery : Screen("app_discovery", R.string.app_main_tab_discovery)
+    data object My : Screen("app_my", R.string.app_main_tab_my)
+    data object Community : Screen("app_community", R.string.app_main_tab_community)
 }
 
 enum class AppBottomNavigationItems(val screen: Screen, var icon: ImageVector) {

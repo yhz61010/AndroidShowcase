@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -45,18 +44,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -77,8 +76,8 @@ import com.leovp.androidshowcase.ui.tabs.discovery.data.SimpleListItemModel
 import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
 import com.leovp.androidshowcase.ui.theme.mark_hot_bg
 import com.leovp.androidshowcase.ui.theme.mark_hot_text_color
-import com.leovp.androidshowcase.ui.theme.mark_special_border
-import com.leovp.androidshowcase.ui.theme.mark_special_text_color
+import com.leovp.androidshowcase.ui.theme.mark_quality_border
+import com.leovp.androidshowcase.ui.theme.mark_quality_text_color
 import com.leovp.androidshowcase.ui.theme.mark_vip_border
 import com.leovp.androidshowcase.ui.theme.mark_vip_text_color
 import com.leovp.androidshowcase.util.floorMod
@@ -192,17 +191,15 @@ fun EverydayRecommendsItem(list: List<EverydayItemModel>, onItemClick: (Everyday
 
     LazyRow(
         contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth(),
         state = pagerState
     ) {
-        itemsIndexed(list) { idx, data ->
-            Column(
-                modifier = Modifier.padding(end = if (idx == list.lastIndex) 0.dp else 10.dp),
-            ) {
+        items(list) { data ->
+            Column {
                 Card(
                     modifier = Modifier
                         .clickable { onItemClick(data) }
-                        // .padding(horizontal = 16.dp, vertical = 0.dp)
                         .size(cardWidth),
                     shape = MaterialTheme.shapes.large
                 ) {
@@ -260,10 +257,14 @@ fun EverydayRecommendsItem(list: List<EverydayItemModel>, onItemClick: (Everyday
 @Composable
 fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemModel) -> Unit) {
     val pageCount = list.size
-    val pagerState = rememberPagerState(0)
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { pageCount }
+    )
 
     val pageCountIndex by remember { derivedStateOf { pagerState.currentPage.floorMod(list.size) } }
-    var currentTime by remember { mutableStateOf(System.currentTimeMillis()) }
+    var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
     LaunchedEffect(key1 = currentTime) {
         launch {
@@ -284,10 +285,10 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
 
     Box(modifier = Modifier.padding(bottom = 6.dp)) {
         HorizontalPager(
-            beyondBoundsPageCount = 1,
-            pageCount = pageCount,
             state = pagerState,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            beyondBoundsPageCount = 1,
+            key = { index -> list[index].id }
         ) { page ->
             Card(
                 shape = RoundedCornerShape(10.dp),
@@ -351,31 +352,58 @@ fun DiscoveryScreenContentItems(data: SimpleListItemModel) {
         supportingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val smallRounded = MaterialTheme.shapes.small
-                val modifier = when (data.type) {
-                    MarkType.Hot -> Modifier.background(color = mark_hot_bg, shape = smallRounded)
+                val borderWidth = 0.4.dp
+                val borderModifier = when (data.type) {
+                    MarkType.Hot -> Modifier.border(
+                        width = borderWidth,
+                        color = mark_hot_bg,
+                        shape = smallRounded
+                    )
+
                     MarkType.Special -> Modifier.border(
-                        width = 1.dp,
-                        color = mark_special_border,
+                        width = borderWidth,
+                        color = mark_quality_border,
                         shape = smallRounded
                     )
 
                     MarkType.Vip -> Modifier.border(
-                        width = 1.dp,
+                        width = borderWidth,
                         color = mark_vip_border,
                         shape = smallRounded
                     )
                 }
+                val backgroundModifier = when (data.type) {
+                    MarkType.Hot -> Modifier.background(color = mark_hot_bg, shape = smallRounded)
+                    else -> Modifier
+                }
+                val paddingModifier = when (data.type) {
+                    MarkType.Vip -> Modifier.padding(horizontal = 2.dp)
+                    MarkType.Hot -> Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                    else -> Modifier.padding(horizontal = 4.dp)
+                }
+                val fontFamily = when (data.type) {
+                    MarkType.Vip -> FontFamily.SansSerif
+                    else -> null
+                }
+                val fontSize = when (data.type) {
+                    MarkType.Vip -> TextUnit(8.0f, TextUnitType.Sp)
+                    else -> TextUnit(9.0f, TextUnitType.Sp)
+                }
                 val textColor = when (data.type) {
                     MarkType.Hot -> mark_hot_text_color
-                    MarkType.Special -> mark_special_text_color
+                    MarkType.Special -> mark_quality_text_color
                     MarkType.Vip -> mark_vip_text_color
                 }
                 Text(
-                    modifier = modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier
+                        .then(borderModifier)
+                        .then(backgroundModifier)
+                        .then(paddingModifier),
                     text = data.markText,
                     color = textColor,
-                    fontSize = TextUnit(10.0f, TextUnitType.Sp),
-                    fontWeight = FontWeight.Bold
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = fontFamily
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(

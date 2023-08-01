@@ -3,10 +3,10 @@ package com.leovp.androidshowcase.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // --------------------
-val discovery_top_section_start_color = Color(0x40A262AB) // f3dff0
+val discovery_top_section_start_color = Color(0x40A262AB)
 val discovery_top_section_middle1_color = Color(0x20A262AB)
 val discovery_top_section_middle2_color = Color(0x10A262AB)
-val discovery_top_section_middle3_color = Color(0x05A262AB) // e2dffa
+val discovery_top_section_middle3_color = Color(0x05A262AB)
 val discovery_top_section_end_color = Color(0x00FFFFFF)
 
 val discovery_search_bar_start_color = Color(0x20EE579C)
@@ -14,16 +14,16 @@ val discovery_search_bar_end_color = Color(0x204DABE5)
 
 val immersive_sys_ui = Color(0x338B5000)
 
-val mark_hot_text_color = Color(0xffd92738)
+val mark_hot_text_color = Color(0xffff0000)
 val mark_hot_border = Color(0xfff3e6e9)
 val mark_hot_bg = Color(0xfff3e6e9)
 
-val mark_special_text_color = Color(0xffcfb87f)
-val mark_special_border = Color(0xffe7dcc2)
-val mark_special_bg = Color.Transparent
+val mark_quality_text_color = Color(0xffcfb87f)
+val mark_quality_border = Color(0xffe7dcc2)
+val mark_quality_bg = Color.Transparent
 
-val mark_vip_text_color = Color(0xffda776c)
-val mark_vip_border = Color(0xfff1e4e4)
+val mark_vip_text_color = Color(0x92ff0000)
+val mark_vip_border = Color(0x70ff0000)
 val mark_vip_bg = Color.Transparent
 // --------------------
 

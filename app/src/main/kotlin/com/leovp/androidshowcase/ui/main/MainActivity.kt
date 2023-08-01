@@ -144,97 +144,103 @@ fun MainScreen(
         gesturesEnabled = !isExpandedScreen
     ) {
         val context = LocalContext.current
-
-        val pagerState = rememberPagerState(initialPage = AppBottomNavigationItems.DISCOVERY.ordinal)
         val pagerScreenValues = AppBottomNavigationItems.values()
 
-        val scrollState = rememberLazyListState()
-        val firstVisibleItemIndex by remember { derivedStateOf { scrollState.firstVisibleItemIndex } }
-        val firstVisibleItemScrollOffset by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset } }
-        val scrolled = firstVisibleItemIndex != 0 || firstVisibleItemScrollOffset != 0
-
         Box(contentAlignment = Alignment.TopEnd) {
-            Scaffold(modifier = modifier, topBar = {
-                HomeTopAppBar(
-                    modifier = modifier,
-                    onNavigationClick = {
-                        coroutineScope.launch { sizeAwareDrawerState.open() }
-                    },
-                    onActionClick = { context.toast("Recording is not yet implemented.") }
-                ) {
-                    when (pagerState.currentPage) {
-                        AppBottomNavigationItems.DISCOVERY.ordinal -> {
-                            SearchBar(
-                                border = if (scrolled) {
-                                    BorderStroke(
+            val pagerState = rememberPagerState(
+                initialPage = AppBottomNavigationItems.DISCOVERY.ordinal,
+                initialPageOffsetFraction = 0f,
+                pageCount = { pagerScreenValues.size }
+            )
+
+            val scrollState = rememberLazyListState()
+            val firstVisibleItemIndex by remember { derivedStateOf { scrollState.firstVisibleItemIndex } }
+            val firstVisibleItemScrollOffset by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset } }
+            val scrolled = firstVisibleItemIndex != 0 || firstVisibleItemScrollOffset != 0
+
+            Scaffold(
+                modifier = modifier,
+                topBar = {
+                    HomeTopAppBar(
+                        modifier = modifier,
+                        onNavigationClick = {
+                            coroutineScope.launch { sizeAwareDrawerState.open() }
+                        },
+                        onActionClick = { context.toast("Recording is not yet implemented.") }
+                    ) {
+                        when (pagerState.currentPage) {
+                            AppBottomNavigationItems.DISCOVERY.ordinal -> {
+                                SearchBar(
+                                    border = if (scrolled) {
+                                        BorderStroke(
+                                            width = 0.5.dp,
+                                            color = Color.LightGray
+                                        )
+                                    } else BorderStroke(
                                         width = 0.5.dp,
-                                        color = Color.LightGray
-                                    )
-                                } else BorderStroke(
-                                    width = 0.5.dp,
-                                    brush = defaultLinearGradient
-                                ),
-                                backgroundBrush = if (scrolled) null else defaultLinearGradient,
-                                modifier = Modifier
-                                    .height(48.dp)
-                                    .padding(vertical = 6.dp),
-                                onClick = { context.toast("Click search bar.") },
-                                onActionClick = { context.toast("Click scan button on search bar.") }
+                                        brush = defaultLinearGradient
+                                    ),
+                                    backgroundBrush = if (scrolled) null else defaultLinearGradient,
+                                    modifier = Modifier
+                                        .height(48.dp)
+                                        .padding(vertical = 6.dp),
+                                    onClick = { context.toast("Click search bar.") },
+                                    onActionClick = { context.toast("Click scan button on search bar.") }
+                                )
+                            }
+                        }
+                    }
+                }, bottomBar = {
+                    NavigationBar {
+                        AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
+                            NavigationBarItem(
+                                icon = {
+                                    when (index) {
+                                        AppBottomNavigationItems.COMMUNITY.ordinal -> {
+                                            val badgeNumber = 123.toBadgeText(999)
+                                            val unreadContentDescription = stringResource(
+                                                R.string.app_tab_community_unread,
+                                                badgeNumber
+                                            )
+                                            BadgedBox(
+                                                badge = {
+                                                    Badge {
+                                                        Text(
+                                                            badgeNumber,
+                                                            modifier = Modifier.semantics {
+                                                                contentDescription = unreadContentDescription
+                                                            }
+                                                        )
+                                                    }
+                                                }) {
+                                                Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId))
+                                            }
+                                        }
+
+                                        else -> Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId))
+                                    }
+                                },
+                                label = { Text(stringResource(bottomItemData.screen.resId)) },
+                                // Here's the trick. The selected tab is based on HorizontalPager state.
+                                selected = index == pagerState.currentPage,
+                                onClick = {
+                                    LogContext.log.i(TAG, "Selected: ${bottomItemData.screen.route}")
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            page = bottomItemData.ordinal,
+                                            animationSpec = tween(TAB_SWITCH_ANIM_DURATION)
+                                        )
+                                    }
+                                }
                             )
                         }
                     }
-                }
-            }, bottomBar = {
-                NavigationBar {
-                    AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
-                        NavigationBarItem(
-                            icon = {
-                                when (index) {
-                                    AppBottomNavigationItems.COMMUNITY.ordinal -> {
-                                        val badgeNumber = 123.toBadgeText(999)
-                                        val unreadContentDescription = stringResource(
-                                            R.string.app_tab_community_unread,
-                                            badgeNumber
-                                        )
-                                        BadgedBox(
-                                            badge = {
-                                                Badge {
-                                                    Text(
-                                                        badgeNumber,
-                                                        modifier = Modifier.semantics {
-                                                            contentDescription = unreadContentDescription
-                                                        }
-                                                    )
-                                                }
-                                            }) {
-                                            Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId))
-                                        }
-                                    }
-
-                                    else -> Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId))
-                                }
-                            },
-                            label = { Text(stringResource(bottomItemData.screen.resId)) },
-                            // Here's the trick. The selected tab is based on HorizontalPager state.
-                            selected = index == pagerState.currentPage,
-                            onClick = {
-                                LogContext.log.i(TAG, "Selected: ${bottomItemData.screen.route}")
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(
-                                        page = bottomItemData.ordinal,
-                                        animationSpec = tween(TAB_SWITCH_ANIM_DURATION)
-                                    )
-                                }
-                            }
-                        )
-                    }
-                }
-            }) { contentPadding ->
+                }) { contentPadding ->
                 val newModifier = modifier.padding(contentPadding)
                 HorizontalPager(
-                    pageCount = pagerScreenValues.size,
                     state = pagerState,
-                    modifier = newModifier
+                    modifier = newModifier,
+                    key = { index -> pagerScreenValues[index].ordinal }
                 ) { page ->
                     when (pagerScreenValues[page]) {
                         AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(scrollState)
@@ -296,7 +302,7 @@ fun HomeTopAppBar(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            /*.background(color = Color.Cyan)*/,
+        /*.background(color = Color.Cyan)*/,
         verticalArrangement = Arrangement.Center
     ) {
         Spacer(
@@ -305,7 +311,9 @@ fun HomeTopAppBar(
                 .statusBarsPadding()
         )
         Row(
-            modifier = modifier.fillMaxWidth().heightIn(topBarHeight),
+            modifier = modifier
+                .fillMaxWidth()
+                .heightIn(topBarHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ConstraintLayout(
