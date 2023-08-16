@@ -71,9 +71,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
@@ -115,7 +112,9 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    widthSize: WindowWidthSizeClass, modifier: Modifier = Modifier, navController: NavHostController
+    widthSize: WindowWidthSizeClass,
+    onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding().value
     val targetHeight = LocalDensity.current.run {
@@ -123,20 +122,16 @@ fun MainScreen(
         (56 + 2 * 8 + statusBarHeight).dp.toPx()
     }
 
-    val navigationActions = rememberNavigationActions(navController = navController)
     val coroutineScope = rememberCoroutineScope()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: DrawerDestinations.NO_ROUTE
-
     val isExpandedScreen = widthSize == WindowWidthSizeClass.Expanded
     val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
 
     ModalNavigationDrawer(
         drawerContent = {
             AppDrawer(
-                currentRoute = currentRoute,
-                navigateTo = { route -> navigationActions.navigate(route) },
-                closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
+                currentRoute = DrawerDestinations.NO_ROUTE,
+                onNavigateTo = { route -> onNavigationToDrawerItem(route) },
+                onCloseDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
                 modifier = Modifier.requiredWidth(300.dp)
             )
         }, drawerState = sizeAwareDrawerState,
@@ -381,7 +376,7 @@ fun PreviewMainScreen() {
     AppTheme(dynamicColor = false) {
         MainScreen(
             widthSize = WindowWidthSizeClass.Compact,
-            navController = rememberNavController()
+            onNavigationToDrawerItem = {}
         )
     }
 }

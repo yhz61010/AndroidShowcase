@@ -23,8 +23,8 @@ private const val TAG = "NavGraph"
 @Composable
 fun AppNavGraph(
     widthSizeClass: WindowWidthSizeClass,
-    modifier: Modifier = Modifier,
     navController: NavHostController,
+    modifier: Modifier = Modifier,
     startDestination: String = AppDestinations.SPLASH_ROUTE,
 ) {
     val navigationActions = rememberNavigationActions(navController = navController)
@@ -43,24 +43,31 @@ fun AppNavGraph(
             ) {
                 MainScreen(
                     widthSize = widthSizeClass,
-                    modifier = modifier,
-                    navController = navController
+                    onNavigationToDrawerItem = { drawerItemRoute ->
+                        navigationActions.navigate(drawerItemRoute)
+                    },
+                    modifier = modifier
                 )
             }
         }
 
-        addAppDrawerGraph(onNavigateToRoute = {}, modifier, navController)
+        addAppDrawerGraph(
+            onMenuUpAction = { navigationActions.upPress() },
+            modifier = modifier
+        )
     }
 }
 
 fun NavGraphBuilder.addAppDrawerGraph(
-    onNavigateToRoute: (String) -> Unit,
+    onMenuUpAction: () -> Unit,
     modifier: Modifier = Modifier,
-    navController: NavHostController,
 ) {
     composable(DrawerDestinations.MEMBER_CENTER_ROUTE) {
         ImmersiveTheme(color = immersive_sys_ui, lightStatusBar = !isSystemInDarkTheme(), dynamicColor = false) {
-            MemberCenterScreen(modifier, navController)
+            MemberCenterScreen(
+                onMenuUpAction = onMenuUpAction,
+                modifier = modifier
+            )
         }
     }
     composable(DrawerDestinations.MESSAGES) {}

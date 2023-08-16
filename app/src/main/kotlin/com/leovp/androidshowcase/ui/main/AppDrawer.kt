@@ -39,8 +39,8 @@ import com.leovp.module.common.res.Dimen
 @Composable
 fun AppDrawer(
     currentRoute: String,
-    navigateTo: (route: String) -> Unit,
-    closeDrawer: () -> Unit,
+    onNavigateTo: (route: String) -> Unit,
+    onCloseDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     ModalDrawerSheet(modifier) {
@@ -57,7 +57,7 @@ fun AppDrawer(
             label = { Text(stringResource(id = R.string.app_drawer_member_center)) },
             icon = { Icon(Icons.Outlined.CreditCard, null) },
             selected = currentRoute == DrawerDestinations.MEMBER_CENTER_ROUTE,
-            onClick = { navigateTo(DrawerDestinations.MEMBER_CENTER_ROUTE); closeDrawer() },
+            onClick = { onNavigateTo(DrawerDestinations.MEMBER_CENTER_ROUTE); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
@@ -67,7 +67,7 @@ fun AppDrawer(
             label = { Text(stringResource(id = R.string.app_drawer_message_label)) },
             icon = { Icon(Icons.Outlined.Email, null) },
             selected = currentRoute == DrawerDestinations.MESSAGES,
-            onClick = { navigateTo(DrawerDestinations.MESSAGES); closeDrawer() },
+            onClick = { onNavigateTo(DrawerDestinations.MESSAGES); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
@@ -77,7 +77,7 @@ fun AppDrawer(
             label = { Text(stringResource(id = R.string.app_drawer_settings_label)) },
             icon = { Icon(Icons.Outlined.Settings, null) },
             selected = currentRoute == DrawerDestinations.SETTING_ROUTE,
-            onClick = { navigateTo(DrawerDestinations.SETTING_ROUTE); closeDrawer() },
+            onClick = { onNavigateTo(DrawerDestinations.SETTING_ROUTE); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
@@ -87,7 +87,7 @@ fun AppDrawer(
             label = { Text(stringResource(id = R.string.app_drawer_exit_label)) },
             icon = { Icon(Icons.Outlined.ExitToApp, null) },
             selected = currentRoute == DrawerDestinations.EXIT_ROUTE,
-            onClick = { navigateTo(DrawerDestinations.EXIT_ROUTE); closeDrawer() },
+            onClick = { onNavigateTo(DrawerDestinations.EXIT_ROUTE); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
@@ -122,8 +122,8 @@ fun PreviewAppDrawer() {
     AppTheme(dynamicColor = false) {
         AppDrawer(
             currentRoute = DrawerDestinations.NO_ROUTE,
-            navigateTo = { },
-            closeDrawer = { }
+            onNavigateTo = { },
+            onCloseDrawer = { }
         )
     }
 }

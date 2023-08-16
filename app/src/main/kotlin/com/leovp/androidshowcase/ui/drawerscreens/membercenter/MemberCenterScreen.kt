@@ -31,10 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.leovp.androidshowcase.R
-import com.leovp.androidshowcase.ui.main.rememberNavigationActions
 import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
 
@@ -44,11 +41,13 @@ import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemberCenterScreen(modifier: Modifier = Modifier, navController: NavHostController) {
+fun MemberCenterScreen(
+    onMenuUpAction: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
-    val navigationActions = rememberNavigationActions(navController)
     Scaffold(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -62,7 +61,7 @@ fun MemberCenterScreen(modifier: Modifier = Modifier, navController: NavHostCont
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
                 title = { Text(title) },
                 navigationIcon = {
-                    IconButton(onClick = { navigationActions.upPress() }) {
+                    IconButton(onClick = onMenuUpAction) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null,
@@ -127,6 +126,6 @@ fun LazyListScope.memberCenterScreenContentItems() {
 @Composable
 fun PreviewMemberCenterScreen() {
     ImmersiveTheme(color = immersive_sys_ui, dynamicColor = false) {
-        MemberCenterScreen(navController = rememberNavController())
+        MemberCenterScreen(onMenuUpAction = {})
     }
 }

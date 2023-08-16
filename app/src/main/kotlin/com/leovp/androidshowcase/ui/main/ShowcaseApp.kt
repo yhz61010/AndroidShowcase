@@ -16,7 +16,6 @@ private const val TAG = "SC-App"
 fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     SplashTheme {
         val navController = rememberNavController()
-
         AppNavGraph(
             widthSizeClass,
             navController = navController,
