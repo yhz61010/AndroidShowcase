@@ -10,7 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.leovp.androidshowcase.ui.drawerscreens.membercenter.MemberCenterScreen
-import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
 
@@ -28,13 +27,13 @@ fun AppNavGraph(
     navController: NavHostController,
     startDestination: String = AppDestinations.SPLASH_ROUTE,
 ) {
-    val navigationActions = getNavigationActions(navController = navController)
+    val navigationActions = rememberNavigationActions(navController = navController)
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
         composable(AppDestinations.SPLASH_ROUTE) {
             // AnimatedSplashScreen(navController = navController)
-            SplashScreen {
-                navigationActions.navigate(AppDestinations.MAIN_ROUTE)
-            }
+            SplashScreen(
+                onTimeout = { navigationActions.navigate(AppDestinations.MAIN_ROUTE) }
+            )
         }
         composable(AppDestinations.MAIN_ROUTE) {
             ImmersiveTheme(

@@ -110,10 +110,8 @@ class AppNavigationActions(private val navController: NavHostController) {
 }
 
 @Composable
-fun getNavigationActions(navController: NavHostController): AppNavigationActions {
-    return remember(navController) {
-        AppNavigationActions(navController)
-    }
+fun rememberNavigationActions(navController: NavHostController): AppNavigationActions {
+    return remember(navController) { AppNavigationActions(navController) }
 }
 
 private fun outputGraphInfo(route: String, navController: NavHostController) {

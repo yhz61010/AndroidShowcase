@@ -123,7 +123,7 @@ fun MainScreen(
         (56 + 2 * 8 + statusBarHeight).dp.toPx()
     }
 
-    val navigationActions = getNavigationActions(navController = navController)
+    val navigationActions = rememberNavigationActions(navController = navController)
     val coroutineScope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: DrawerDestinations.NO_ROUTE

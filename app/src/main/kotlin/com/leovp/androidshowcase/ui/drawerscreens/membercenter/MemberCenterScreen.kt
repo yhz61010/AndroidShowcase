@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.leovp.androidshowcase.R
-import com.leovp.androidshowcase.ui.main.getNavigationActions
+import com.leovp.androidshowcase.ui.main.rememberNavigationActions
 import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
 
@@ -48,7 +48,7 @@ fun MemberCenterScreen(modifier: Modifier = Modifier, navController: NavHostCont
     // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
-    val navigationActions = getNavigationActions(navController)
+    val navigationActions = rememberNavigationActions(navController)
     Scaffold(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -110,11 +110,11 @@ fun LazyListScope.memberCenterScreenContentItems() {
             contentScale = ContentScale.FillWidth,
         )
     }
-    item {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            repeat(100) {
+    repeat(100) {
+        item {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    modifier = Modifier.padding(2.dp),
+                    modifier = Modifier.padding(2.dp, 16.dp),
                     text = "item: $it"
                 )
             }
