@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.ExitToApp
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
@@ -54,30 +51,30 @@ fun AppDrawer(
                 )
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.app_drawer_member_center)) },
-            icon = { Icon(Icons.Outlined.CreditCard, null) },
-            selected = currentRoute == DrawerDestinations.MEMBER_CENTER_ROUTE,
-            onClick = { onNavigateTo(DrawerDestinations.MEMBER_CENTER_ROUTE); onCloseDrawer() },
+            label = { Text(stringResource(id = Screen.MemberCenterScreen.resId)) },
+            icon = { Icon(Screen.MemberCenterScreen.requireIcon, null) },
+            selected = currentRoute == Screen.MemberCenterScreen.route,
+            onClick = { onNavigateTo(Screen.MemberCenterScreen.route); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
                 .padding(horizontal = Dimen.drawerItemHorizontalPadding)
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.app_drawer_message_label)) },
-            icon = { Icon(Icons.Outlined.Email, null) },
-            selected = currentRoute == DrawerDestinations.MESSAGES,
-            onClick = { onNavigateTo(DrawerDestinations.MESSAGES); onCloseDrawer() },
+            label = { Text(stringResource(id = Screen.MessageScreen.resId)) },
+            icon = { Icon(Screen.MessageScreen.requireIcon, null) },
+            selected = currentRoute == Screen.MessageScreen.route,
+            onClick = { onNavigateTo(Screen.MessageScreen.route); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
                 .padding(horizontal = Dimen.drawerItemHorizontalPadding)
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.app_drawer_settings_label)) },
-            icon = { Icon(Icons.Outlined.Settings, null) },
-            selected = currentRoute == DrawerDestinations.SETTING_ROUTE,
-            onClick = { onNavigateTo(DrawerDestinations.SETTING_ROUTE); onCloseDrawer() },
+            label = { Text(stringResource(id = Screen.SettingScreen.resId)) },
+            icon = { Icon(Screen.SettingScreen.requireIcon, null) },
+            selected = currentRoute == Screen.SettingScreen.route,
+            onClick = { onNavigateTo(Screen.SettingScreen.route); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
@@ -86,8 +83,8 @@ fun AppDrawer(
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.app_drawer_exit_label)) },
             icon = { Icon(Icons.Outlined.ExitToApp, null) },
-            selected = currentRoute == DrawerDestinations.EXIT_ROUTE,
-            onClick = { onNavigateTo(DrawerDestinations.EXIT_ROUTE); onCloseDrawer() },
+            selected = false,
+            onClick = { },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)

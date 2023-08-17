@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 /*
  * Copyright 2021 The Android Open Source Project
  *

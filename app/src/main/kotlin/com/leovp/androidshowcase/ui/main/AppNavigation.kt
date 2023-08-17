@@ -2,8 +2,11 @@ package com.leovp.androidshowcase.ui.main
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.LibraryMusic
 import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.SpeakerNotes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -20,32 +23,36 @@ import com.leovp.log.LogContext
 private const val TAG = "Nav"
 
 // --------------------
-// Destinations
+// Drawer destinations
 // --------------------
-
-object AppDestinations {
-    const val SPLASH_ROUTE = "app_splash"
-    const val MAIN_ROUTE = "app_main"
-}
-
 object DrawerDestinations {
     const val NO_ROUTE = "drawer_no"
-    const val PROFILE_ROUTE = "drawer_profile"
-    const val MEMBER_CENTER_ROUTE = "drawer_member_center"
-    const val MESSAGES = "drawer_messages"
-    const val SETTING_ROUTE = "drawer_setting"
-    const val EXIT_ROUTE = "drawer_exit"
 }
 
-// ----------
+/**
+ * Define all the screens used in this application.
+ */
+sealed class Screen(val route: String, @StringRes val resId: Int, val icon: ImageVector? = null) {
+    data object Splash : Screen("app_splash", 0)
+    data object Main : Screen("app_main", 0)
 
-sealed class Screen(val route: String, @StringRes val resId: Int) {
+    // Home tab screens
     data object Discovery : Screen("app_discovery", R.string.app_main_tab_discovery)
     data object My : Screen("app_my", R.string.app_main_tab_my)
     data object Community : Screen("app_community", R.string.app_main_tab_community)
+
+    // Drawer item screens
+    data object MemberCenterScreen : Screen(
+        "drawer_member_center", R.string.app_drawer_member_center, Icons.Outlined.CreditCard
+    )
+    data object MessageScreen : Screen("drawer_messages", R.string.app_drawer_message_label, Icons.Outlined.Email)
+    data object SettingScreen : Screen("drawer_setting", R.string.app_drawer_settings_label, Icons.Outlined.Settings)
+
+    val requireIcon: ImageVector
+        get() = icon!!
 }
 
-enum class AppBottomNavigationItems(val screen: Screen, var icon: ImageVector) {
+enum class AppBottomNavigationItems(val screen: Screen, val icon: ImageVector) {
     DISCOVERY(Screen.Discovery, Icons.Outlined.LibraryMusic),
     MY(Screen.My, Icons.Outlined.MusicNote),
     COMMUNITY(Screen.Community, Icons.Outlined.SpeakerNotes)
@@ -76,40 +83,42 @@ class AppNavigationActions(private val navController: NavHostController) {
         LogContext.log.i(TAG, "-> navigate to: $route")
         outputGraphInfo(route, navController)
         return when (route) {
-            AppDestinations.MAIN_ROUTE -> navigationToMain()
+            Screen.Main.route -> navController.navigateToMain()
 
-            DrawerDestinations.MEMBER_CENTER_ROUTE,
-            DrawerDestinations.MESSAGES,
-            DrawerDestinations.SETTING_ROUTE,
-            DrawerDestinations.EXIT_ROUTE -> navigateToAppDrawerRoute(route)
+            Screen.MemberCenterScreen.route,
+            Screen.MessageScreen.route,
+            Screen.SettingScreen.route -> navController.navigateSingleTopTo(route)
 
             else -> error("Illegal route: $route")
         }
     }
-
-    private fun navigationToMain() {
-        navController.navigate(AppDestinations.MAIN_ROUTE) {
-            // Pop up to the start destination of the graph to
-            // avoid building up a large stack of destinations
-            // on the back stack as users select items
-            //
-            // navController.graph.findStartDestination().id
-            popUpTo(AppDestinations.SPLASH_ROUTE) { inclusive = true }
-            // Avoid multiple copies of the same destination when re-selecting the same item
-            launchSingleTop = true
-            // Whether to restore state when re-selecting a previously selected item
-            restoreState = false
-        }
-    }
-
-    private fun navigateToAppDrawerRoute(route: String) {
-        navController.navigate(route) {
-            popUpTo(AppDestinations.MAIN_ROUTE) { saveState = true }
-            launchSingleTop = true
-            restoreState = true
-        }
-    }
 }
+
+fun NavHostController.navigateToMain() =
+    this.navigate(Screen.Main.route) {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destinations
+        // on the back stack as users select items
+        //
+        // navController.graph.findStartDestination().id
+        popUpTo(Screen.Splash.route) { inclusive = true }
+        // Avoid multiple copies of the same destination when re-selecting the same item
+        launchSingleTop = true
+        // Whether to restore state when re-selecting a previously selected item
+        restoreState = false
+    }
+
+fun NavHostController.navigateSingleTopTo(route: String) =
+    this.navigate(route) {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destinations
+        // on the back stack as users select items
+        popUpTo(Screen.Main.route) { saveState = true }
+        // Avoid multiple copies of the same destination when re-selecting the same item
+        launchSingleTop = true
+        // Whether to restore state when re-selecting a previously selected item
+        restoreState = true
+    }
 
 @Composable
 fun rememberNavigationActions(navController: NavHostController): AppNavigationActions {

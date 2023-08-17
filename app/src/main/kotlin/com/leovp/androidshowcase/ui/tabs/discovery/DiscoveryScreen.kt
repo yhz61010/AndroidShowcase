@@ -44,9 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -90,7 +88,7 @@ import kotlinx.coroutines.launch
  * Date: 2023/7/18 15:06
  */
 
-private const val TAG = "Discovery"
+// private const val TAG = "Discovery"
 
 @Composable
 fun DiscoveryScreen(
@@ -186,14 +184,12 @@ fun EverydayRecommendsHeaderItem() {
 
 @Composable
 fun EverydayRecommendsItem(list: List<EverydayItemModel>, onItemClick: (EverydayItemModel) -> Unit) {
-    val pagerState = rememberLazyListState()
     val cardWidth = 120.dp
 
     LazyRow(
-        contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 8.dp),
+        contentPadding = PaddingValues(16.dp, 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth(),
-        state = pagerState
     ) {
         items(list) { data ->
             Column {
@@ -263,10 +259,9 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
         pageCount = { pageCount }
     )
 
-    val pageCountIndex by remember { derivedStateOf { pagerState.currentPage.floorMod(list.size) } }
-    var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val pageCountIndex by remember { derivedStateOf { pagerState.currentPage.floorMod(pageCount) } }
 
-    LaunchedEffect(key1 = currentTime) {
+    LaunchedEffect(key1 = pagerState.settledPage) {
         launch {
             delay(3000L)
             val target = if (pagerState.currentPage < pageCount - 1) pagerState.currentPage + 1 else 0
@@ -278,8 +273,6 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
                     easing = FastOutSlowInEasing
                 )
             )
-
-            currentTime = System.currentTimeMillis()
         }
     }
 

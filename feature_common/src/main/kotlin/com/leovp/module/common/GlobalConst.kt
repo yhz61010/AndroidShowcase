@@ -7,7 +7,7 @@ package com.leovp.module.common
  * Date: 2023/7/6 15:54
  */
 object GlobalConst {
-    private const val TAG = "GlobalConst"
+    // private const val TAG = "GlobalConst"
 
     const val DEBUG = BuildConfig.DEBUG_MODE
 }

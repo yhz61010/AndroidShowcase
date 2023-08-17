@@ -1,6 +1,5 @@
 package com.leovp.androidshowcase.ui.tabs.discovery.data
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector

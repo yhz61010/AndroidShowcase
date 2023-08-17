@@ -5,7 +5,6 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -18,7 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val LightColorsTheme = lightColorScheme(
+private val lightColorsTheme = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
@@ -51,7 +50,7 @@ private val LightColorsTheme = lightColorScheme(
 )
 
 
-private val DarkColorsTheme = darkColorScheme(
+private val darkColorsTheme = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -96,7 +95,7 @@ fun SplashTheme(content: @Composable () -> Unit) {
     }
 
     MaterialTheme(
-        colorScheme = LightColorsTheme,
+        colorScheme = lightColorsTheme,
         typography = Typography,
         content = content
     )
@@ -132,8 +131,8 @@ fun ImmersiveTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorsTheme
-        else -> LightColorsTheme
+        darkTheme -> darkColorsTheme
+        else -> lightColorsTheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {

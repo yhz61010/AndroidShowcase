@@ -16,20 +16,20 @@ import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
  * Date: 2023/7/17 10:24
  */
 
-private const val TAG = "NavGraph"
+// private const val TAG = "NavGraph"
 
 fun NavGraphBuilder.addAppMainGraph(
     widthSizeClass: WindowWidthSizeClass,
     navigationActions: AppNavigationActions,
     modifier: Modifier = Modifier,
 ) {
-    composable(AppDestinations.SPLASH_ROUTE) {
+    composable(route = Screen.Splash.route) {
         SplashTheme {
             // AnimatedSplashScreen(navController = navController)
-            SplashScreen(onTimeout = { navigationActions.navigate(AppDestinations.MAIN_ROUTE) })
+            SplashScreen(onTimeout = { navigationActions.navigate(Screen.Main.route) })
         }
     }
-    composable(AppDestinations.MAIN_ROUTE) {
+    composable(route = Screen.Main.route) {
         ImmersiveTheme(
             color = Color.Transparent,
             dynamicColor = false,
@@ -51,7 +51,7 @@ fun NavGraphBuilder.addAppDrawerGraph(
     navigationActions: AppNavigationActions,
     modifier: Modifier = Modifier,
 ) {
-    composable(DrawerDestinations.MEMBER_CENTER_ROUTE) {
+    composable(route = Screen.MemberCenterScreen.route) {
         ImmersiveTheme(color = immersive_sys_ui, lightStatusBar = !isSystemInDarkTheme(), dynamicColor = false) {
             MemberCenterScreen(
                 widthSize = widthSizeClass,
@@ -60,7 +60,6 @@ fun NavGraphBuilder.addAppDrawerGraph(
             )
         }
     }
-    composable(DrawerDestinations.MESSAGES) {}
-    composable(DrawerDestinations.SETTING_ROUTE) {}
-    composable(DrawerDestinations.EXIT_ROUTE) {}
+    composable(route = Screen.MessageScreen.route) {}
+    composable(route = Screen.SettingScreen.route) {}
 }
