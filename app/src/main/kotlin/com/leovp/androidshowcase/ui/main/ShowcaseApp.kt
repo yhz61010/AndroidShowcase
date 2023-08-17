@@ -2,8 +2,9 @@ package com.leovp.androidshowcase.ui.main
 
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.leovp.androidshowcase.ui.theme.SplashTheme
 
 /**
  * Author: Michael Leo
@@ -14,11 +15,24 @@ private const val TAG = "SC-App"
 
 @Composable
 fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
-    SplashTheme {
-        val navController = rememberNavController()
-        AppNavGraph(
-            widthSizeClass,
-            navController = navController,
+    val navController = rememberNavController()
+    val navigationActions = rememberNavigationActions(navController = navController)
+    val modifier = Modifier
+    NavHost(
+        navController = navController,
+        startDestination = AppDestinations.SPLASH_ROUTE,
+        modifier = modifier
+    ) {
+        addAppMainGraph(
+            widthSizeClass = widthSizeClass,
+            navigationActions = navigationActions,
+            modifier = modifier
+        )
+
+        addAppDrawerGraph(
+            widthSizeClass = widthSizeClass,
+            navigationActions = navigationActions,
+            modifier = modifier
         )
     }
 }

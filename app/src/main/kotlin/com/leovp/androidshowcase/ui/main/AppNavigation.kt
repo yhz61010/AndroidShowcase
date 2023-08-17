@@ -54,9 +54,11 @@ enum class AppBottomNavigationItems(val screen: Screen, var icon: ImageVector) {
 /**
  * Models the navigation actions in the app.
  *
+ * DO NOT use this class directly, use [rememberNavigationActions] instead.
+ *
  * Attention:
- * This class can't be singleton. Otherwise, it will case the following exception
- * when you navigate to other screen after yous witch the device dark mode.
+ * This class can't be singleton. Otherwise, it will cause the following exception
+ * when you navigate to other screen after you switch the device to dark mode.
  * ```
  * java.lang.IllegalStateException:
  * no event down from INITIALIZED in component NavBackStackEntry(40f53e9f-981c-4e19-bcc0-69c85ed7ce77)
@@ -111,7 +113,7 @@ class AppNavigationActions(private val navController: NavHostController) {
 
 @Composable
 fun rememberNavigationActions(navController: NavHostController): AppNavigationActions {
-    return remember(navController) { AppNavigationActions(navController) }
+    return remember { AppNavigationActions(navController) }
 }
 
 private fun outputGraphInfo(route: String, navController: NavHostController) {
