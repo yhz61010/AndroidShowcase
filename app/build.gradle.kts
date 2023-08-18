@@ -7,20 +7,16 @@ apply(from = "../jacoco.gradle.kts")
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
 plugins {
     alias(libs.plugins.android.application)
-
     alias(libs.plugins.kotlin.parcelize) // id("kotlin-parcelize")
-    // alias(libs.plugins.navigation)
+
+    // Add ksp only if you use ksp() in dependencies {}
+    // alias(libs.plugins.ksp)
 
     // https://github.com/mannodermaus/android-junit5
     alias(libs.plugins.android.junit5)
 
     alias(libs.plugins.sonarqube)
     jacoco
-}
-
-kapt {
-    // We also need to add `org.gradle.caching=true` in `gradle.properties`.
-    useBuildCache = true
 }
 
 android {

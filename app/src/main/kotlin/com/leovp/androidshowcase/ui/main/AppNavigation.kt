@@ -45,6 +45,7 @@ sealed class Screen(val route: String, @StringRes val resId: Int, val icon: Imag
     data object MemberCenterScreen : Screen(
         "drawer_member_center", R.string.app_drawer_member_center, Icons.Outlined.CreditCard
     )
+
     data object MessageScreen : Screen("drawer_messages", R.string.app_drawer_message_label, Icons.Outlined.Email)
     data object SettingScreen : Screen("drawer_setting", R.string.app_drawer_settings_label, Icons.Outlined.Settings)
 
@@ -73,6 +74,7 @@ enum class AppBottomNavigationItems(val screen: Screen, val icon: ImageVector) {
  * ```
  */
 class AppNavigationActions(private val navController: NavHostController) {
+    @Suppress("unused")
     val currentRoute: String? get() = navController.currentDestination?.route
 
     fun upPress() {
@@ -94,31 +96,29 @@ class AppNavigationActions(private val navController: NavHostController) {
     }
 }
 
-fun NavHostController.navigateToMain() =
-    this.navigate(Screen.Main.route) {
-        // Pop up to the start destination of the graph to
-        // avoid building up a large stack of destinations
-        // on the back stack as users select items
-        //
-        // navController.graph.findStartDestination().id
-        popUpTo(Screen.Splash.route) { inclusive = true }
-        // Avoid multiple copies of the same destination when re-selecting the same item
-        launchSingleTop = true
-        // Whether to restore state when re-selecting a previously selected item
-        restoreState = false
-    }
+fun NavHostController.navigateToMain() = this.navigate(Screen.Main.route) {
+    // Pop up to the start destination of the graph to
+    // avoid building up a large stack of destinations
+    // on the back stack as users select items
+    //
+    // navController.graph.findStartDestination().id
+    popUpTo(Screen.Splash.route) { inclusive = true }
+    // Avoid multiple copies of the same destination when re-selecting the same item
+    launchSingleTop = true
+    // Whether to restore state when re-selecting a previously selected item
+    restoreState = false
+}
 
-fun NavHostController.navigateSingleTopTo(route: String) =
-    this.navigate(route) {
-        // Pop up to the start destination of the graph to
-        // avoid building up a large stack of destinations
-        // on the back stack as users select items
-        popUpTo(Screen.Main.route) { saveState = true }
-        // Avoid multiple copies of the same destination when re-selecting the same item
-        launchSingleTop = true
-        // Whether to restore state when re-selecting a previously selected item
-        restoreState = true
-    }
+fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) {
+    // Pop up to the start destination of the graph to
+    // avoid building up a large stack of destinations
+    // on the back stack as users select items
+    popUpTo(Screen.Main.route) { saveState = true }
+    // Avoid multiple copies of the same destination when re-selecting the same item
+    launchSingleTop = true
+    // Whether to restore state when re-selecting a previously selected item
+    restoreState = true
+}
 
 @Composable
 fun rememberNavigationActions(navController: NavHostController): AppNavigationActions {

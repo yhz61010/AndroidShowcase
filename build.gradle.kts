@@ -1,11 +1,12 @@
+
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.dsl.BaseFlavor
 import com.android.build.gradle.internal.dsl.DefaultConfig
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
-import java.util.Locale
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
+import java.util.Locale
 
 // =====================================
 // ========== Global settings ==========
@@ -59,11 +60,9 @@ plugins {
     // alias(libs.plugins.vcu)
     jacoco
 
-    // id("org.jetbrains.kotlin.kapt") // or kotlin("kapt")
     // If you use kotlin(), you can change dash(-) with dot(.)
     // or you can still use dash like id("kotlin-parcelize")
-    // alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.parcelize) apply false // id("kotlin-parcelize")
     // https://stackoverflow.com/a/72508037/1685062
     // alias(libs.plugins.navigation) apply false
@@ -156,7 +155,6 @@ allprojects {
 
 subprojects {
     apply(plugin = rootProject.libs.plugins.kotlin.android.get().pluginId)
-    apply(plugin = rootProject.libs.plugins.kotlin.kapt.get().pluginId)
 
     plugins.withId(rootProject.libs.plugins.android.application.get().pluginId) {
         // println("displayName=$displayName, name=$name, group=$group")

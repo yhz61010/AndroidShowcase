@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.parcelize) // id("kotlin-parcelize")
 
+    // Add ksp only if you use ksp() in dependencies {}
+    // alias(libs.plugins.ksp)
+
     alias(libs.plugins.android.junit5)
 
     alias(libs.plugins.sonarqube)
@@ -15,7 +18,6 @@ android {
     namespace = "com.leovp.module.common"
 
     // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
-    @Suppress ("UnstableApiUsage")
     buildFeatures {
         // dataBinding = true
         // viewBinding is enabled by default. Check [build.gradle.kts] in the root folder of project.

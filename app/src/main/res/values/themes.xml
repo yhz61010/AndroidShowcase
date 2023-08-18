@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Allows us to override platform level specific attributes in their respective values-vXX folder. -->
     <style name="app_Platform.Theme.AndroidShowcase" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="windowActionBar">false</item>
@@ -11,8 +11,10 @@
         <!-- There color will be override when the custom theme is activated. -->
         <item name="android:statusBarColor">@color/app_windowBackground</item>
         <item name="android:navigationBarColor">@color/app_windowBackground</item>
+
         <!-- Prevent the issue of briefly displaying a white status bar text when launching the application. -->
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">true</item> <!-- tools:targetApi="23" -->
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
 
         <!-- Prevent the issue of briefly displaying a white background color when launching the application. -->
         <item name="android:colorBackground">@color/app_windowBackground</item>
