@@ -34,26 +34,26 @@ versionCode = "1"
 # @keep
 versionName = "1.0.0"
 
-leo-version = "5.12.19"
+leo-version = "5.12.22"
 
 #===================
 #===== Compile =====
 #===================
-agp = "8.1.0"
-kotlin = "1.9.0"
-ksp = "1.9.0-1.0.13"
+agp = "8.1.1"
+kotlin = "1.9.10"
+ksp = "1.9.10-1.0.13"
 
 # Compose Compiler & Kotlin versions
 # https://androidx.dev/storage/compose-compiler/repository
 # https://developer.android.com/jetpack/androidx/releases/compose-kotlin?hl=zh-cn
-compose-compiler = "1.5.0"
+compose-compiler = "1.5.3"
 
 #=================================
 #===== Android dependencies ======
 #=================================
 compose-bom = "2023.08.00"
 compose-activity = "1.7.2"
-compose-navigation = "2.7.0"
+compose-navigation = "2.7.1"
 accompanist = "0.30.1"
 lottie-compose = "6.1.0"
 lifecycle-compose = "2.6.1"
@@ -76,7 +76,7 @@ jacoco = "0.8.8"
 sonarqube = "4.2.0.3129"
 mars-xlog = "1.2.6"
 karn-notify = "1.4.0"
-xx-permissions = "18.2"
+xx-permissions = "18.3"
 net = "3.6.1"
 coil = "2.4.0"
 
@@ -91,7 +91,7 @@ androidx-test-monitor = "1.6.1"
 androidx-test-uiautomator = "2.2.0"
 espresso-core = "3.5.1"
 kluent = "1.73"
-mockk = "1.13.5"
+mockk = "1.13.7"
 arch = "2.2.0"
 powermock-version = "2.0.9"
 robolectric-version = "4.10.3"

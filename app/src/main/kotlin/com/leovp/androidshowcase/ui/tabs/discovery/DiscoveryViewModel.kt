@@ -30,8 +30,10 @@ data class DiscoveryUiState(
 )
 
 class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
-    // UI state exposed to the UI
+
+    // Backing property to avoid state updates from other classes
     private val _uiState = MutableStateFlow(DiscoveryUiState(loading = true))
+    // UI state exposed to the UI
     val uiState: StateFlow<DiscoveryUiState> = _uiState.asStateFlow()
 
     init {
