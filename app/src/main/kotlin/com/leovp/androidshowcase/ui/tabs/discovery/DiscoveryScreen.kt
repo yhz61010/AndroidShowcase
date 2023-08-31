@@ -78,8 +78,8 @@ import com.leovp.androidshowcase.ui.theme.mark_quality_border
 import com.leovp.androidshowcase.ui.theme.mark_quality_text_color
 import com.leovp.androidshowcase.ui.theme.mark_vip_border
 import com.leovp.androidshowcase.ui.theme.mark_vip_text_color
-import com.leovp.androidshowcase.util.floorMod
-import com.leovp.androidshowcase.util.viewModelProviderFactoryOf
+import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
+import com.leovp.module.common.utils.floorMod
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -94,7 +94,9 @@ import kotlinx.coroutines.launch
 fun DiscoveryScreen(
     scrollState: LazyListState,
     modifier: Modifier = Modifier,
-    viewModel: DiscoveryVM = viewModel(factory = viewModelProviderFactoryOf { DiscoveryVM(FakeDI.discoveryRepository) })
+    viewModel: DiscoveryVM = viewModel(
+        factory = viewModelProviderFactoryOf { DiscoveryVM(FakeDI.discoveryRepository) },
+    ),
 ) {
     val ctx = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -130,20 +132,14 @@ fun DiscoveryScreenContentHeadItem() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "华语精选",
-            style = MaterialTheme.typography.bodyLarge.copy(
+            text = "华语精选", style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Black
             )
         )
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            modifier = Modifier.requiredSize(24.dp),
-            onClick = { }
-        ) {
+        IconButton(modifier = Modifier.requiredSize(24.dp), onClick = { }) {
             Icon(
-                imageVector = Icons.Default.MoreVert,
-                tint = Color.Gray,
-                contentDescription = null
+                imageVector = Icons.Default.MoreVert, tint = Color.Gray, contentDescription = null
             )
         }
     }
@@ -156,8 +152,7 @@ fun EverydayRecommendsHeaderItem() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "每日推荐",
-            style = MaterialTheme.typography.bodyLarge.copy(
+            text = "每日推荐", style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Black
             )
         )
@@ -169,21 +164,18 @@ fun EverydayRecommendsHeaderItem() {
             color = Color.Gray,
             fontWeight = FontWeight.Bold
         )
-        IconButton(
-            modifier = Modifier.requiredSize(24.dp),
-            onClick = { }
-        ) {
+        IconButton(modifier = Modifier.requiredSize(24.dp), onClick = { }) {
             Icon(
-                imageVector = Icons.Default.MoreVert,
-                tint = Color.Gray,
-                contentDescription = null
+                imageVector = Icons.Default.MoreVert, tint = Color.Gray, contentDescription = null
             )
         }
     }
 }
 
 @Composable
-fun EverydayRecommendsItem(list: List<EverydayItemModel>, onItemClick: (EverydayItemModel) -> Unit) {
+fun EverydayRecommendsItem(
+    list: List<EverydayItemModel>, onItemClick: (EverydayItemModel) -> Unit
+) {
     val cardWidth = 120.dp
 
     LazyRow(
@@ -193,18 +185,14 @@ fun EverydayRecommendsItem(list: List<EverydayItemModel>, onItemClick: (Everyday
     ) {
         items(list) { data ->
             Column {
-                Card(
-                    modifier = Modifier
-                        .clickable { onItemClick(data) }
-                        .size(cardWidth),
-                    shape = MaterialTheme.shapes.large
-                ) {
+                Card(modifier = Modifier
+                    .clickable { onItemClick(data) }
+                    .size(cardWidth),
+                     shape = MaterialTheme.shapes.large) {
                     Box {
                         AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(data.thumbnail)
-                                .crossfade(true)
-                                .build(),
+                            model = ImageRequest.Builder(LocalContext.current).data(data.thumbnail)
+                                .crossfade(true).build(),
                             contentDescription = null,
                             placeholder = ColorPainter(Color.LightGray),
                             contentScale = ContentScale.Crop,
@@ -256,33 +244,29 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = { pageCount }
-    )
+        pageCount = { pageCount })
 
     val pageCountIndex by remember { derivedStateOf { pagerState.currentPage.floorMod(pageCount) } }
 
     LaunchedEffect(key1 = pagerState.settledPage) {
         launch {
             delay(3000L)
-            val target = if (pagerState.currentPage < pageCount - 1) pagerState.currentPage + 1 else 0
+            val target =
+                if (pagerState.currentPage < pageCount - 1) pagerState.currentPage + 1 else 0
 
             pagerState.animateScrollToPage(
-                page = target,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    easing = FastOutSlowInEasing
+                page = target, animationSpec = tween(
+                    durationMillis = 500, easing = FastOutSlowInEasing
                 )
             )
         }
     }
 
     Box(modifier = Modifier.padding(bottom = 6.dp)) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxWidth(),
-            beyondBoundsPageCount = 1,
-            key = { index -> list[index].id }
-        ) { page ->
+        HorizontalPager(state = pagerState,
+                        modifier = Modifier.fillMaxWidth(),
+                        beyondBoundsPageCount = 1,
+                        key = { index -> list[index].id }) { page ->
             Card(
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -292,10 +276,8 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
                     .heightIn(min = 140.dp),
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(list[page].thumbnail)
-                        .crossfade(true)
-                        .build(),
+                    model = ImageRequest.Builder(LocalContext.current).data(list[page].thumbnail)
+                        .crossfade(true).build(),
                     contentDescription = null,
                     placeholder = ColorPainter(Color.LightGray),
                     contentScale = ContentScale.Crop,
@@ -308,8 +290,7 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 26.dp, vertical = 10.dp)
-                .align(Alignment.BottomStart),
-            verticalAlignment = Alignment.CenterVertically
+                .align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically
         ) {
             repeat(pageCount) { index ->
                 Box(
@@ -331,101 +312,96 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
 @Composable
 fun DiscoveryScreenContentItems(data: SimpleListItemModel) {
     val context = LocalContext.current
-    ListItem(
-        modifier = Modifier.clickable { context.toast("You clicked item ${data.title}") },
-        headlineContent = {
-            Text(
-                text = data.title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        supportingContent = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                val smallRounded = MaterialTheme.shapes.small
-                val borderWidth = 0.4.dp
-                val borderModifier = when (data.type) {
-                    MarkType.Hot -> Modifier.border(
-                        width = borderWidth,
-                        color = mark_hot_bg,
-                        shape = smallRounded
-                    )
+    ListItem(modifier = Modifier.clickable { context.toast("You clicked item ${data.title}") },
+             headlineContent = {
+                 Text(
+                     text = data.title,
+                     style = MaterialTheme.typography.titleMedium,
+                     color = MaterialTheme.colorScheme.secondary,
+                     maxLines = 1,
+                     overflow = TextOverflow.Ellipsis
+                 )
+             },
+             supportingContent = {
+                 Row(verticalAlignment = Alignment.CenterVertically) {
+                     val smallRounded = MaterialTheme.shapes.small
+                     val borderWidth = 0.4.dp
+                     val borderModifier = when (data.type) {
+                         MarkType.Hot -> Modifier.border(
+                             width = borderWidth, color = mark_hot_bg, shape = smallRounded
+                         )
 
-                    MarkType.Special -> Modifier.border(
-                        width = borderWidth,
-                        color = mark_quality_border,
-                        shape = smallRounded
-                    )
+                         MarkType.Special -> Modifier.border(
+                             width = borderWidth, color = mark_quality_border, shape = smallRounded
+                         )
 
-                    MarkType.Vip -> Modifier.border(
-                        width = borderWidth,
-                        color = mark_vip_border,
-                        shape = smallRounded
-                    )
-                }
-                val backgroundModifier = when (data.type) {
-                    MarkType.Hot -> Modifier.background(color = mark_hot_bg, shape = smallRounded)
-                    else -> Modifier
-                }
-                val paddingModifier = when (data.type) {
-                    MarkType.Vip -> Modifier.padding(horizontal = 2.dp)
-                    MarkType.Hot -> Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
-                    else -> Modifier.padding(horizontal = 4.dp)
-                }
-                val fontFamily = when (data.type) {
-                    MarkType.Vip -> FontFamily.SansSerif
-                    else -> null
-                }
-                val fontSize = when (data.type) {
-                    MarkType.Vip -> TextUnit(8.0f, TextUnitType.Sp)
-                    else -> TextUnit(9.0f, TextUnitType.Sp)
-                }
-                val textColor = when (data.type) {
-                    MarkType.Hot -> mark_hot_text_color
-                    MarkType.Special -> mark_quality_text_color
-                    MarkType.Vip -> mark_vip_text_color
-                }
-                Text(
-                    modifier = Modifier
-                        .then(borderModifier)
-                        .then(backgroundModifier)
-                        .then(paddingModifier),
-                    text = data.markText,
-                    color = textColor,
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.Black,
-                    fontFamily = fontFamily
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = data.subTitle,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.Gray,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        },
-        trailingContent = {
-            if (data.showTrailIcon) {
-                Icon(
-                    modifier = Modifier.alpha(0.6f),
-                    imageVector = Icons.Outlined.SmartDisplay,
-                    contentDescription = null,
-                    tint = Color.DarkGray
-                )
-            }
-        },
-        leadingContent = {
-            ListItemImage(
-                imageUrl = data.thumbnail,
-                contentDescription = null,
-                modifier = Modifier.size(56.dp)
-            )
-        }
-    )
+                         MarkType.Vip -> Modifier.border(
+                             width = borderWidth, color = mark_vip_border, shape = smallRounded
+                         )
+                     }
+                     val backgroundModifier = when (data.type) {
+                         MarkType.Hot -> Modifier.background(
+                             color = mark_hot_bg, shape = smallRounded
+                         )
+
+                         else -> Modifier
+                     }
+                     val paddingModifier = when (data.type) {
+                         MarkType.Vip -> Modifier.padding(horizontal = 2.dp)
+                         MarkType.Hot -> Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                         else -> Modifier.padding(horizontal = 4.dp)
+                     }
+                     val fontFamily = when (data.type) {
+                         MarkType.Vip -> FontFamily.SansSerif
+                         else -> null
+                     }
+                     val fontSize = when (data.type) {
+                         MarkType.Vip -> TextUnit(8.0f, TextUnitType.Sp)
+                         else -> TextUnit(9.0f, TextUnitType.Sp)
+                     }
+                     val textColor = when (data.type) {
+                         MarkType.Hot -> mark_hot_text_color
+                         MarkType.Special -> mark_quality_text_color
+                         MarkType.Vip -> mark_vip_text_color
+                     }
+                     Text(
+                         modifier = Modifier
+                             .then(borderModifier)
+                             .then(backgroundModifier)
+                             .then(paddingModifier),
+                         text = data.markText,
+                         color = textColor,
+                         fontSize = fontSize,
+                         fontWeight = FontWeight.Black,
+                         fontFamily = fontFamily
+                     )
+                     Spacer(modifier = Modifier.width(4.dp))
+                     Text(
+                         text = data.subTitle,
+                         style = MaterialTheme.typography.labelMedium,
+                         color = Color.Gray,
+                         maxLines = 1,
+                         overflow = TextOverflow.Ellipsis
+                     )
+                 }
+             },
+             trailingContent = {
+                 if (data.showTrailIcon) {
+                     Icon(
+                         modifier = Modifier.alpha(0.6f),
+                         imageVector = Icons.Outlined.SmartDisplay,
+                         contentDescription = null,
+                         tint = Color.DarkGray
+                     )
+                 }
+             },
+             leadingContent = {
+                 ListItemImage(
+                     imageUrl = data.thumbnail,
+                     contentDescription = null,
+                     modifier = Modifier.size(56.dp)
+                 )
+             })
 }
 
 @Composable
@@ -441,9 +417,7 @@ fun ListItemImage(
         shadowElevation = elevation,
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .crossfade(true)
+            model = ImageRequest.Builder(LocalContext.current).data(imageUrl).crossfade(true)
                 .build(),
             contentDescription = contentDescription,
             placeholder = ColorPainter(Color.LightGray),

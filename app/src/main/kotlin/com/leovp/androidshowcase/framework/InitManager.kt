@@ -10,6 +10,7 @@ import com.leovp.androidshowcase.R
 import com.leovp.log.LogContext
 import com.leovp.module.common.CrashHandler
 import com.leovp.module.common.GlobalConst
+import com.leovp.module.common.log.MarsXLog
 import com.leovp.pref.LPref
 import com.leovp.pref.PrefContext
 import io.karn.notify.Notify

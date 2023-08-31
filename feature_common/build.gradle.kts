@@ -23,8 +23,17 @@ android {
         // viewBinding is enabled by default. Check [build.gradle.kts] in the root folder of project.
         // viewBinding = true
         // aidl = true
+
+        // Enable compose feature
+        compose = true
+
         // Add this line as needed
         buildConfig = true
+    }
+
+    // Compose options setting
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     defaultConfig {
@@ -55,16 +64,11 @@ android {
 
 dependencies {
     implementation(libs.bundles.kotlin)
-    // implementation(libs.bundles.androidx.main)
-    // implementation(libs.bundles.navigation)
-    // implementation(libs.bundles.lifecycle.full)
-
-    // ----------
 
     api(libs.leo.androidbase)
     api(libs.leo.pref)
     api(libs.leo.log)
-    api(libs.leo.floatview)
+    // api(libs.leo.floatview)
     api(libs.leo.lib.json)
     api(libs.mars.xlog)
     api(libs.karn.notify)

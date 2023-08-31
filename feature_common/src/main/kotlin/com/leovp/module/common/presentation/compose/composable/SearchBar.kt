@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.util.ui
+package com.leovp.module.common.presentation.compose.composable
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -29,9 +29,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.leovp.androidshowcase.ui.theme.AppTheme
-import com.leovp.androidshowcase.ui.theme.discovery_search_bar_end_color
-import com.leovp.androidshowcase.ui.theme.discovery_search_bar_start_color
+import com.leovp.module.common.presentation.compose.ext.noRippleClickable
 
 /**
  * Author: Michael Leo
@@ -44,7 +42,7 @@ private val iconSize = 19.dp
 fun SearchBar(
     modifier: Modifier = Modifier,
     border: BorderStroke? = null,
-    backgroundColor: Color ? = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color? = MaterialTheme.colorScheme.surface,
     backgroundBrush: Brush? = null,
     onClick: () -> Unit,
     onActionClick: () -> Unit
@@ -103,11 +101,14 @@ fun SearchBar(
     }
 }
 
-internal val defaultLinearGradient: Brush
+private val discoverySearchBarStartColor = Color(0x20EE579C)
+private val discoverySearchBarEndColor = Color(0x204DABE5)
+
+val defaultLinearGradient: Brush
     get() = Brush.linearGradient(
         listOf(
-            discovery_search_bar_start_color,
-            discovery_search_bar_end_color,
+            discoverySearchBarStartColor,
+            discoverySearchBarEndColor,
         ),
         start = Offset(Float.POSITIVE_INFINITY, 0f),
         end = Offset(0f, Float.POSITIVE_INFINITY),
@@ -118,15 +119,13 @@ internal val defaultLinearGradient: Brush
 @Preview("Searchbar (dark)", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewSearchBar() {
-    AppTheme {
-        SearchBar(
-            border = BorderStroke(
-                width = 0.5.dp,
-                brush = defaultLinearGradient
-            ),
-            backgroundBrush = defaultLinearGradient,
-            onClick = {},
-            onActionClick = {}
-        )
-    }
+    SearchBar(
+        border = BorderStroke(
+            width = 0.5.dp,
+            brush = defaultLinearGradient
+        ),
+        backgroundBrush = defaultLinearGradient,
+        onClick = {},
+        onActionClick = {}
+    )
 }

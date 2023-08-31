@@ -11,9 +11,6 @@ val discovery_top_section_middle2_color = Color(0x10A262AB)
 val discovery_top_section_middle3_color = Color(0x05A262AB)
 val discovery_top_section_end_color = Color(0x00FFFFFF)
 
-val discovery_search_bar_start_color = Color(0x20EE579C)
-val discovery_search_bar_end_color = Color(0x204DABE5)
-
 val immersive_sys_ui = Color(0x338B5000)
 
 val mark_hot_text_color = Color(0xffff0000)

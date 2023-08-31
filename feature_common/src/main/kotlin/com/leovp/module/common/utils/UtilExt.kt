@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.util
+package com.leovp.module.common.utils
 
 /**
  * Author: Michael Leo

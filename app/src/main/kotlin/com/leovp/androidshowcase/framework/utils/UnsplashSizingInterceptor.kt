@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.leovp.androidshowcase.util
+package com.leovp.androidshowcase.framework.utils
 
 import coil.intercept.Interceptor
 import coil.request.ImageResult

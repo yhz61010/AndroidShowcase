@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.util.ui
+package com.leovp.module.common.presentation.compose.ext
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

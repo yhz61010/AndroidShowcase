@@ -1,6 +1,6 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.leovp.androidshowcase.framework
+package com.leovp.module.common.log
 
 import android.content.Context
 import com.leovp.log.base.ILog

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.leovp.androidshowcase.util
+package com.leovp.module.common.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
