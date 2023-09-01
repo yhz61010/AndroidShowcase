@@ -33,6 +33,7 @@ class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
 
     // Backing property to avoid state updates from other classes
     private val _uiState = MutableStateFlow(DiscoveryUiState(loading = true))
+
     // UI state exposed to the UI
     val uiState: StateFlow<DiscoveryUiState> = _uiState.asStateFlow()
 
@@ -51,6 +52,7 @@ class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
             val personalRecommends = personalRecommendsDeferred.await().successOr(emptyList())
             val carouselRecommends = carouselRecommendsDeferred.await().successOr(emptyList())
             val everydayRecommends = everydayRecommendsDeferred.await().successOr(emptyList())
+
             _uiState.update {
                 it.copy(
                     loading = false,
@@ -61,18 +63,4 @@ class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
             }
         }
     }
-
-    /**
-     * Factory for DiscoveryScreenVM that takes DiscoveryRepository as a dependency
-     */
-    // companion object {
-    //     fun provideFactory(
-    //         repository: DiscoveryRepository,
-    //     ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-    //         @Suppress("UNCHECKED_CAST")
-    //         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    //             return DiscoveryScreenVM(repository) as T
-    //         }
-    //     }
-    // }
 }

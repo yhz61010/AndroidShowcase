@@ -1,6 +1,6 @@
 package com.leovp.androidshowcase.ui.tabs.discovery.data
 
-import com.leovp.module.common.RequestResult
+import com.leovp.module.common.Result
 
 /**
  * Author: Michael Leo
@@ -8,7 +8,7 @@ import com.leovp.module.common.RequestResult
  */
 
 interface DiscoveryRepository {
-    suspend fun getPersonalRecommends(): RequestResult<List<SimpleListItemModel>>
-    suspend fun getCarouselRecommends(): RequestResult<List<CarouselItemModel>>
-    suspend fun getEverydayRecommends(): RequestResult<List<EverydayItemModel>>
+    suspend fun getPersonalRecommends(): Result<List<SimpleListItemModel>>
+    suspend fun getCarouselRecommends(): Result<List<CarouselItemModel>>
+    suspend fun getEverydayRecommends(): Result<List<EverydayItemModel>>
 }

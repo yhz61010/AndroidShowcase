@@ -111,22 +111,22 @@ fun DiscoveryScreen(
             }
         }
         item {
-            EverydayRecommendsHeaderItem()
-            EverydayRecommendsItem(uiState.everydayRecommends) { item ->
+            EverydayRecommendsHeader()
+            EverydayRecommendsContent(uiState.everydayRecommends) { item ->
                 ctx.toast("Everyday recommend item: $item")
             }
         }
         item {
-            DiscoveryScreenContentHeadItem()
+            MusicContentHeader()
         }
         items(uiState.personalRecommends) { data ->
-            DiscoveryScreenContentItems(data)
+            MusicContentItem(data)
         }
     }
 }
 
 @Composable
-fun DiscoveryScreenContentHeadItem() {
+fun MusicContentHeader() {
     Row(
         modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -146,7 +146,7 @@ fun DiscoveryScreenContentHeadItem() {
 }
 
 @Composable
-fun EverydayRecommendsHeaderItem() {
+fun EverydayRecommendsHeader() {
     Row(
         modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -173,7 +173,7 @@ fun EverydayRecommendsHeaderItem() {
 }
 
 @Composable
-fun EverydayRecommendsItem(
+fun EverydayRecommendsContent(
     list: List<EverydayItemModel>, onItemClick: (EverydayItemModel) -> Unit
 ) {
     val cardWidth = 120.dp
@@ -244,29 +244,37 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = { pageCount })
+        pageCount = { pageCount },
+    )
 
     val pageCountIndex by remember { derivedStateOf { pagerState.currentPage.floorMod(pageCount) } }
 
     LaunchedEffect(key1 = pagerState.settledPage) {
         launch {
             delay(3000L)
-            val target =
-                if (pagerState.currentPage < pageCount - 1) pagerState.currentPage + 1 else 0
+            val target = if (pagerState.currentPage < pageCount - 1) {
+                pagerState.currentPage + 1
+            } else {
+                0
+            }
 
             pagerState.animateScrollToPage(
-                page = target, animationSpec = tween(
-                    durationMillis = 500, easing = FastOutSlowInEasing
-                )
+                page = target,
+                animationSpec = tween(
+                    durationMillis = 500,
+                    easing = FastOutSlowInEasing,
+                ),
             )
         }
     }
 
     Box(modifier = Modifier.padding(bottom = 6.dp)) {
-        HorizontalPager(state = pagerState,
-                        modifier = Modifier.fillMaxWidth(),
-                        beyondBoundsPageCount = 1,
-                        key = { index -> list[index].id }) { page ->
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth(),
+            beyondBoundsPageCount = 1,
+            key = { index -> list[index].id },
+        ) { page ->
             Card(
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -290,7 +298,8 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 26.dp, vertical = 10.dp)
-                .align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically
+                .align(Alignment.BottomStart),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             repeat(pageCount) { index ->
                 Box(
@@ -298,10 +307,16 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
                         .padding(start = 2.dp, end = 2.dp)
                         .width(if (index == pageCountIndex) 12.dp else 4.dp)
                         .height(4.dp)
-                        .clip(if (index == pageCountIndex) RoundedCornerShape(2.dp) else CircleShape)
+                        .clip(
+                            if (index == pageCountIndex) RoundedCornerShape(2.dp) else CircleShape
+                        )
                         .background(
                             color = if (index == pageCountIndex) Color.White else Color.LightGray,
-                            // shape = if (index == pageCountIndex) RoundedCornerShape(2.dp) else CircleShape
+                            // shape = if (index == pageCountIndex) {
+                            //     RoundedCornerShape(2.dp)
+                            // } else {
+                            //     CircleShape
+                            // }
                         )
                 )
             }
@@ -310,98 +325,100 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
 }
 
 @Composable
-fun DiscoveryScreenContentItems(data: SimpleListItemModel) {
+fun MusicContentItem(data: SimpleListItemModel) {
     val context = LocalContext.current
-    ListItem(modifier = Modifier.clickable { context.toast("You clicked item ${data.title}") },
-             headlineContent = {
-                 Text(
-                     text = data.title,
-                     style = MaterialTheme.typography.titleMedium,
-                     color = MaterialTheme.colorScheme.secondary,
-                     maxLines = 1,
-                     overflow = TextOverflow.Ellipsis
-                 )
-             },
-             supportingContent = {
-                 Row(verticalAlignment = Alignment.CenterVertically) {
-                     val smallRounded = MaterialTheme.shapes.small
-                     val borderWidth = 0.4.dp
-                     val borderModifier = when (data.type) {
-                         MarkType.Hot -> Modifier.border(
-                             width = borderWidth, color = mark_hot_bg, shape = smallRounded
-                         )
+    ListItem(
+        modifier = Modifier.clickable { context.toast("You clicked item ${data.title}") },
+        headlineContent = {
+            Text(
+                text = data.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        supportingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                val smallRounded = MaterialTheme.shapes.small
+                val borderWidth = 0.4.dp
+                val borderModifier = when (data.type) {
+                    MarkType.Hot -> Modifier.border(
+                        width = borderWidth, color = mark_hot_bg, shape = smallRounded
+                    )
 
-                         MarkType.Special -> Modifier.border(
-                             width = borderWidth, color = mark_quality_border, shape = smallRounded
-                         )
+                    MarkType.Special -> Modifier.border(
+                        width = borderWidth, color = mark_quality_border, shape = smallRounded
+                    )
 
-                         MarkType.Vip -> Modifier.border(
-                             width = borderWidth, color = mark_vip_border, shape = smallRounded
-                         )
-                     }
-                     val backgroundModifier = when (data.type) {
-                         MarkType.Hot -> Modifier.background(
-                             color = mark_hot_bg, shape = smallRounded
-                         )
+                    MarkType.Vip -> Modifier.border(
+                        width = borderWidth, color = mark_vip_border, shape = smallRounded
+                    )
+                }
+                val backgroundModifier = when (data.type) {
+                    MarkType.Hot -> Modifier.background(
+                        color = mark_hot_bg, shape = smallRounded
+                    )
 
-                         else -> Modifier
-                     }
-                     val paddingModifier = when (data.type) {
-                         MarkType.Vip -> Modifier.padding(horizontal = 2.dp)
-                         MarkType.Hot -> Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
-                         else -> Modifier.padding(horizontal = 4.dp)
-                     }
-                     val fontFamily = when (data.type) {
-                         MarkType.Vip -> FontFamily.SansSerif
-                         else -> null
-                     }
-                     val fontSize = when (data.type) {
-                         MarkType.Vip -> TextUnit(8.0f, TextUnitType.Sp)
-                         else -> TextUnit(9.0f, TextUnitType.Sp)
-                     }
-                     val textColor = when (data.type) {
-                         MarkType.Hot -> mark_hot_text_color
-                         MarkType.Special -> mark_quality_text_color
-                         MarkType.Vip -> mark_vip_text_color
-                     }
-                     Text(
-                         modifier = Modifier
-                             .then(borderModifier)
-                             .then(backgroundModifier)
-                             .then(paddingModifier),
-                         text = data.markText,
-                         color = textColor,
-                         fontSize = fontSize,
-                         fontWeight = FontWeight.Black,
-                         fontFamily = fontFamily
-                     )
-                     Spacer(modifier = Modifier.width(4.dp))
-                     Text(
-                         text = data.subTitle,
-                         style = MaterialTheme.typography.labelMedium,
-                         color = Color.Gray,
-                         maxLines = 1,
-                         overflow = TextOverflow.Ellipsis
-                     )
-                 }
-             },
-             trailingContent = {
-                 if (data.showTrailIcon) {
-                     Icon(
-                         modifier = Modifier.alpha(0.6f),
-                         imageVector = Icons.Outlined.SmartDisplay,
-                         contentDescription = null,
-                         tint = Color.DarkGray
-                     )
-                 }
-             },
-             leadingContent = {
-                 ListItemImage(
-                     imageUrl = data.thumbnail,
-                     contentDescription = null,
-                     modifier = Modifier.size(56.dp)
-                 )
-             })
+                    else -> Modifier
+                }
+                val paddingModifier = when (data.type) {
+                    MarkType.Vip -> Modifier.padding(horizontal = 2.dp)
+                    MarkType.Hot -> Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                    else -> Modifier.padding(horizontal = 4.dp)
+                }
+                val fontFamily = when (data.type) {
+                    MarkType.Vip -> FontFamily.SansSerif
+                    else -> null
+                }
+                val fontSize = when (data.type) {
+                    MarkType.Vip -> TextUnit(8.0f, TextUnitType.Sp)
+                    else -> TextUnit(9.0f, TextUnitType.Sp)
+                }
+                val textColor = when (data.type) {
+                    MarkType.Hot -> mark_hot_text_color
+                    MarkType.Special -> mark_quality_text_color
+                    MarkType.Vip -> mark_vip_text_color
+                }
+                Text(
+                    modifier = Modifier
+                        .then(borderModifier)
+                        .then(backgroundModifier)
+                        .then(paddingModifier),
+                    text = data.markText,
+                    color = textColor,
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = fontFamily
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = data.subTitle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
+        trailingContent = {
+            if (data.showTrailIcon) {
+                Icon(
+                    modifier = Modifier.alpha(0.6f),
+                    imageVector = Icons.Outlined.SmartDisplay,
+                    contentDescription = null,
+                    tint = Color.DarkGray
+                )
+            }
+        },
+        leadingContent = {
+            ListItemImage(
+                imageUrl = data.thumbnail,
+                contentDescription = null,
+                modifier = Modifier.size(56.dp)
+            )
+        },
+    )
 }
 
 @Composable

@@ -1,21 +1,25 @@
 package com.leovp.androidshowcase.ui.tabs.discovery.data
 
-import com.leovp.module.common.RequestResult
+import com.leovp.module.common.Result
 
 /**
  * Author: Michael Leo
  * Date: 2023/7/25 13:14
  */
-class FakeDiscoveryRepository(private val dataSource: DiscoveryLocalDataSource) : DiscoveryRepository {
-    override suspend fun getPersonalRecommends(): RequestResult<List<SimpleListItemModel>> {
-        return RequestResult.Success(dataSource.discoveryPersonalRecommendedMusicList)
+class FakeDiscoveryRepository(
+    private val dataSource: DiscoveryLocalDataSource
+) : DiscoveryRepository {
+
+    override suspend fun getPersonalRecommends(): Result<List<SimpleListItemModel>> {
+        return Result.Success(dataSource.discoveryPersonalRecommendedMusicList)
     }
 
-    override suspend fun getCarouselRecommends(): RequestResult<List<CarouselItemModel>> {
-        return RequestResult.Success(dataSource.discoveryCarouselRecommendedList)
+    override suspend fun getCarouselRecommends(): Result<List<CarouselItemModel>> {
+        return Result.Success(dataSource.discoveryCarouselRecommendedList)
     }
 
-    override suspend fun getEverydayRecommends(): RequestResult<List<EverydayItemModel>> {
-        return RequestResult.Success(dataSource.discoveryEverydayRecommendedList)
+    override suspend fun getEverydayRecommends(): Result<List<EverydayItemModel>> {
+        return Result.Success(dataSource.discoveryEverydayRecommendedList)
     }
+
 }
