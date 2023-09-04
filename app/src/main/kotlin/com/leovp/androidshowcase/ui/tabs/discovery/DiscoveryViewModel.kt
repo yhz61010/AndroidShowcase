@@ -1,5 +1,6 @@
 package com.leovp.androidshowcase.ui.tabs.discovery
 
+import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leovp.androidshowcase.ui.tabs.discovery.data.CarouselItemModel
@@ -20,20 +21,11 @@ import kotlinx.coroutines.launch
  * Date: 2023/7/24 15:12
  */
 
+class DiscoveryViewModel(private val repository: DiscoveryRepository) : ViewModel() {
 
-private const val TAG = "DisVM"
-
-/**
- * UI state for the Discovery screen
- */
-data class DiscoveryUiState(
-    val personalRecommends: List<SimpleListItemModel> = emptyList(),
-    val carouselRecommends: List<CarouselItemModel> = emptyList(),
-    val everydayRecommends: List<EverydayItemModel> = emptyList(),
-    val loading: Boolean = false
-)
-
-class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
+    companion object {
+        private const val TAG = "DisVM"
+    }
 
     // Backing property to avoid state updates from other classes
     private val _uiState = MutableStateFlow(DiscoveryUiState(loading = true))
@@ -46,7 +38,7 @@ class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
     }
 
     fun refreshAll() {
-        LogContext.log.i(TAG, "Discovery -> refreshAll()")
+        LogContext.log.i(Companion.TAG, "Discovery -> refreshAll()")
         _uiState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
@@ -69,3 +61,14 @@ class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
         }
     }
 }
+
+/**
+ * UI state for the Discovery screen
+ */
+@Keep
+data class DiscoveryUiState(
+    val personalRecommends: List<SimpleListItemModel> = emptyList(),
+    val carouselRecommends: List<CarouselItemModel> = emptyList(),
+    val everydayRecommends: List<EverydayItemModel> = emptyList(),
+    val loading: Boolean = false
+)

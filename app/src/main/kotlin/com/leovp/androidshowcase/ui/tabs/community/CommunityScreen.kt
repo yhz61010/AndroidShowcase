@@ -14,7 +14,10 @@ import androidx.compose.ui.tooling.preview.Preview
  */
 
 @Composable
-fun CommunityScreen(modifier: Modifier = Modifier) {
+fun CommunityScreen(
+    onRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Surface(modifier = modifier.fillMaxSize()) {
         Column(modifier) {
             Text(text = "Community Screen")
@@ -25,5 +28,5 @@ fun CommunityScreen(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun PreviewCommunityScreen() {
-    CommunityScreen()
+    CommunityScreen(onRefresh = {})
 }

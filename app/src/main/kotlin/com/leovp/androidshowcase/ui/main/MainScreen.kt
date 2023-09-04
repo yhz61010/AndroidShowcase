@@ -63,8 +63,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
+import com.leovp.androidshowcase.framework.FakeDI
 import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
 import com.leovp.androidshowcase.ui.tabs.discovery.DiscoveryScreen
 import com.leovp.androidshowcase.ui.tabs.my.MyScreen
@@ -73,11 +76,13 @@ import com.leovp.androidshowcase.ui.theme.discovery_top_section_end_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle2_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle3_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_start_color
-import com.leovp.module.common.utils.toBadgeText
+import com.leovp.log.LogContext
 import com.leovp.module.common.presentation.compose.composable.SearchBar
 import com.leovp.module.common.presentation.compose.composable.defaultLinearGradient
-import com.leovp.log.LogContext
 import com.leovp.module.common.presentation.compose.composable.rememberSizeAwareDrawerState
+import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
+import com.leovp.module.common.utils.previewInitLog
+import com.leovp.module.common.utils.toBadgeText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -94,9 +99,13 @@ private const val TAB_SWITCH_ANIM_DURATION = 300
 fun MainScreen(
     widthSize: WindowWidthSizeClass,
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel = viewModel(
+        factory = viewModelProviderFactoryOf { MainViewModel(FakeDI.mainUnreadRepository) },
+    ),
 ) {
     val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
     val isExpandedScreen = widthSize == WindowWidthSizeClass.Expanded
@@ -132,6 +141,7 @@ fun MainScreen(
             Scaffold(modifier = modifier, topBar = {
                 HomeTopAppBar(
                     modifier = modifier,
+                    unread = uiState.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
                     onNavigationClick = { coroutineScope.launch { sizeAwareDrawerState.open() } },
                     onActionClick = {
                         context.toast("Recording is not yet implemented.")
@@ -140,10 +150,16 @@ fun MainScreen(
                     HomeTopAppBarContent(pagerState, scrolled)
                 }
             }, bottomBar = {
-                CustomBottomBar(pagerState, coroutineScope)
+                CustomBottomBar(pagerState, coroutineScope, uiState.unreadList)
             }) { contentPadding ->
                 val newModifier = modifier.padding(contentPadding)
-                MainScreenContent(newModifier, pagerState, scrollState, pagerScreenValues)
+                MainScreenContent(
+                    modifier = newModifier,
+                    onRefresh = { viewModel.refreshAll() },
+                    pagerState = pagerState,
+                    scrollState = scrollState,
+                    pagerScreenValues = pagerScreenValues,
+                )
             } // end of Scaffold
 
             LinearGradientBox(scrollState)
@@ -176,13 +192,19 @@ fun HomeTopAppBarContent(pagerState: PagerState, scrolled: Boolean) {
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun CustomBottomBar(pagerState: PagerState, coroutineScope: CoroutineScope) {
+fun CustomBottomBar(
+    pagerState: PagerState,
+    coroutineScope: CoroutineScope,
+    unreadList: List<UnreadModel> = emptyList()
+) {
     NavigationBar {
         AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
+            val badgeNum =
+                unreadList.firstOrNull { it.key == bottomItemData.screen.route }?.value ?: 0
             NavigationBarItem(
                 icon = {
-                    if (bottomItemData.unread > 0) {
-                        val badgeNumber = bottomItemData.unread.toBadgeText(999)
+                    if (badgeNum > 0) {
+                        val badgeNumber = badgeNum.toBadgeText(999)
                         val unreadContentDescription = stringResource(
                             R.string.app_tab_unread_count, badgeNumber
                         )
@@ -228,6 +250,7 @@ fun MainScreenContent(
     pagerState: PagerState,
     scrollState: LazyListState,
     pagerScreenValues: Array<AppBottomNavigationItems>,
+    onRefresh: () -> Unit,
 ) {
     HorizontalPager(
         state = pagerState,
@@ -235,9 +258,9 @@ fun MainScreenContent(
         key = { index -> pagerScreenValues[index].ordinal },
     ) { page ->
         when (pagerScreenValues[page]) {
-            AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(scrollState)
-            AppBottomNavigationItems.MY -> MyScreen()
-            AppBottomNavigationItems.COMMUNITY -> CommunityScreen()
+            AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(scrollState, onRefresh)
+            AppBottomNavigationItems.MY -> MyScreen(onRefresh)
+            AppBottomNavigationItems.COMMUNITY -> CommunityScreen(onRefresh)
         }
     }
 }
@@ -288,6 +311,7 @@ fun LinearGradientBox(scrollState: LazyListState) {
 @Composable
 fun HomeTopAppBar(
     modifier: Modifier = Modifier,
+    unread: Int? = 0,
     onNavigationClick: () -> Unit,
     onActionClick: () -> Unit,
     content: @Composable () -> Unit,
@@ -318,25 +342,26 @@ fun HomeTopAppBar(
                     // .background(color = Color.Yellow),
                     onClick = onNavigationClick
                 ) { Icon(Icons.Filled.Menu, null) }
-                // TODO get badge from view model
-                val badgeNum = 23
-                BadgedBox(
-                    modifier = Modifier.constrainAs(badge) {
-                        top.linkTo(iconBtn.top, margin = 22.dp)
-                        end.linkTo(iconBtn.end, margin = if (badgeNum < 100) 22.dp else 26.dp)
-                    },
-                    badge = {
-                        Badge(
-                            modifier = Modifier.border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                shape = CircleShape,
-                            )
-                        ) {
-                            Text(text = badgeNum.toBadgeText())
-                        }
-                    },
-                ) {}
+                val badgeNum = unread ?: 0
+                if (badgeNum > 0) {
+                    BadgedBox(
+                        modifier = Modifier.constrainAs(badge) {
+                            top.linkTo(iconBtn.top, margin = 22.dp)
+                            end.linkTo(iconBtn.end, margin = if (badgeNum < 100) 22.dp else 26.dp)
+                        },
+                        badge = {
+                            Badge(
+                                modifier = Modifier.border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    shape = CircleShape,
+                                )
+                            ) {
+                                Text(text = badgeNum.toBadgeText())
+                            }
+                        },
+                    ) {}
+                }
             }
             Row(modifier = modifier.weight(1f)) {
                 content()
@@ -351,7 +376,14 @@ fun HomeTopAppBar(
 @Preview
 @Composable
 fun PreviewMainScreen() {
+    previewInitLog()
     AppTheme(dynamicColor = false) {
-        MainScreen(widthSize = WindowWidthSizeClass.Compact, onNavigationToDrawerItem = {})
+        MainScreen(
+            widthSize = WindowWidthSizeClass.Compact,
+            onNavigationToDrawerItem = {},
+            viewModel = viewModel(
+                factory = viewModelProviderFactoryOf { MainViewModel(FakeDI.previewMainUnreadRepository) },
+            ),
+        )
     }
 }

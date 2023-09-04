@@ -53,10 +53,10 @@ sealed class Screen(val route: String, @StringRes val resId: Int, val icon: Imag
         get() = icon!!
 }
 
-enum class AppBottomNavigationItems(val screen: Screen, val icon: ImageVector, val unread: Int) {
-    DISCOVERY(Screen.Discovery, Icons.Outlined.LibraryMusic, 6),
-    MY(Screen.My, Icons.Outlined.MusicNote, 0),
-    COMMUNITY(Screen.Community, Icons.Outlined.SpeakerNotes, 123)
+enum class AppBottomNavigationItems(val screen: Screen, val icon: ImageVector) {
+    DISCOVERY(Screen.Discovery, Icons.Outlined.LibraryMusic),
+    MY(Screen.My, Icons.Outlined.MusicNote),
+    COMMUNITY(Screen.Community, Icons.Outlined.SpeakerNotes)
 }
 
 /**

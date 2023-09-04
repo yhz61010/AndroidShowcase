@@ -1,5 +1,8 @@
 package com.leovp.androidshowcase.framework
 
+import com.leovp.androidshowcase.ui.main.data.FakeMainRepository
+import com.leovp.androidshowcase.ui.main.data.MainLocalDataSource
+import com.leovp.androidshowcase.ui.main.data.PreviewFakeMainRepository
 import com.leovp.androidshowcase.ui.tabs.discovery.data.DiscoveryLocalDataSource
 import com.leovp.androidshowcase.ui.tabs.discovery.data.FakeDiscoveryRepository
 import com.leovp.androidshowcase.ui.tabs.discovery.data.PreviewFakeDiscoveryRepository
@@ -13,7 +16,17 @@ object FakeDI {
         FakeDiscoveryRepository(DiscoveryLocalDataSource())
     }
 
-    val discoveryRepositoryPreview by lazy {
+    val mainUnreadRepository by lazy {
+        FakeMainRepository(MainLocalDataSource())
+    }
+
+    // ==========
+
+    val previewDiscoveryRepository by lazy {
         PreviewFakeDiscoveryRepository(DiscoveryLocalDataSource())
+    }
+
+    val previewMainUnreadRepository by lazy {
+        PreviewFakeMainRepository(MainLocalDataSource())
     }
 }

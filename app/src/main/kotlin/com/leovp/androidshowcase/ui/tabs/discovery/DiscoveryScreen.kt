@@ -78,13 +78,12 @@ import com.leovp.androidshowcase.ui.theme.mark_quality_border
 import com.leovp.androidshowcase.ui.theme.mark_quality_text_color
 import com.leovp.androidshowcase.ui.theme.mark_vip_border
 import com.leovp.androidshowcase.ui.theme.mark_vip_text_color
-import com.leovp.log.LLog
-import com.leovp.log.LogContext
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullRefresh
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.rememberPullRefreshState
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.floorMod
+import com.leovp.module.common.utils.previewInitLog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -98,16 +97,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun DiscoveryScreen(
     scrollState: LazyListState,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DiscoveryVM = viewModel(
-        factory = viewModelProviderFactoryOf { DiscoveryVM(FakeDI.discoveryRepository) },
+    viewModel: DiscoveryViewModel = viewModel(
+        factory = viewModelProviderFactoryOf { DiscoveryViewModel(FakeDI.discoveryRepository) },
     ),
 ) {
     val ctx = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.loading,
-        onRefresh = { viewModel.refreshAll() },
+        onRefresh = {
+            viewModel.refreshAll()
+            onRefresh()
+        },
     )
 
     Box(
@@ -473,11 +476,12 @@ fun ListItemImage(
 @Preview
 @Composable
 fun PreviewDiscoveryScreen() {
-    LogContext.setLogImpl(LLog("AOS"))
+    previewInitLog()
     DiscoveryScreen(
         scrollState = rememberLazyListState(),
+        onRefresh = {},
         viewModel = viewModel(
-            factory = viewModelProviderFactoryOf { DiscoveryVM(FakeDI.discoveryRepositoryPreview) },
+            factory = viewModelProviderFactoryOf { DiscoveryViewModel(FakeDI.previewDiscoveryRepository) },
         ),
     )
 }
