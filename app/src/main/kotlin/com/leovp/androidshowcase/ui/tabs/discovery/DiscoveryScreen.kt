@@ -78,6 +78,11 @@ import com.leovp.androidshowcase.ui.theme.mark_quality_border
 import com.leovp.androidshowcase.ui.theme.mark_quality_text_color
 import com.leovp.androidshowcase.ui.theme.mark_vip_border
 import com.leovp.androidshowcase.ui.theme.mark_vip_text_color
+import com.leovp.log.LLog
+import com.leovp.log.LogContext
+import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
+import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullRefresh
+import com.leovp.module.common.presentation.compose.composable.pullrefresh.rememberPullRefreshState
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.floorMod
 import kotlinx.coroutines.delay
@@ -100,29 +105,50 @@ fun DiscoveryScreen(
 ) {
     val ctx = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 6.dp),
-        modifier = modifier.fillMaxSize(),
-        state = scrollState
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.loading,
+        onRefresh = { viewModel.refreshAll() },
+    )
+
+    Box(
+        modifier = Modifier
+            .padding(PaddingValues(horizontal = 0.dp, vertical = 6.dp))
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState),
+        contentAlignment = Alignment.TopCenter,
     ) {
-        item {
-            CarouselHeader(uiState.carouselRecommends) { item ->
-                ctx.toast("Carousel recommend item: $item")
-            }
-        }
-        item {
-            EverydayRecommendsHeader()
-            EverydayRecommendsContent(uiState.everydayRecommends) { item ->
-                ctx.toast("Everyday recommend item: $item")
-            }
-        }
-        item {
-            MusicContentHeader()
-        }
-        items(uiState.personalRecommends) { data ->
-            MusicContentItem(data)
-        }
-    }
+        if (!uiState.loading) {
+            LazyColumn(
+                // contentPadding = PaddingValues(horizontal = 0.dp, vertical = 6.dp),
+                modifier = modifier.fillMaxSize(),
+                state = scrollState,
+            ) {
+                item {
+                    CarouselHeader(uiState.carouselRecommends) { item ->
+                        ctx.toast("Carousel recommend item: $item")
+                    }
+                }
+                item {
+                    EverydayRecommendsHeader()
+                    EverydayRecommendsContent(uiState.everydayRecommends) { item ->
+                        ctx.toast("Everyday recommend item: $item")
+                    }
+                }
+                item {
+                    MusicContentHeader()
+                }
+                items(uiState.personalRecommends) { data ->
+                    MusicContentItem(data)
+                }
+            } // end LazyColumn
+        } // end if
+
+        PullRefreshIndicator(
+            refreshing = uiState.loading,
+            state = pullRefreshState,
+            // modifier = Modifier.align(Alignment.TopCenter)
+        )
+    } // end Box
 }
 
 @Composable
@@ -447,5 +473,11 @@ fun ListItemImage(
 @Preview
 @Composable
 fun PreviewDiscoveryScreen() {
-    DiscoveryScreen(scrollState = rememberLazyListState())
+    LogContext.setLogImpl(LLog("AOS"))
+    DiscoveryScreen(
+        scrollState = rememberLazyListState(),
+        viewModel = viewModel(
+            factory = viewModelProviderFactoryOf { DiscoveryVM(FakeDI.discoveryRepositoryPreview) },
+        ),
+    )
 }

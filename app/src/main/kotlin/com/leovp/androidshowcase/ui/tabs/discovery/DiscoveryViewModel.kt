@@ -6,6 +6,7 @@ import com.leovp.androidshowcase.ui.tabs.discovery.data.CarouselItemModel
 import com.leovp.androidshowcase.ui.tabs.discovery.data.DiscoveryRepository
 import com.leovp.androidshowcase.ui.tabs.discovery.data.EverydayItemModel
 import com.leovp.androidshowcase.ui.tabs.discovery.data.SimpleListItemModel
+import com.leovp.log.LogContext
 import com.leovp.module.common.successOr
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,9 @@ import kotlinx.coroutines.launch
  * Author: Michael Leo
  * Date: 2023/7/24 15:12
  */
+
+
+private const val TAG = "DisVM"
 
 /**
  * UI state for the Discovery screen
@@ -41,7 +45,8 @@ class DiscoveryVM(private val repository: DiscoveryRepository) : ViewModel() {
         refreshAll()
     }
 
-    private fun refreshAll() {
+    fun refreshAll() {
+        LogContext.log.i(TAG, "Discovery -> refreshAll()")
         _uiState.update { it.copy(loading = true) }
 
         viewModelScope.launch {

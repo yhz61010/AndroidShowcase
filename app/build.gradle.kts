@@ -247,7 +247,6 @@ dependencies {
 
     implementation(libs.coil.kt.compose)
     // implementation(libs.lottie.compose)
-    // implementation(libs.accompanist.systemuicontroller)
 
     // ==============================
     testImplementation(libs.bundles.test)
