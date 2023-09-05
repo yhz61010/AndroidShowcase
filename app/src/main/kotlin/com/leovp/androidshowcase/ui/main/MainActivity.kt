@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.leovp.module.common.GlobalConst
+import com.leovp.module.common.http.RequestUtil
 
 /**
  * Author: Michael Leo
@@ -21,6 +23,11 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        RequestUtil.initNetEngine(
+            baseUrl = GlobalConst.API_BASE_URL
+        )
+
         // This app draws behind the system bars, so we want to handle fitting system windows
         WindowCompat.setDecorFitsSystemWindows(
             window,

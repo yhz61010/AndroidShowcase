@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.tabs.discovery
+package com.leovp.androidshowcase.ui.tabs.discovery.presentation
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -67,17 +67,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
-import com.leovp.androidshowcase.framework.FakeDI
-import com.leovp.androidshowcase.ui.tabs.discovery.data.CarouselItemModel
-import com.leovp.androidshowcase.ui.tabs.discovery.data.EverydayItemModel
-import com.leovp.androidshowcase.ui.tabs.discovery.data.SimpleListItemModel
-import com.leovp.androidshowcase.ui.tabs.discovery.iters.MarkType
+import com.leovp.androidshowcase.testdata.FakeDI
+import com.leovp.androidshowcase.ui.tabs.discovery.domain.enum.MarkType
+import com.leovp.androidshowcase.ui.tabs.discovery.domain.model.CarouselItem
+import com.leovp.androidshowcase.ui.tabs.discovery.domain.model.EverydayItem
+import com.leovp.androidshowcase.ui.tabs.discovery.domain.model.MusicItem
 import com.leovp.androidshowcase.ui.theme.mark_hot_bg
 import com.leovp.androidshowcase.ui.theme.mark_hot_text_color
 import com.leovp.androidshowcase.ui.theme.mark_quality_border
 import com.leovp.androidshowcase.ui.theme.mark_quality_text_color
 import com.leovp.androidshowcase.ui.theme.mark_vip_border
 import com.leovp.androidshowcase.ui.theme.mark_vip_text_color
+import com.leovp.json.toJsonString
+import com.leovp.log.LogContext
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullRefresh
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.rememberPullRefreshState
@@ -92,7 +94,7 @@ import kotlinx.coroutines.launch
  * Date: 2023/7/18 15:06
  */
 
-// private const val TAG = "Discovery"
+private const val TAG = "Discovery"
 
 @Composable
 fun DiscoveryScreen(
@@ -100,7 +102,7 @@ fun DiscoveryScreen(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DiscoveryViewModel = viewModel(
-        factory = viewModelProviderFactoryOf { DiscoveryViewModel(FakeDI.discoveryRepository) },
+        factory = viewModelProviderFactoryOf { DiscoveryViewModel(FakeDI.discoveryListUseCase) },
     ),
 ) {
     val ctx = LocalContext.current
@@ -141,6 +143,7 @@ fun DiscoveryScreen(
                     MusicContentHeader()
                 }
                 items(uiState.personalRecommends) { data ->
+                    LogContext.log.i(TAG, "personal data=${data.toJsonString()}")
                     MusicContentItem(data)
                 }
             } // end LazyColumn
@@ -203,7 +206,7 @@ fun EverydayRecommendsHeader() {
 
 @Composable
 fun EverydayRecommendsContent(
-    list: List<EverydayItemModel>, onItemClick: (EverydayItemModel) -> Unit
+    list: List<EverydayItem>, onItemClick: (EverydayItem) -> Unit
 ) {
     val cardWidth = 120.dp
 
@@ -220,7 +223,8 @@ fun EverydayRecommendsContent(
                      shape = MaterialTheme.shapes.large) {
                     Box {
                         AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current).data(data.thumbnail)
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(data.getDefaultImageUrl())
                                 .crossfade(true).build(),
                             contentDescription = null,
                             placeholder = ColorPainter(Color.LightGray),
@@ -268,7 +272,7 @@ fun EverydayRecommendsContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemModel) -> Unit) {
+fun CarouselHeader(list: List<CarouselItem>, onItemClick: (CarouselItem) -> Unit) {
     val pageCount = list.size
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -354,7 +358,7 @@ fun CarouselHeader(list: List<CarouselItemModel>, onItemClick: (CarouselItemMode
 }
 
 @Composable
-fun MusicContentItem(data: SimpleListItemModel) {
+fun MusicContentItem(data: MusicItem) {
     val context = LocalContext.current
     ListItem(
         modifier = Modifier.clickable { context.toast("You clicked item ${data.title}") },
@@ -442,7 +446,7 @@ fun MusicContentItem(data: SimpleListItemModel) {
         },
         leadingContent = {
             ListItemImage(
-                imageUrl = data.thumbnail,
+                imageUrl = data.getDefaultImageUrl(),
                 contentDescription = null,
                 modifier = Modifier.size(56.dp)
             )
@@ -452,7 +456,7 @@ fun MusicContentItem(data: SimpleListItemModel) {
 
 @Composable
 fun ListItemImage(
-    imageUrl: String,
+    imageUrl: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp
@@ -481,7 +485,7 @@ fun PreviewDiscoveryScreen() {
         scrollState = rememberLazyListState(),
         onRefresh = {},
         viewModel = viewModel(
-            factory = viewModelProviderFactoryOf { DiscoveryViewModel(FakeDI.previewDiscoveryRepository) },
+            factory = viewModelProviderFactoryOf { DiscoveryViewModel(FakeDI.previewDiscoveryListUseCase) },
         ),
     )
 }

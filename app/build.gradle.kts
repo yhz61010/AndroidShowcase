@@ -1,5 +1,5 @@
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.Properties
 
 // https://developer.android.com/studio/build?hl=zh-cn#module-level
 
@@ -30,7 +30,6 @@ android {
     /** Specifies one flavor dimension. */
     flavorDimensions += listOf("version")
 
-
     defaultConfig {
         applicationId = namespace
 
@@ -45,12 +44,10 @@ android {
             abiFilters += setOf("arm64-v8a")
         }
 
-        // buildConfigFieldFromGradleProperty("apiBaseUrl")
-        // buildConfigField("FEATURE_MODULE_NAMES", getFeatureNames())
-
         // https://github.com/mannodermaus/android-junit5
         // Connect JUnit 5 to the runner
-        testInstrumentationRunnerArguments["runnerBuilder"] = "de.mannodermaus.junit5.AndroidJUnit5Builder"
+        testInstrumentationRunnerArguments["runnerBuilder"] =
+            "de.mannodermaus.junit5.AndroidJUnit5Builder"
     }
 
     // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
@@ -170,11 +167,12 @@ android {
         variant.outputs
             .mapNotNull { it as? com.android.build.gradle.internal.api.ApkVariantOutputImpl }
             .forEach { output ->
-                output.outputFileName = "${appName}${("-$flavorName").takeIf { it != "-" } ?: ""}-${buildType.name}" +
-                    "-v$versionName($versionCode)" +
-                    "-${gitVersionTag()}-${gitCommitCount()}" +
+                output.outputFileName =
+                    "${appName}${("-$flavorName").takeIf { it != "-" } ?: ""}-${buildType.name}" +
+                            "-v$versionName($versionCode)" +
+                            "-${gitVersionTag()}-${gitCommitCount()}" +
 //                        ("-unaligned".takeIf { !output.zipAlign.enabled } ?: "") +
-                    ".apk"
+                            ".apk"
             }
     }
 }
@@ -227,11 +225,12 @@ fun gitVersionTag(): String {
     val matcher: MatchResult? = regex.matchEntire(versionTag)
 
     val matcherGroup0: MatchGroup? = matcher?.groups?.get(0)
-    versionTag = if (matcher?.value?.isNotBlank() == true && matcherGroup0?.value?.isNotBlank() == true) {
-        versionTag.substring(0, matcherGroup0.range.first) + "." + matcherGroup0.value
-    } else {
-        versionTag
-    }
+    versionTag =
+        if (matcher?.value?.isNotBlank() == true && matcherGroup0?.value?.isNotBlank() == true) {
+            versionTag.substring(0, matcherGroup0.range.first) + "." + matcherGroup0.value
+        } else {
+            versionTag
+        }
 
     return versionTag
 }
@@ -247,6 +246,8 @@ dependencies {
 
     implementation(libs.coil.kt.compose)
     // implementation(libs.lottie.compose)
+
+    implementation(libs.karn.notify)
 
     // ==============================
     testImplementation(libs.bundles.test)

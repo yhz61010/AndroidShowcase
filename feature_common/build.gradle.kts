@@ -1,3 +1,6 @@
+import com.android.build.api.dsl.LibraryDefaultConfig
+import java.util.Locale
+
 apply(from = "../jacoco.gradle.kts")
 
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
@@ -39,6 +42,11 @@ android {
     defaultConfig {
         // Connect JUnit 5 to the runner
         testInstrumentationRunnerArguments["runnerBuilder"] = "de.mannodermaus.junit5.AndroidJUnit5Builder"
+
+        buildConfigFieldFromGradleProperty("apiBaseUrl")
+        buildConfigFieldFromGradleProperty("apiToken")
+
+        buildConfigField("String", "VERSION_NAME", "\"${libs.versions.versionName.get()}\"")
     }
 
     // https://developer.android.com/reference/tools/gradle-api/7.1/com/android/build/api/dsl/Lint
@@ -68,10 +76,17 @@ dependencies {
     api(libs.leo.androidbase)
     api(libs.leo.pref)
     api(libs.leo.log)
-    // api(libs.leo.floatview)
     api(libs.leo.lib.json)
+
     api(libs.mars.xlog)
-    api(libs.karn.notify)
+
+    // Net - dependencies - Start
+    api(libs.kotlin.coroutines)
+    api(libs.square.okhttp)
+    api(libs.net)
+    // Net - dependencies - End
+
+    api(libs.serialization.json)
 
     // ----------
 
@@ -107,3 +122,20 @@ dependencies {
     androidTestRuntimeOnly(libs.mannodermaus.junit5.runner)
     // ==============================
 }
+
+/*
+ * Takes value from Gradle project property and sets it as Android build config property
+ * eg. apiToken variable present in the gradle.properties file
+ * will be accessible as BuildConfig.GRADLE_API_TOKEN in the app.
+ */
+fun LibraryDefaultConfig.buildConfigFieldFromGradleProperty(gradlePropertyName: String) {
+    val propertyValue = project.properties[gradlePropertyName] as? String
+    checkNotNull(propertyValue) { "Gradle property $gradlePropertyName is null" }
+
+    val androidResourceName =
+        "GRADLE_${gradlePropertyName.toSnakeCase()}".uppercase(Locale.getDefault())
+    buildConfigField("String", androidResourceName, propertyValue)
+}
+
+fun String.toSnakeCase() =
+    this.split(Regex("(?=[A-Z])")).joinToString("_") { it.lowercase(Locale.getDefault()) }

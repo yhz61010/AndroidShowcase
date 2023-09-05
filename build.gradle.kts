@@ -53,6 +53,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 
     alias(libs.plugins.detekt)
     alias(libs.plugins.ktlint.gradle)
@@ -82,6 +83,8 @@ val detektFormatting: Provider<MinimalExternalModuleDependency> = libs.detekt.fo
 // all projects = root project + sub projects
 allprojects {
     group = customGroup
+
+    apply(plugin = rootProject.libs.plugins.kotlin.serialization.get().pluginId)
 
     // We want to apply ktlint at all project level because it also checks Gradle config files (*.kts)
     apply(plugin = rootProject.libs.plugins.ktlint.gradle.get().pluginId)

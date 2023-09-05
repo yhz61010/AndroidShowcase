@@ -67,9 +67,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
-import com.leovp.androidshowcase.framework.FakeDI
+import com.leovp.androidshowcase.testdata.FakeDI
 import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
-import com.leovp.androidshowcase.ui.tabs.discovery.DiscoveryScreen
+import com.leovp.androidshowcase.ui.tabs.discovery.presentation.DiscoveryScreen
 import com.leovp.androidshowcase.ui.tabs.my.MyScreen
 import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_end_color

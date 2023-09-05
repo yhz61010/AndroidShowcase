@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.tabs.discovery.iters
+package com.leovp.androidshowcase.ui.tabs.discovery.domain.enum
 
 /**
  * Author: Michael Leo

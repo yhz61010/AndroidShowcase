@@ -80,6 +80,8 @@ karn-notify = "1.4.0"
 xx-permissions = "18.3"
 net = "3.6.1"
 coil = "2.4.0"
+square-okhttp = "4.11.0"
+serialization-json = "1.6.0"
 
 #================
 #===== Test =====
@@ -184,6 +186,8 @@ karn-notify = { module = "io.karn:notify", version.ref = "karn-notify" }
 net = { module = "com.github.liangjingkanji:Net", version.ref = "net" }
 #coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+square-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "square-okhttp" }
+serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json" }
 
 #================
 #===== Test =====
@@ -236,7 +240,7 @@ androidx-compose = [
     "androidx-compose-materialWindow"
 ]
 
-kotlin = ["kotlin-reflect", "kotlin-coroutines"]
+kotlin = ["kotlin-coroutines"]
 
 test = [
     "kotlin-junit5",
@@ -275,8 +279,9 @@ powermock = [
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }

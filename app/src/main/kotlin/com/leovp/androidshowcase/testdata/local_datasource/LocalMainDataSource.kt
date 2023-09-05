@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.main.data
+package com.leovp.androidshowcase.testdata.local_datasource
 
 import com.leovp.androidshowcase.ui.main.UnreadModel
 
@@ -6,7 +6,7 @@ import com.leovp.androidshowcase.ui.main.UnreadModel
  * Author: Michael Leo
  * Date: 2023/9/4 14:25
  */
-class MainLocalDataSource {
+class LocalMainDataSource {
     val unreadList: List<UnreadModel>
         get() = listOf(
             UnreadModel(UnreadModel.DISCOVERY, (0..<1000).random()),

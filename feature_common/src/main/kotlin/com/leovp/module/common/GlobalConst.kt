@@ -10,4 +10,8 @@ object GlobalConst {
     // private const val TAG = "GlobalConst"
 
     const val DEBUG = BuildConfig.DEBUG_MODE
+    const val VERSION_NAME = BuildConfig.VERSION_NAME
+
+    const val API_BASE_URL = BuildConfig.GRADLE_API_BASE_URL
+    const val API_TOKEN = BuildConfig.GRADLE_API_TOKEN
 }
