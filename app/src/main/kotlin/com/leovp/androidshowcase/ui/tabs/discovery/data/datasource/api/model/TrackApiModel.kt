@@ -8,36 +8,38 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
-  * Author: Michael Leo
-  * Date: 2023/9/6 15:59
-  */
+ * Author: Michael Leo
+ * Date: 2023/9/6 11:00
+ */
 
 @Keep
 @Immutable
 @Serializable
-data class Track2(
+data class TrackApiModel(
+
+    @SerialName("@attr") val attr: AttrApiModel,
+    val artist: ArtistApiModel,
+    val duration: Int?,
+    @SerialName("image")
+    val images: List<ImageApiModel>?,
+    val listeners: Int,
+    @SerialName("mbid") val mbId: String?, // nullable from api
     val name: String,
-    val playcount: String,
-    val listeners: String,
-    val mbid: String?, // nullable from api
     val url: String,
-    val streamable: String,
-    val artist: Artist,
-    val image: List<ImageApiModel>?,
-    @SerialName("@attr") val attr: AttrX,
+
+    val playcount: Int?,
 )
 
-fun Track2.toMusicItem(): MusicItem {
-    val images = this.image
-        ?.filterNot { it.size == ImageSizeApiModel.UNKNOWN || it.text.isBlank() }
-        ?.map { it.toEverydayItem() }
+fun TrackApiModel.toDomainModel(index: Int): MusicItem {
+    val images = this.images?.filterNot { it.size == ImageSizeApiModel.UNKNOWN || it.url.isBlank() }
+        ?.map { it.toDomainModel() }
 
     return MusicItem(
-        id = attr.rank.toInt(),
+        id = index,
         thumbnail = images ?: emptyList(),
         title = name,
         subTitle = artist.name,
-        markText = "$listeners 人正在收听",
+        markText = "$listeners",
         showTrailIcon = false,
         type = MarkType.Hot,
     )

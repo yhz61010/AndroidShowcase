@@ -15,11 +15,11 @@ import kotlinx.serialization.Serializable
 @Immutable
 @Serializable
 data class ImageApiModel(
-    @SerialName("#text") val text: String,
+    @SerialName("#text") val url: String,
     val size: ImageSizeApiModel
 )
 
-fun ImageApiModel.toEverydayItem() = Image(
-    url = this.text,
-    size = this.size.toEverydayItem(),
+fun ImageApiModel.toDomainModel() = Image(
+    url = this.url,
+    size = this.size.toDomainModel(),
 )

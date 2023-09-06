@@ -2,6 +2,7 @@ package com.leovp.androidshowcase.ui.tabs.discovery.data.datasource.api.model
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,10 +13,17 @@ import kotlinx.serialization.Serializable
 @Keep
 @Immutable
 @Serializable
-data class Attr(
+data class AttrApiModel(
     val country: String?, // nullable from api
-    val page: String,
-    val perPage: String,
-    val total: String,
-    val totalPages: String,
+    val artist: String?, // nullable from api
+
+    val page: Int?,
+    val perPage: Int?,
+    val total: Int?,
+    val totalPages: Int?,
+
+    @SerialName("for")
+    val forField: String?,
+
+    val rank: Int?,
 )

@@ -15,7 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.colorResource
 import androidx.core.view.WindowCompat
+import com.leovp.androidshowcase.R
 
 private val lightColorsTheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -85,19 +87,22 @@ private val darkColorsTheme = darkColorScheme(
 @Composable
 fun SplashTheme(content: @Composable () -> Unit) {
     val view = LocalView.current
+    val systemBarColor = colorResource(id = R.color.app_windowBackground)
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = md_theme_light_surfaceVariant.toArgb()
-            window.navigationBarColor = md_theme_light_surfaceVariant.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+            window.statusBarColor = systemBarColor.toArgb()
+            window.navigationBarColor = systemBarColor.toArgb()
+            val isLightBar = false
+            with(WindowCompat.getInsetsController(window, view)) {
+                isAppearanceLightStatusBars = isLightBar
+                isAppearanceLightNavigationBars = isLightBar
+            }
         }
     }
 
     MaterialTheme(
-        colorScheme = lightColorsTheme,
-        typography = Typography,
-        content = content
+        colorScheme = lightColorsTheme, typography = Typography, content = content
     )
 }
 
@@ -105,8 +110,7 @@ fun SplashTheme(content: @Composable () -> Unit) {
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
+    dynamicColor: Boolean = false, content: @Composable () -> Unit
 ) {
     ImmersiveTheme(
         color = colorScheme.primary,
@@ -118,12 +122,9 @@ fun AppTheme(
 
 @Composable
 fun ImmersiveTheme(
-    color: Color,
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    lightStatusBar: Boolean? = null,
+    color: Color, darkTheme: Boolean = isSystemInDarkTheme(), lightSystemBar: Boolean? = null,
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
+    dynamicColor: Boolean = false, content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -140,15 +141,15 @@ fun ImmersiveTheme(
             val window = (view.context as Activity).window
             window.statusBarColor = color.toArgb()
             window.navigationBarColor = color.toArgb()
-            val isLightStatusBar = lightStatusBar.takeIf { it != null } ?: darkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = isLightStatusBar
+            val isLightSystemBar = lightSystemBar.takeIf { it != null } ?: darkTheme
+            with(WindowCompat.getInsetsController(window, view)) {
+                isAppearanceLightStatusBars = isLightSystemBar
+                isAppearanceLightNavigationBars = isLightSystemBar
+            }
         }
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
-        shapes = AppShapes,
-        typography = Typography,
-        content = content
+        colorScheme = colorScheme, shapes = AppShapes, typography = Typography, content = content
     )
 }

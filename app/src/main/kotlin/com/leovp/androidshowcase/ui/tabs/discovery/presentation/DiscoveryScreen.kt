@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -67,6 +68,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
+import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.testdata.FakeDI
 import com.leovp.androidshowcase.ui.tabs.discovery.domain.enum.MarkType
 import com.leovp.androidshowcase.ui.tabs.discovery.domain.model.CarouselItem
@@ -78,8 +80,6 @@ import com.leovp.androidshowcase.ui.theme.mark_quality_border
 import com.leovp.androidshowcase.ui.theme.mark_quality_text_color
 import com.leovp.androidshowcase.ui.theme.mark_vip_border
 import com.leovp.androidshowcase.ui.theme.mark_vip_text_color
-import com.leovp.json.toJsonString
-import com.leovp.log.LogContext
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullRefresh
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.rememberPullRefreshState
@@ -94,7 +94,7 @@ import kotlinx.coroutines.launch
  * Date: 2023/7/18 15:06
  */
 
-private const val TAG = "Discovery"
+// private const val TAG = "Discovery"
 
 @Composable
 fun DiscoveryScreen(
@@ -143,7 +143,6 @@ fun DiscoveryScreen(
                     MusicContentHeader()
                 }
                 items(uiState.personalRecommends) { data ->
-                    LogContext.log.i(TAG, "personal data=${data.toJsonString()}")
                     MusicContentItem(data)
                 }
             } // end LazyColumn
@@ -164,9 +163,10 @@ fun MusicContentHeader() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "华语精选", style = MaterialTheme.typography.bodyLarge.copy(
+            text = stringResource(R.string.app_discovery_tab_chinese_curated),
+            style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Black
-            )
+            ),
         )
         Spacer(modifier = Modifier.weight(1f))
         IconButton(modifier = Modifier.requiredSize(24.dp), onClick = { }) {
@@ -184,14 +184,15 @@ fun EverydayRecommendsHeader() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "每日推荐", style = MaterialTheme.typography.bodyLarge.copy(
+            text = stringResource(R.string.app_discovery_tab_everyday_recommends),
+            style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Black
-            )
+            ),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             modifier = Modifier.weight(1f),
-            text = "8939187人在听",
+            text = stringResource(R.string.app_cmn_listeners, 8939187),
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Gray,
             fontWeight = FontWeight.Bold
@@ -413,18 +414,20 @@ fun MusicContentItem(data: MusicItem) {
                     MarkType.Special -> mark_quality_text_color
                     MarkType.Vip -> mark_vip_text_color
                 }
-                Text(
-                    modifier = Modifier
-                        .then(borderModifier)
-                        .then(backgroundModifier)
-                        .then(paddingModifier),
-                    text = data.markText,
-                    color = textColor,
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.Black,
-                    fontFamily = fontFamily
-                )
-                Spacer(modifier = Modifier.width(4.dp))
+                if (data.markText.isNotBlank()) {
+                    Text(
+                        modifier = Modifier
+                            .then(borderModifier)
+                            .then(backgroundModifier)
+                            .then(paddingModifier),
+                        text = data.getMarkTextString(stringResource(id = R.string.app_cmn_listeners_listening)),
+                        color = textColor,
+                        fontSize = fontSize,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = fontFamily
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                }
                 Text(
                     text = data.subTitle,
                     style = MaterialTheme.typography.labelMedium,

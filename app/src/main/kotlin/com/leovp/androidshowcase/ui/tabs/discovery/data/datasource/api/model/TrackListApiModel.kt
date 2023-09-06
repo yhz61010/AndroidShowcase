@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Keep
 @Immutable
 @Serializable
-data class TracksX(
-    @SerialName("@attr") val attr: Attr,
-    val track: List<Track>
+data class TrackListApiModel(
+    @SerialName("@attr") val attr: AttrApiModel,
+    val track: List<TrackApiModel>
 )

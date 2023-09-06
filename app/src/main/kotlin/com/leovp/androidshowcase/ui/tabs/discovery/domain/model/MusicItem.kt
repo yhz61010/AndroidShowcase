@@ -21,6 +21,10 @@ data class MusicItem(
     val showTrailIcon: Boolean,
     val type: MarkType
 ) {
+    val markTextWithText = false
+
+    fun getMarkTextString(suffix: String): String = "${this.markText}$suffix"
+
     fun getDefaultImageUrl() = this.thumbnail.firstOrNull { it.size == ImageSize.EXTRA_LARGE }?.url
 }
 

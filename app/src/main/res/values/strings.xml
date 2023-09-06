@@ -20,4 +20,10 @@
 
     <string name="app_tab_unread_count">%1$s new unread</string>
 
+    <string name="app_discovery_tab_chinese_curated">华语精选</string>
+    <string name="app_discovery_tab_everyday_recommends">每日推荐</string>
+
+    <string name="app_cmn_listeners">%1$d人在听</string>
+    <string name="app_cmn_listeners_listening">人正在收听</string>
+
 </resources>

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.leovp.androidshowcase.ui.tabs.discovery.data.datasource.api.model
 
 import com.leovp.androidshowcase.ui.tabs.discovery.domain.enum.ImageSize
@@ -31,4 +33,4 @@ enum class ImageSizeApiModel {
     UNKNOWN,
 }
 
-fun ImageSizeApiModel.toEverydayItem() = ImageSize.valueOf(this.name)
+fun ImageSizeApiModel.toDomainModel() = ImageSize.valueOf(this.name)
