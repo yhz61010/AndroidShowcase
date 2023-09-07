@@ -21,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +42,7 @@ import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemberCenterScreen(
-    widthSize: WindowWidthSizeClass,
+    // widthSize: WindowWidthSizeClass,
     onMenuUpAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -127,9 +126,9 @@ fun LazyListScope.memberCenterScreenContentItems() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewMemberCenterScreen() {
-    ImmersiveTheme(color = immersive_sys_ui, dynamicColor = false) {
+    ImmersiveTheme(systemBarColor = immersive_sys_ui, dynamicColor = false) {
         MemberCenterScreen(
-            widthSize = WindowWidthSizeClass.Compact,
+            // widthSize = WindowWidthSizeClass.Compact,
             onMenuUpAction = {}
         )
     }

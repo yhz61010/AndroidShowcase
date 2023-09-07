@@ -23,10 +23,14 @@ object InitManager {
     fun init(app: Application) {
         CrashHandler.initCrashHandler(app)
 
-        LeoToast.getInstance(app).init(LeoToast.ToastConfig(GlobalConst.DEBUG, R.mipmap.app_ic_launcher_round))
+        LeoToast.getInstance(app).init(
+            LeoToast.ToastConfig(GlobalConst.DEBUG, R.mipmap.app_ic_launcher_round)
+        )
 
         // Log must be initialized first.
-        LogContext.setLogImpl(MarsXLog("AOS").apply { init(app) })
+        LogContext.setLogImpl(MarsXLog("AOS").apply {
+            init(app, com.leovp.androidshowcase.BuildConfig.CONSOLE_LOG_OPEN)
+        })
         PrefContext.setPrefImpl(LPref(app))
 
         closeAndroidPDialog()
@@ -43,8 +47,7 @@ object InitManager {
             }
             alerting("default-notification") {
                 channelName = app.getString(R.string.app_notification_channel_name)
-                channelDescription =
-                    app.getString(R.string.app_notification_channel_name_desc)
+                channelDescription = app.getString(R.string.app_notification_channel_name_desc)
                 lockScreenVisibility = NotificationCompat.VISIBILITY_PRIVATE
                 channelImportance = Notify.IMPORTANCE_LOW
             }

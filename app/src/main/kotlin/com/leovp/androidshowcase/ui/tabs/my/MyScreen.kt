@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MyScreen(
-    onRefresh: () -> Unit,
+    // onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
@@ -28,5 +28,5 @@ fun MyScreen(
 @Preview
 @Composable
 fun PreviewMyScreen() {
-    MyScreen(onRefresh = {})
+    MyScreen(/*onRefresh = {}*/)
 }

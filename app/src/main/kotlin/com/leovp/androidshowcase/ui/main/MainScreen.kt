@@ -259,8 +259,8 @@ fun MainScreenContent(
     ) { page ->
         when (pagerScreenValues[page]) {
             AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(scrollState, onRefresh)
-            AppBottomNavigationItems.MY -> MyScreen(onRefresh)
-            AppBottomNavigationItems.COMMUNITY -> CommunityScreen(onRefresh)
+            AppBottomNavigationItems.MY -> MyScreen(/*onRefresh*/)
+            AppBottomNavigationItems.COMMUNITY -> CommunityScreen(/*onRefresh*/)
         }
     }
 }

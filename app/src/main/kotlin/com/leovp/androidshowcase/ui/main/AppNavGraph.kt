@@ -31,7 +31,7 @@ fun NavGraphBuilder.addAppMainGraph(
     }
     composable(route = Screen.Main.route) {
         ImmersiveTheme(
-            color = Color.Transparent,
+            systemBarColor = Color.Transparent,
             dynamicColor = false,
             lightSystemBar = true
         ) {
@@ -47,14 +47,14 @@ fun NavGraphBuilder.addAppMainGraph(
 }
 
 fun NavGraphBuilder.addAppDrawerGraph(
-    widthSizeClass: WindowWidthSizeClass,
+    // widthSizeClass: WindowWidthSizeClass,
     navigationActions: AppNavigationActions,
     modifier: Modifier = Modifier,
 ) {
     composable(route = Screen.MemberCenterScreen.route) {
-        ImmersiveTheme(color = immersive_sys_ui, lightSystemBar = !isSystemInDarkTheme(), dynamicColor = false) {
+        ImmersiveTheme(systemBarColor = immersive_sys_ui, lightSystemBar = !isSystemInDarkTheme(), dynamicColor = false) {
             MemberCenterScreen(
-                widthSize = widthSizeClass,
+                // widthSize = widthSizeClass,
                 onMenuUpAction = { navigationActions.upPress() },
                 modifier = modifier
             )

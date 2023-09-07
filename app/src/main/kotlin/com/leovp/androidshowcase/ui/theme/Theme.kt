@@ -113,7 +113,7 @@ fun AppTheme(
     dynamicColor: Boolean = false, content: @Composable () -> Unit
 ) {
     ImmersiveTheme(
-        color = colorScheme.primary,
+        systemBarColor = colorScheme.primary,
         darkTheme = darkTheme,
         dynamicColor = dynamicColor,
         content = content
@@ -122,9 +122,12 @@ fun AppTheme(
 
 @Composable
 fun ImmersiveTheme(
-    color: Color, darkTheme: Boolean = isSystemInDarkTheme(), lightSystemBar: Boolean? = null,
+    systemBarColor: Color,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    lightSystemBar: Boolean? = null,
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false, content: @Composable () -> Unit
+    dynamicColor: Boolean = false,
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -139,8 +142,8 @@ fun ImmersiveTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = color.toArgb()
-            window.navigationBarColor = color.toArgb()
+            window.statusBarColor = systemBarColor.toArgb()
+            window.navigationBarColor = systemBarColor.toArgb()
             val isLightSystemBar = lightSystemBar.takeIf { it != null } ?: darkTheme
             with(WindowCompat.getInsetsController(window, view)) {
                 isAppearanceLightStatusBars = isLightSystemBar

@@ -25,15 +25,22 @@ class MarsXLog(private val prefix: String) : ILog {
 
     private val defaultLevel = if (GlobalConst.DEBUG) Xlog.LEVEL_DEBUG else Xlog.LEVEL_INFO
 
-    fun init(context: Context) {
+    fun init(context: Context, enableConsoleLog: Boolean) {
         val logDir = getLogDir(context, "xlog").absolutePath
         val cacheDir = getLogDir(context, "x-cache-dir").absolutePath
 
         System.loadLibrary("c++_shared")
         System.loadLibrary("marsxlog")
         Log.setLogImp(Xlog())
-        Log.setConsoleLogOpen(GlobalConst.DEBUG)
-        Log.appenderOpen(defaultLevel, Xlog.AppednerModeAsync, cacheDir, logDir, "main", CACHE_DAYS)
+        Log.setConsoleLogOpen(enableConsoleLog)
+        Log.appenderOpen(
+            defaultLevel,
+            Xlog.AppednerModeAsync,
+            cacheDir,
+            logDir,
+            "main",
+            CACHE_DAYS,
+        )
     }
 
     private fun getLogDir(ctx: Context, baseFolderName: String): File {
@@ -45,7 +52,8 @@ class MarsXLog(private val prefix: String) : ILog {
 
     @Suppress("WeakerAccess")
     private fun getBaseDirString(ctx: Context, baseFolderName: String): String {
-        return ctx.getExternalFilesDir(null)?.let { it.absolutePath + File.separator + baseFolderName } ?: ""
+        return ctx.getExternalFilesDir(null)
+            ?.let { it.absolutePath + File.separator + baseFolderName } ?: ""
     }
 
     // ==================================================

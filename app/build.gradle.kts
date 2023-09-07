@@ -108,22 +108,22 @@ android {
      * and assign each flavor to a flavor dimension.
      */
     productFlavors {
-        create("demo") {
+        create("dev") {
             // Assigns this product flavor to the "version" flavor dimension.
             // If you are using only one dimension, this property is optional,
             // and the plugin automatically assigns all the module's flavors to
             // that dimension.
             dimension = "version"
-            applicationIdSuffix = ".demo"
-            versionNameSuffix = "-demo"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
         }
-        create("full") {
+        create("prod") {
             dimension = "version"
         }
     }
 
     buildTypes {
-        getByName("debug") {
+        debug /*getByName("debug")*/ {
             signingConfig = signingConfigs.getByName("debug")
         }
 
@@ -133,7 +133,7 @@ android {
          *
          * See the global configurations in top-level `build.gradle.kts`.
          */
-        getByName("release") {
+        release /*getByName("release")*/ {
             signingConfig = signingConfigs.getByName("release")
         }
 
@@ -164,6 +164,12 @@ android {
 
     applicationVariants.all {
         val variant = this
+        // println("Iterating variant: " + variant.name)
+        if (variant.name == "prodRelease") {
+            variant.buildConfigField("boolean", "CONSOLE_LOG_OPEN", "false")
+        } else {
+            variant.buildConfigField("boolean", "CONSOLE_LOG_OPEN", "true")
+        }
         variant.outputs
             .mapNotNull { it as? com.android.build.gradle.internal.api.ApkVariantOutputImpl }
             .forEach { output ->
@@ -243,17 +249,16 @@ dependencies {
     // By using `projects`, you need to enable `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`
     // in `settings.gradle.kts` where in your root folder.
     implementation(projects.featureCommon)
-
     implementation(libs.coil.kt.compose)
     // implementation(libs.lottie.compose)
-
     implementation(libs.karn.notify)
 
     // ==============================
     testImplementation(libs.bundles.test)
-    testRuntimeOnly(libs.bundles.test.runtime.only)
-    androidTestImplementation(libs.bundles.test)
+    // testRuntimeOnly(libs.bundles.test.runtime.only)
+    // androidTestImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.android.test)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     // ==============================
     // The instrumentation test companion libraries
     // https://github.com/mannodermaus/android-junit5

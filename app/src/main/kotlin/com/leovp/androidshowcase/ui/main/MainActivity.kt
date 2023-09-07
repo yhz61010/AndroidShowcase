@@ -57,7 +57,7 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
         )
 
         addAppDrawerGraph(
-            widthSizeClass = widthSizeClass,
+            // widthSizeClass = widthSizeClass,
             navigationActions = navigationActions
         )
     }

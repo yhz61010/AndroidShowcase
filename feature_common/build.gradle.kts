@@ -60,18 +60,18 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
+        debug /*getByName("debug")*/ {
             buildConfigField("boolean", "DEBUG_MODE", "true")
         }
 
-        getByName("release") {
+        release /*getByName("release")*/ {
             buildConfigField("boolean", "DEBUG_MODE", "false")
         }
     }
 }
 
 dependencies {
-    implementation(libs.bundles.kotlin)
+    api(libs.bundles.kotlin)
 
     api(libs.leo.androidbase)
     api(libs.leo.pref)
@@ -90,17 +90,13 @@ dependencies {
 
     // ----------
 
-    val composeBom = platform(libs.androidx.compose.bom)
-    api(composeBom)
-    androidTestImplementation(composeBom)
-
+    api(platform(libs.androidx.compose.bom))
     // Material Design 3
     api(libs.androidx.material3)
-
     // Android Studio Preview support
     api(libs.androidx.compose.ui.tooling.preview)
+    // api(libs.androidx.compose.ui.graphics)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    // debugImplementation(libs.androidx.compose.ui.graphics)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     api(libs.bundles.androidx.compose)
@@ -111,9 +107,10 @@ dependencies {
 
     // ==============================
     testImplementation(libs.bundles.test)
-    testRuntimeOnly(libs.bundles.test.runtime.only)
-    androidTestImplementation(libs.bundles.test)
+    // testRuntimeOnly(libs.bundles.test.runtime.only)
+    // androidTestImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.android.test)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     // ==============================
     // The instrumentation test companion libraries
     // https://github.com/mannodermaus/android-junit5
