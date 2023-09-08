@@ -41,7 +41,8 @@ android {
 
     defaultConfig {
         // Connect JUnit 5 to the runner
-        testInstrumentationRunnerArguments["runnerBuilder"] = "de.mannodermaus.junit5.AndroidJUnit5Builder"
+        testInstrumentationRunnerArguments["runnerBuilder"] =
+            "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
         buildConfigFieldFromGradleProperty("apiBaseUrl")
         buildConfigFieldFromGradleProperty("apiToken")
@@ -71,14 +72,26 @@ android {
 }
 
 dependencies {
+    api(platform(libs.androidx.compose.bom))
+    // Material Design 3
+    api(libs.androidx.material3)
+    api(libs.bundles.androidx.compose)
+    // Android Studio Preview support
+    api(libs.androidx.compose.ui.tooling.preview)
+    // api(libs.androidx.compose.ui.graphics)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // ----------
+
     api(libs.bundles.kotlin)
 
     api(libs.leo.androidbase)
+    // api(libs.leo.log)
+    // api(libs.leo.lib.json)
+    // api(libs.leo.lib.common.kotlin)
     api(libs.leo.pref)
-    api(libs.leo.log)
-    api(libs.leo.lib.json)
-
-    api(libs.mars.xlog)
+    // implementation(libs.leo.floatview)
 
     // Net - dependencies - Start
     api(libs.kotlin.coroutines)
@@ -87,23 +100,7 @@ dependencies {
     // Net - dependencies - End
 
     api(libs.serialization.json)
-
-    // ----------
-
-    api(platform(libs.androidx.compose.bom))
-    // Material Design 3
-    api(libs.androidx.material3)
-    // Android Studio Preview support
-    api(libs.androidx.compose.ui.tooling.preview)
-    // api(libs.androidx.compose.ui.graphics)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    api(libs.bundles.androidx.compose)
-
-    api(libs.androidx.navigation.compose)
-    api(libs.androidx.compose.material.iconsExtended)
-    api(libs.androidx.lifecycle.runtime.compose)
+    api(libs.mars.xlog)
 
     // ==============================
     testImplementation(libs.bundles.test)

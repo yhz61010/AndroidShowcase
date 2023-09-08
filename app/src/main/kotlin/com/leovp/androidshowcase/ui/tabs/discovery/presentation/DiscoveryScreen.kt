@@ -30,9 +30,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.SmartDisplay
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -171,7 +169,9 @@ fun MusicContentHeader() {
         Spacer(modifier = Modifier.weight(1f))
         IconButton(modifier = Modifier.requiredSize(24.dp), onClick = { }) {
             Icon(
-                imageVector = Icons.Default.MoreVert, tint = Color.Gray, contentDescription = null
+                painter = painterResource(id = R.drawable.app_more_vert),
+                tint = Color.Gray,
+                contentDescription = null,
             )
         }
     }
@@ -199,7 +199,9 @@ fun EverydayRecommendsHeader() {
         )
         IconButton(modifier = Modifier.requiredSize(24.dp), onClick = { }) {
             Icon(
-                imageVector = Icons.Default.MoreVert, tint = Color.Gray, contentDescription = null
+                painter = painterResource(id = R.drawable.app_more_vert),
+                tint = Color.Gray,
+                contentDescription = null,
             )
         }
     }
@@ -441,7 +443,7 @@ fun MusicContentItem(data: MusicItem) {
             if (data.showTrailIcon) {
                 Icon(
                     modifier = Modifier.alpha(0.6f),
-                    imageVector = Icons.Outlined.SmartDisplay,
+                    painter = painterResource(id = R.drawable.app_smart_display),
                     contentDescription = null,
                     tint = Color.DarkGray
                 )

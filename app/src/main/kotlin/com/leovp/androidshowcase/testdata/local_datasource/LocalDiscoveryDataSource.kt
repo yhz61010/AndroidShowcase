@@ -1,7 +1,5 @@
 package com.leovp.androidshowcase.testdata.local_datasource
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EventNote
 import com.leovp.androidshowcase.ui.tabs.discovery.data.datasource.DiscoveryDataSource
 import com.leovp.androidshowcase.ui.tabs.discovery.domain.enum.ImageSize
 import com.leovp.androidshowcase.ui.tabs.discovery.domain.enum.MarkType
@@ -47,7 +45,7 @@ class LocalDiscoveryDataSource : DiscoveryDataSource {
             ),
             type = monthDateFormat.format(Date()),
             title = "每日推荐|从「是你」听起",
-            icon = Icons.Default.EventNote
+            icon = null // calendar_month
         ),
         EverydayItem(
             id = 2,

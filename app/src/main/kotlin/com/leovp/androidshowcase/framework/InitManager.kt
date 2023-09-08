@@ -31,6 +31,7 @@ object InitManager {
         LogContext.setLogImpl(MarsXLog("AOS").apply {
             init(app, com.leovp.androidshowcase.BuildConfig.CONSOLE_LOG_OPEN)
         })
+
         PrefContext.setPrefImpl(LPref(app))
 
         closeAndroidPDialog()

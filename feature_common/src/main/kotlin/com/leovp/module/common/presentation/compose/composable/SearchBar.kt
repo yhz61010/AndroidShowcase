@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.QrCode
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,6 +42,8 @@ fun SearchBar(
     border: BorderStroke? = null,
     backgroundColor: Color? = MaterialTheme.colorScheme.surface,
     backgroundBrush: Brush? = null,
+    searchIndicatorIcon: Painter? = null,
+    actionIcon: Painter? = null,
     onClick: () -> Unit,
     onActionClick: () -> Unit
 ) {
@@ -56,8 +56,7 @@ fun SearchBar(
             .heightIn(46.dp)
             .noRippleClickable(onClick = onClick)
     ) {
-        var rowModifier = Modifier
-            .fillMaxWidth()
+        var rowModifier = Modifier.fillMaxWidth()
         // .wrapContentSize()
         backgroundColor?.let {
             rowModifier = rowModifier.background(color = it, shape = CircleShape)
@@ -66,17 +65,18 @@ fun SearchBar(
             rowModifier = rowModifier.background(brush = it, shape = CircleShape)
         }
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = rowModifier
+            verticalAlignment = Alignment.CenterVertically, modifier = rowModifier
         ) {
             Spacer(Modifier.width(containerHorizontalPadding))
-            Icon(
-                modifier = Modifier.requiredSize(iconSize),
-                imageVector = Icons.Default.Search,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.surfaceTint
-            )
-            Spacer(Modifier.width(8.dp))
+            if (searchIndicatorIcon != null) {
+                Icon(
+                    modifier = Modifier.requiredSize(iconSize),
+                    painter = searchIndicatorIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.surfaceTint
+                )
+                Spacer(Modifier.width(8.dp))
+            }
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Wellerman Nathan Evans",
@@ -85,16 +85,18 @@ fun SearchBar(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(Modifier.width(8.dp))
-            IconButton(
-                onClick = onActionClick,
-                modifier = Modifier.requiredSize(iconSize),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.QrCode,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.surfaceTint
-                )
+            if (actionIcon != null) {
+                Spacer(Modifier.width(8.dp))
+                IconButton(
+                    onClick = onActionClick,
+                    modifier = Modifier.requiredSize(iconSize),
+                ) {
+                    Icon(
+                        painter = actionIcon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.surfaceTint
+                    )
+                }
             }
             Spacer(Modifier.width(containerHorizontalPadding))
         }
@@ -122,10 +124,10 @@ private fun PreviewSearchBar() {
     SearchBar(
         border = BorderStroke(
             width = 0.5.dp,
-            brush = defaultLinearGradient
+            brush = defaultLinearGradient,
         ),
         backgroundBrush = defaultLinearGradient,
         onClick = {},
-        onActionClick = {}
+        onActionClick = {},
     )
 }

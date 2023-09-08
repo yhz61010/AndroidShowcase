@@ -27,9 +27,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,12 +54,12 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
@@ -142,6 +139,7 @@ fun MainScreen(
                 HomeTopAppBar(
                     modifier = modifier,
                     unread = uiState.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
+                    pagerState = pagerState,
                     onNavigationClick = { coroutineScope.launch { sizeAwareDrawerState.open() } },
                     onActionClick = {
                         context.toast("Recording is not yet implemented.")
@@ -183,6 +181,8 @@ fun HomeTopAppBarContent(pagerState: PagerState, scrolled: Boolean) {
                 modifier = Modifier
                     .height(48.dp)
                     .padding(vertical = 6.dp),
+                searchIndicatorIcon = painterResource(id = R.drawable.app_search),
+                actionIcon = painterResource(id = R.drawable.app_qr_code),
                 onClick = { context.toast("Click search bar.") },
                 onActionClick = { context.toast("Click scan button on search bar.") },
             )
@@ -220,13 +220,13 @@ fun CustomBottomBar(
                                 }
                             },
                         ) {
-                            Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId))
+                            TabIcon(bottomItemData.screen)
                         }
                     } else {
-                        Icon(bottomItemData.icon, stringResource(bottomItemData.screen.resId))
+                        TabIcon(bottomItemData.screen)
                     }
                 },
-                label = { Text(stringResource(bottomItemData.screen.resId)) },
+                label = { Text(stringResource(bottomItemData.screen.nameResId)) },
                 // Here's the trick. The selected tab is based on HorizontalPager state.
                 selected = index == pagerState.currentPage,
                 onClick = {
@@ -241,6 +241,14 @@ fun CustomBottomBar(
             ) // end NavigationBarItem
         } // end AppBottomNavigationItems
     } // end NavigationBar
+}
+
+@Composable
+private fun TabIcon(screen: Screen) {
+    Icon(
+        painter = painterResource(id = screen.iconResId),
+        contentDescription = stringResource(screen.nameResId),
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -307,11 +315,12 @@ fun LinearGradientBox(scrollState: LazyListState) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeTopAppBar(
     modifier: Modifier = Modifier,
     unread: Int? = 0,
+    pagerState: PagerState,
     onNavigationClick: () -> Unit,
     onActionClick: () -> Unit,
     content: @Composable () -> Unit,
@@ -333,22 +342,20 @@ fun HomeTopAppBar(
                 .heightIn(topBarHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ConstraintLayout(
-                modifier = Modifier.wrapContentSize()
+            Box(
+                modifier = Modifier.wrapContentSize(),
+                contentAlignment = Alignment.TopEnd,
             ) {
-                val (iconBtn, badge) = createRefs()
                 IconButton(
-                    modifier = Modifier.constrainAs(iconBtn) {},
                     // .background(color = Color.Yellow),
                     onClick = onNavigationClick
-                ) { Icon(Icons.Filled.Menu, null) }
+                ) { Icon(painterResource(R.drawable.app_menu), null) }
                 val badgeNum = unread ?: 0
                 if (badgeNum > 0) {
                     BadgedBox(
-                        modifier = Modifier.constrainAs(badge) {
-                            top.linkTo(iconBtn.top, margin = 22.dp)
-                            end.linkTo(iconBtn.end, margin = if (badgeNum < 100) 22.dp else 26.dp)
-                        },
+                        modifier = Modifier.padding(
+                            0.dp, 22.dp, if (badgeNum < 10) 20.dp else 24.dp, 0.dp
+                        ),
                         badge = {
                             Badge(
                                 modifier = Modifier.border(
@@ -366,8 +373,13 @@ fun HomeTopAppBar(
             Row(modifier = modifier.weight(1f)) {
                 content()
             }
-            IconButton(onClick = onActionClick) {
-                Icon(Icons.Outlined.Mic, null)
+            if (pagerState.currentPage == AppBottomNavigationItems.DISCOVERY.ordinal) {
+                IconButton(onClick = onActionClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.app_mic),
+                        contentDescription = null,
+                    )
+                }
             }
         } // end row
     } // end Column
@@ -382,7 +394,9 @@ fun PreviewMainScreen() {
             widthSize = WindowWidthSizeClass.Compact,
             onNavigationToDrawerItem = {},
             viewModel = viewModel(
-                factory = viewModelProviderFactoryOf { MainViewModel(FakeDI.previewMainUnreadRepository) },
+                factory = viewModelProviderFactoryOf {
+                    MainViewModel(FakeDI.previewMainUnreadRepository)
+                },
             ),
         )
     }

@@ -246,12 +246,17 @@ fun Project.getSignProperty(key: String, path: String = "config/sign/keystore.pr
 }
 
 dependencies {
+    implementation(libs.androidx.multidex)
+
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
     // By using `projects`, you need to enable `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`
     // in `settings.gradle.kts` where in your root folder.
     implementation(projects.featureCommon)
     implementation(libs.coil.kt.compose)
-    // implementation(libs.lottie.compose)
     implementation(libs.karn.notify)
+    // implementation(libs.lottie.compose)
 
     // ==============================
     testImplementation(libs.bundles.test)

@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
@@ -42,53 +40,59 @@ fun AppDrawer(
 ) {
     ModalDrawerSheet(modifier) {
         AppLogo(
-            modifier = Modifier
-                .padding(
-                    start = 24.dp,
-                    top = Dimen.drawerHeaderPaddingTop,
-                    end = NavigationDrawerItemDefaults.ItemPadding.calculateEndPadding(LayoutDirection.Ltr),
-                    bottom = Dimen.drawerHeaderPaddingBottom
-                )
+            modifier = Modifier.padding(
+                start = 24.dp,
+                top = Dimen.drawerHeaderPaddingTop,
+                end = NavigationDrawerItemDefaults.ItemPadding.calculateEndPadding(
+                    LayoutDirection.Ltr
+                ),
+                bottom = Dimen.drawerHeaderPaddingBottom
+            )
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = Screen.MemberCenterScreen.resId)) },
-            icon = { Icon(Screen.MemberCenterScreen.requireIcon, null) },
+            label = { Text(stringResource(id = Screen.MemberCenterScreen.nameResId)) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = Screen.MemberCenterScreen.getIcon()),
+                    contentDescription = null
+                )
+            },
             selected = currentRoute == Screen.MemberCenterScreen.route,
             onClick = { onNavigateTo(Screen.MemberCenterScreen.route); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
-                .padding(horizontal = Dimen.drawerItemHorizontalPadding)
+                .padding(horizontal = Dimen.drawerItemHorizontalPadding),
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = Screen.MessageScreen.resId)) },
-            icon = { Icon(Screen.MessageScreen.requireIcon, null) },
+            label = { Text(stringResource(id = Screen.MessageScreen.nameResId)) },
+            icon = { Icon(painterResource(id = Screen.MessageScreen.getIcon()), null) },
             selected = currentRoute == Screen.MessageScreen.route,
             onClick = { onNavigateTo(Screen.MessageScreen.route); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
-                .padding(horizontal = Dimen.drawerItemHorizontalPadding)
+                .padding(horizontal = Dimen.drawerItemHorizontalPadding),
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = Screen.SettingScreen.resId)) },
-            icon = { Icon(Screen.SettingScreen.requireIcon, null) },
+            label = { Text(stringResource(id = Screen.SettingScreen.nameResId)) },
+            icon = { Icon(painterResource(id = Screen.SettingScreen.getIcon()), null) },
             selected = currentRoute == Screen.SettingScreen.route,
             onClick = { onNavigateTo(Screen.SettingScreen.route); onCloseDrawer() },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
-                .padding(horizontal = Dimen.drawerItemHorizontalPadding)
+                .padding(horizontal = Dimen.drawerItemHorizontalPadding),
         )
         NavigationDrawerItem(
             label = { Text(stringResource(id = R.string.app_drawer_exit_label)) },
-            icon = { Icon(Icons.Outlined.ExitToApp, null) },
+            icon = { Icon(painterResource(id = R.drawable.app_exit_to_app), null) },
             selected = false,
             onClick = { },
             // modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             modifier = Modifier
                 .height(Dimen.drawerItemHeight)
-                .padding(horizontal = Dimen.drawerItemHorizontalPadding)
+                .padding(horizontal = Dimen.drawerItemHorizontalPadding),
         )
     }
 }
@@ -96,8 +100,7 @@ fun AppDrawer(
 @Composable
 private fun AppLogo(modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier, verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painterResource(R.drawable.app_user_avatar),
@@ -117,10 +120,8 @@ private fun AppLogo(modifier: Modifier = Modifier) {
 @Composable
 fun PreviewAppDrawer() {
     AppTheme(dynamicColor = false) {
-        AppDrawer(
-            currentRoute = DrawerDestinations.NO_ROUTE,
-            onNavigateTo = { },
-            onCloseDrawer = { }
-        )
+        AppDrawer(currentRoute = DrawerDestinations.NO_ROUTE,
+                  onNavigateTo = { },
+                  onCloseDrawer = { })
     }
 }
