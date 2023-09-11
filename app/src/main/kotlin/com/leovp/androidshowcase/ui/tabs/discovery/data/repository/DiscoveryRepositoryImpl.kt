@@ -9,6 +9,7 @@ import com.leovp.androidshowcase.ui.tabs.discovery.domain.model.CarouselItem
 import com.leovp.androidshowcase.ui.tabs.discovery.domain.model.EverydayItem
 import com.leovp.androidshowcase.ui.tabs.discovery.domain.model.MusicItem
 import com.leovp.androidshowcase.ui.tabs.discovery.domain.repository.DiscoveryRepository
+import com.leovp.module.common.GlobalConst
 import com.leovp.module.common.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,7 +29,7 @@ class DiscoveryRepositoryImpl(
 
     override suspend fun getEverydayRecommends(): Result<List<EverydayItem>> =
         withContext(Dispatchers.IO) {
-            val result: Result<List<EverydayItem>> = Net.get("./?method=album.search") {
+            val result: Result<List<EverydayItem>> = Net.get(GlobalConst.HTTP_GET_SEARCH_ALBUM) {
                 param("album", "Teresa Teng")
                 param("limit", 10)
                 param("page", 1) // start from 1
@@ -45,7 +46,7 @@ class DiscoveryRepositoryImpl(
 
     override suspend fun getPersonalRecommends(): Result<List<MusicItem>> =
         withContext(Dispatchers.IO) {
-            val result: Result<List<MusicItem>> = Net.get("./?method=artist.gettoptracks") {
+            val result: Result<List<MusicItem>> = Net.get(GlobalConst.HTTP_GET_TOP_TRACKS) {
                 param("artist", "Teresa Teng")
                 param("limit", 10)
                 param("page", 1) // start from 1

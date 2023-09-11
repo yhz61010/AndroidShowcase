@@ -53,5 +53,5 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(
     "app",
-    "feature_common"
+    "feature_base"
 )

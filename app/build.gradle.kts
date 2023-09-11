@@ -253,7 +253,7 @@ dependencies {
 
     // By using `projects`, you need to enable `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`
     // in `settings.gradle.kts` where in your root folder.
-    implementation(projects.featureCommon)
+    implementation(projects.featureBase)
     implementation(libs.coil.kt.compose)
     implementation(libs.karn.notify)
     // implementation(libs.lottie.compose)
