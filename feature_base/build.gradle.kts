@@ -85,6 +85,7 @@ dependencies {
     // ----------
 
     api(libs.bundles.kotlin)
+    api(libs.androidx.lifecycle.runtime.compose)
 
     api(libs.leo.androidbase)
     // api(libs.leo.log)
@@ -98,9 +99,11 @@ dependencies {
     api(libs.square.okhttp)
     api(libs.net)
     // Net - dependencies - End
-
     api(libs.serialization.json)
     api(libs.mars.xlog)
+    api(libs.coil.kt.compose)
+    api(libs.karn.notify)
+    // api(libs.lottie.compose)
 
     // ==============================
     testImplementation(libs.bundles.test)

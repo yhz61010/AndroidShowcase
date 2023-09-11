@@ -52,6 +52,7 @@ dependencyResolutionManagement {
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(
-    "app",
-    "feature_base"
+    ":app",
+    ":feature_base",
+    ":feature_discovery",
 )

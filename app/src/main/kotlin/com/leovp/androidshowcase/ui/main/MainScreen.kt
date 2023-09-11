@@ -66,13 +66,13 @@ import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.testdata.FakeDI
 import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
-import com.leovp.androidshowcase.ui.tabs.discovery.presentation.DiscoveryScreen
 import com.leovp.androidshowcase.ui.tabs.my.MyScreen
 import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_end_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle2_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle3_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_start_color
+import com.leovp.feature_discovery.presentation.DiscoveryScreen
 import com.leovp.log.LogContext
 import com.leovp.module.common.presentation.compose.composable.SearchBar
 import com.leovp.module.common.presentation.compose.composable.defaultLinearGradient
