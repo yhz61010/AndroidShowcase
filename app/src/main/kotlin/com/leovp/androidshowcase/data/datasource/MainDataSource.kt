@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.data.datasource.api
+package com.leovp.androidshowcase.data.datasource
 
 import com.leovp.androidshowcase.domain.model.UnreadModel
 

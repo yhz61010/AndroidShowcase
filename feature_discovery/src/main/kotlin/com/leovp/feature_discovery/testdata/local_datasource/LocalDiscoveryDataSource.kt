@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:max-line-length") // String constants read better
+
 package com.leovp.feature_discovery.testdata.local_datasource
 
 import com.leovp.feature_discovery.data.datasource.DiscoveryDataSource

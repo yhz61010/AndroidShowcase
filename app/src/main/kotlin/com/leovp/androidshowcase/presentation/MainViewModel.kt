@@ -7,19 +7,22 @@ import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.domain.usecase.MainUseCase
 import com.leovp.log.LogContext
 import com.leovp.module.common.successOr
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Author: Michael Leo
  * Date: 2023/9/4 14:08
  */
 
-class MainViewModel(private val useCase: MainUseCase) : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(private val useCase: MainUseCase) : ViewModel() {
     companion object {
         private const val TAG = "MainVM"
     }

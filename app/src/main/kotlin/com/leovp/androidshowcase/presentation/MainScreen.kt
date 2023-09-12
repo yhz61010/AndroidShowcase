@@ -63,13 +63,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
+import com.leovp.androidshowcase.R
+import com.leovp.androidshowcase.domain.model.UnreadModel
+import com.leovp.androidshowcase.testdata.FakeDI
 import com.leovp.androidshowcase.ui.AppBottomNavigationItems
 import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.androidshowcase.ui.DrawerDestinations
-import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.ui.Screen
-import com.leovp.androidshowcase.domain.model.UnreadModel
-import com.leovp.androidshowcase.testdata.FakeDI
 import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_end_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle2_color
@@ -102,9 +102,7 @@ fun MainScreen(
     widthSize: WindowWidthSizeClass,
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = viewModel(
-        factory = viewModelProviderFactoryOf { MainViewModel(FakeDI.mainUseCase) },
-    ),
+    viewModel: MainViewModel,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

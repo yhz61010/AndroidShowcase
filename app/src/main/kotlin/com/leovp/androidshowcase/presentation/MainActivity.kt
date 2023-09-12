@@ -15,18 +15,23 @@ import com.leovp.androidshowcase.ui.Screen
 import com.leovp.androidshowcase.ui.addAppDrawerGraph
 import com.leovp.androidshowcase.ui.addAppMainGraph
 import com.leovp.androidshowcase.ui.rememberNavigationActions
+import com.leovp.androidshowcase.utils.InitManager
 import com.leovp.module.common.GlobalConst
 import com.leovp.module.common.http.RequestUtil
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Author: Michael Leo
  * Date: 2023/7/14 13:07
  */
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        InitManager.init(application)
 
         RequestUtil.initNetEngine(
             baseUrl = GlobalConst.API_BASE_URL

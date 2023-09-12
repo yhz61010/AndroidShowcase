@@ -6,20 +6,17 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.compose.AsyncImage
 import coil.disk.DiskCache
-import com.leovp.androidshowcase.utils.InitManager
+import dagger.hilt.android.HiltAndroidApp
 
 /**
  * Author: Michael Leo
  * Date: 2023/7/6 15:52
  */
+
+@HiltAndroidApp
 class CustomApplication : MultiDexApplication(), ImageLoaderFactory {
     companion object {
         private const val TAG = "CA"
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        InitManager.init(this)
     }
 
     /**
