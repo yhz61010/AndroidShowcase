@@ -85,7 +85,13 @@ fun AppDrawer(
                 .padding(horizontal = Dimen.drawerItemHorizontalPadding),
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.app_drawer_exit_label)) },
+            label = {
+                Text(
+                    stringResource(
+                        id = com.leovp.feature_main_drawer.R.string.drawer_exit_label
+                    )
+                )
+            },
             icon = { Icon(painterResource(id = R.drawable.app_exit_to_app), null) },
             selected = false,
             onClick = { },

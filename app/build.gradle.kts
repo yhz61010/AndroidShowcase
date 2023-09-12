@@ -196,7 +196,7 @@ fun gitCommitCount(): Int {
         }
     }.getOrDefault(0)
     // You must trim() the result. Because the result of command has a suffix '\n'.
-    return stdout.toString().trim().toInt()
+    return runCatching { stdout.toString().trim().toInt() }.getOrDefault(0)
 }
 
 // 使用commit的哈希值作为版本号也是可以的，获取最新的一次提交的哈希值的前七个字符
@@ -224,21 +224,21 @@ fun gitVersionTag(): String {
             commandLine = cmd.trim().split(' ')
             standardOutput = stdout
         }
-    }.getOrDefault(null) ?: return "NA"
-    var versionTag = stdout.toString().trim()
+    }.getOrDefault("NA")
 
-    val regex = "-(\\d+)-g".toRegex()
-    val matcher: MatchResult? = regex.matchEntire(versionTag)
+    return runCatching {
+        val versionTag = stdout.toString().trim()
 
-    val matcherGroup0: MatchGroup? = matcher?.groups?.get(0)
-    versionTag =
+        val regex = "-(\\d+)-g".toRegex()
+        val matcher: MatchResult? = regex.matchEntire(versionTag)
+
+        val matcherGroup0: MatchGroup? = matcher?.groups?.get(0)
         if (matcher?.value?.isNotBlank() == true && matcherGroup0?.value?.isNotBlank() == true) {
             versionTag.substring(0, matcherGroup0.range.first) + "." + matcherGroup0.value
         } else {
             versionTag
         }
-
-    return versionTag
+    }.getOrDefault("NA")
 }
 
 fun Project.getSignProperty(key: String, path: String = "config/sign/keystore.properties"): String {
@@ -252,6 +252,9 @@ dependencies {
     // By using `projects`, you need to enable `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`
     // in `settings.gradle.kts` where in your root folder.
     implementation(projects.featureDiscovery)
+    implementation(projects.featureMy)
+    implementation(projects.featureCommunity)
+    implementation(projects.featureMainDrawer)
 
     // ==============================
     testImplementation(libs.bundles.test)

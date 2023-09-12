@@ -192,7 +192,7 @@ fun EverydayRecommendsHeader() {
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             modifier = Modifier.weight(1f),
-            text = stringResource(com.leovp.module.common.R.string.app_cmn_listeners, 8939187),
+            text = stringResource(com.leovp.module.common.R.string.cmn_listeners, 8939187),
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Gray,
             fontWeight = FontWeight.Bold
@@ -423,7 +423,7 @@ fun MusicContentItem(data: MusicItem) {
                             .then(paddingModifier),
                         text = data.getMarkTextString(
                             stringResource(
-                                id = com.leovp.module.common.R.string.app_cmn_listeners_listening
+                                id = com.leovp.module.common.R.string.cmn_listeners_listening
                             )
                         ),
                         color = textColor,

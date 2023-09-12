@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.leovp.androidshowcase.ui.drawerscreens.membercenter.MemberCenterScreen
+import com.leovp.feature_main_drawer.membercenter.MemberCenterScreen
 import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
@@ -37,7 +37,7 @@ fun NavGraphBuilder.addAppMainGraph(
         ) {
             MainScreen(
                 widthSize = widthSizeClass,
-                onNavigationToDrawerItem = { drawerItemRoute ->
+                onNavigationToDrawerItem = { drawerItemRoute: String ->
                     navigationActions.navigate(drawerItemRoute)
                 },
                 modifier = modifier

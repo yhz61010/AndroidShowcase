@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_cmn_listeners">%1$d人在听</string>
-    <string name="app_cmn_listeners_listening">人正在收听</string>
+    <string name="cmn_listeners">%1$d人在听</string>
+    <string name="cmn_listeners_listening">人正在收听</string>
 </resources>

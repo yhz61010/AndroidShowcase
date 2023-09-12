@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.tabs.community
+package com.leovp.feature_my.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,23 +10,23 @@ import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * Author: Michael Leo
- * Date: 2023/7/20 08:43
+ * Date: 2023/7/20 09:58
  */
 
 @Composable
-fun CommunityScreen(
+fun MyScreen(
     // onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
         Column(modifier) {
-            Text(text = "Community Screen")
+            Text(text = "My Screen")
         }
     }
 }
 
 @Preview
 @Composable
-fun PreviewCommunityScreen() {
-    CommunityScreen(/*onRefresh = {}*/)
+fun PreviewMyScreen() {
+    MyScreen(/*onRefresh = {}*/)
 }

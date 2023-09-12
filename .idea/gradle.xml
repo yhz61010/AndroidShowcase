@@ -13,7 +13,10 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/feature_base" />
+            <option value="$PROJECT_DIR$/feature_community" />
             <option value="$PROJECT_DIR$/feature_discovery" />
+            <option value="$PROJECT_DIR$/feature_main_drawer" />
+            <option value="$PROJECT_DIR$/feature_my" />
           </set>
         </option>
       </GradleProjectSettings>

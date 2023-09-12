@@ -110,7 +110,8 @@ fun SplashTheme(content: @Composable () -> Unit) {
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false, content: @Composable () -> Unit
+    dynamicColor: Boolean = false,
+    content: @Composable () -> Unit,
 ) {
     ImmersiveTheme(
         systemBarColor = colorScheme.primary,
@@ -153,6 +154,9 @@ fun ImmersiveTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme, shapes = AppShapes, typography = Typography, content = content
+        colorScheme = colorScheme,
+        shapes = AppShapes,
+        typography = Typography,
+        content = content,
     )
 }

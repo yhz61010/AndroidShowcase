@@ -18,7 +18,7 @@ plugins {
 android {
     namespace = "com.leovp.feature_discovery"
 
-    resourcePrefix = "dis_"
+    resourcePrefix = "com_"
 
     // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
     buildFeatures {

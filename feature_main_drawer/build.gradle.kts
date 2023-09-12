@@ -16,9 +16,9 @@ plugins {
 }
 
 android {
-    namespace = "com.leovp.feature_discovery"
+    namespace = "com.leovp.feature_main_drawer"
 
-    resourcePrefix = "dis_"
+    resourcePrefix = "drawer_"
 
     // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
     buildFeatures {

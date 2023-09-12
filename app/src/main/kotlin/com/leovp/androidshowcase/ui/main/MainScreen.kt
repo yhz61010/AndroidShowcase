@@ -65,8 +65,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.testdata.FakeDI
-import com.leovp.androidshowcase.ui.tabs.community.CommunityScreen
-import com.leovp.androidshowcase.ui.tabs.my.MyScreen
+import com.leovp.feature_community.presentation.CommunityScreen
+import com.leovp.feature_my.presentation.MyScreen
 import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_end_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle2_color

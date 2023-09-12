@@ -61,15 +61,21 @@ sealed class Screen(
     // Drawer item screens
     data object MemberCenterScreen : Screen(
         route = "drawer_member_center",
-        nameResId = R.string.app_drawer_member_center,
+        nameResId = com.leovp.feature_main_drawer.R.string.drawer_member_center,
         iconResId = R.drawable.app_credit_card
     )
 
-    data object MessageScreen :
-        Screen("drawer_messages", R.string.app_drawer_message_label, iconResId = R.drawable.app_mail)
+    data object MessageScreen : Screen(
+        "drawer_messages",
+        com.leovp.feature_main_drawer.R.string.drawer_message_label,
+        iconResId = R.drawable.app_mail
+    )
 
-    data object SettingScreen :
-        Screen("drawer_setting", R.string.app_drawer_settings_label, iconResId = R.drawable.app_settings)
+    data object SettingScreen : Screen(
+        "drawer_setting",
+        com.leovp.feature_main_drawer.R.string.drawer_settings_label,
+        iconResId = R.drawable.app_settings
+    )
 }
 
 enum class AppBottomNavigationItems(val screen: Screen) {
@@ -108,9 +114,11 @@ class AppNavigationActions(private val navController: NavHostController) {
         return when (route) {
             Screen.Main.route -> navController.navigateToMain()
 
-            Screen.MemberCenterScreen.route, Screen.MessageScreen.route, Screen.SettingScreen.route -> navController.navigateSingleTopTo(
-                route
-            )
+            Screen.MemberCenterScreen.route,
+
+            Screen.MessageScreen.route,
+
+            Screen.SettingScreen.route -> navController.navigateSingleTopTo(route)
 
             else -> error("Illegal route: $route")
         }
@@ -147,7 +155,10 @@ fun rememberNavigationActions(navController: NavHostController): AppNavigationAc
 }
 
 private fun outputGraphInfo(route: String, navController: NavHostController) {
-    LogContext.log.d(TAG, "  current: $route  previous=${navController.currentDestination?.route}")
+    LogContext.log.d(
+        TAG,
+        "  current: $route  previous=${navController.currentDestination?.route}",
+    )
     for ((i, dest) in navController.currentBackStack.value.withIndex()) {
         LogContext.log.d(TAG, "    Stack $i: ${dest.destination.route}")
     }

@@ -55,4 +55,7 @@ include(
     ":app",
     ":feature_base",
     ":feature_discovery",
+    ":feature_my",
+    ":feature_community",
+    ":feature_main_drawer"
 )

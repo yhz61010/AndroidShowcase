@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.drawerscreens.membercenter
+package com.leovp.feature_main_drawer.membercenter
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -29,9 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.leovp.androidshowcase.R
-import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
-import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
+import com.leovp.feature_main_drawer.R
 
 /**
  * Author: Michael Leo
@@ -41,56 +39,49 @@ import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
 @Composable
 fun MemberCenterScreen(
     // widthSize: WindowWidthSizeClass,
-    onMenuUpAction: () -> Unit,
-    modifier: Modifier = Modifier
+    onMenuUpAction: () -> Unit, modifier: Modifier = Modifier
 ) {
     // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
     Scaffold(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            val title = stringResource(id = R.string.app_drawer_member_center)
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
+            val title = stringResource(id = R.string.drawer_member_center)
             CenterAlignedTopAppBar(
                 // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 //     containerColor = Color.Cyan
                 // ),
                 // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-                title = { Text(title) },
-                navigationIcon = {
+                title = { Text(title) }, navigationIcon = {
                     IconButton(onClick = onMenuUpAction) {
                         Icon(
-                            painter = painterResource(id = R.drawable.app_arrow_back),
+                            painter = painterResource(
+                                id = com.leovp.module.common.R.drawable.cmn_arrow_back
+                            ),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
-                },
-                scrollBehavior = scrollBehavior
+                }, scrollBehavior = scrollBehavior
             )
-        }
-    ) { contentPadding ->
+        }) { contentPadding ->
         MemberCenterContent(
             modifier = Modifier
                 // .nestedScroll(scrollBehavior.nestedScrollConnection)
                 // innerPadding takes into account the top and bottom bar
-                .padding(contentPadding),
-            state = rememberLazyListState()
+                .padding(contentPadding), state = rememberLazyListState()
         )
     }
 }
 
 @Composable
 fun MemberCenterContent(
-    modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState()
+    modifier: Modifier = Modifier, state: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(16.dp),
-        modifier = modifier,
-        state = state
+        contentPadding = PaddingValues(16.dp), modifier = modifier, state = state
     ) {
         memberCenterScreenContentItems()
     }
@@ -99,7 +90,7 @@ fun MemberCenterContent(
 fun LazyListScope.memberCenterScreenContentItems() {
     item {
         Image(
-            painterResource(R.drawable.app_beauty),
+            painterResource(R.drawable.drawer_beauty),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,8 +103,7 @@ fun LazyListScope.memberCenterScreenContentItems() {
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    modifier = Modifier.padding(2.dp, 16.dp),
-                    text = "item: $it"
+                    modifier = Modifier.padding(2.dp, 16.dp), text = "item: $it"
                 )
             }
         }
@@ -124,10 +114,7 @@ fun LazyListScope.memberCenterScreenContentItems() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewMemberCenterScreen() {
-    ImmersiveTheme(systemBarColor = immersive_sys_ui, dynamicColor = false) {
-        MemberCenterScreen(
-            // widthSize = WindowWidthSizeClass.Compact,
-            onMenuUpAction = {}
-        )
-    }
+    MemberCenterScreen(
+        // widthSize = WindowWidthSizeClass.Compact,
+        onMenuUpAction = {})
 }
