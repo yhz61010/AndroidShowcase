@@ -63,11 +63,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
-import com.leovp.androidshowcase.AppBottomNavigationItems
-import com.leovp.androidshowcase.AppDrawer
-import com.leovp.androidshowcase.DrawerDestinations
+import com.leovp.androidshowcase.ui.AppBottomNavigationItems
+import com.leovp.androidshowcase.ui.AppDrawer
+import com.leovp.androidshowcase.ui.DrawerDestinations
 import com.leovp.androidshowcase.R
-import com.leovp.androidshowcase.Screen
+import com.leovp.androidshowcase.ui.Screen
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.testdata.FakeDI
 import com.leovp.androidshowcase.ui.theme.AppTheme

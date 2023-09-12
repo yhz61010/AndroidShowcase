@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.framework
+package com.leovp.androidshowcase.utils
 
 import android.app.Application
 import androidx.core.app.NotificationCompat
@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import com.leovp.android.exts.LeoToast
 import com.leovp.android.ui.ForegroundComponent
 import com.leovp.androidbase.exts.android.closeAndroidPDialog
+import com.leovp.androidshowcase.BuildConfig
 import com.leovp.androidshowcase.R
 import com.leovp.log.LogContext
 import com.leovp.module.common.CrashHandler
@@ -29,7 +30,7 @@ object InitManager {
 
         // Log must be initialized first.
         LogContext.setLogImpl(MarsXLog("AOS").apply {
-            init(app, com.leovp.androidshowcase.BuildConfig.CONSOLE_LOG_OPEN)
+            init(app, BuildConfig.CONSOLE_LOG_OPEN)
         })
 
         PrefContext.setPrefImpl(LPref(app))

@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase
+package com.leovp.androidshowcase.ui
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.module.common.res.Dimen
 
@@ -29,6 +30,14 @@ import com.leovp.module.common.res.Dimen
  * Author: Michael Leo
  * Date: 2023/7/17 10:07
  */
+
+enum class AppBottomNavigationItems(val screen: Screen) {
+    DISCOVERY(Screen.Discovery),
+
+    MY(Screen.My),
+
+    COMMUNITY(Screen.Community)
+}
 
 @Composable
 fun AppDrawer(

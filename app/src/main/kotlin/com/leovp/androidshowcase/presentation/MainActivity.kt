@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.leovp.androidshowcase.Screen
-import com.leovp.androidshowcase.addAppDrawerGraph
-import com.leovp.androidshowcase.addAppMainGraph
-import com.leovp.androidshowcase.rememberNavigationActions
+import com.leovp.androidshowcase.ui.Screen
+import com.leovp.androidshowcase.ui.addAppDrawerGraph
+import com.leovp.androidshowcase.ui.addAppMainGraph
+import com.leovp.androidshowcase.ui.rememberNavigationActions
 import com.leovp.module.common.GlobalConst
 import com.leovp.module.common.http.RequestUtil
 

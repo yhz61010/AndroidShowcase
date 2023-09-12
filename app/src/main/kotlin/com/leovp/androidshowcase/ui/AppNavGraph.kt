@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase
+package com.leovp.androidshowcase.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass

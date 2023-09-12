@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.framework
+package com.leovp.androidshowcase
 
 import android.util.Log
 import androidx.multidex.MultiDexApplication
@@ -6,6 +6,7 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.compose.AsyncImage
 import coil.disk.DiskCache
+import com.leovp.androidshowcase.utils.InitManager
 
 /**
  * Author: Michael Leo

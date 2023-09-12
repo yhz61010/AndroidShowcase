@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".framework.CustomApplication"
+        android:name=".CustomApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/app_data_extraction_rules"
         android:fullBackupContent="false"
