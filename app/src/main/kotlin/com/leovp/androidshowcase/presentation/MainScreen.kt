@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.main
+package com.leovp.androidshowcase.presentation
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -63,16 +63,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
+import com.leovp.androidshowcase.AppBottomNavigationItems
+import com.leovp.androidshowcase.AppDrawer
+import com.leovp.androidshowcase.DrawerDestinations
 import com.leovp.androidshowcase.R
+import com.leovp.androidshowcase.Screen
+import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.testdata.FakeDI
-import com.leovp.feature_community.presentation.CommunityScreen
-import com.leovp.feature_my.presentation.MyScreen
 import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_end_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle2_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle3_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_start_color
+import com.leovp.feature_community.presentation.CommunityScreen
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
+import com.leovp.feature_my.presentation.MyScreen
 import com.leovp.log.LogContext
 import com.leovp.module.common.presentation.compose.composable.SearchBar
 import com.leovp.module.common.presentation.compose.composable.defaultLinearGradient
@@ -98,7 +103,7 @@ fun MainScreen(
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = viewModel(
-        factory = viewModelProviderFactoryOf { MainViewModel(FakeDI.mainUnreadRepository) },
+        factory = viewModelProviderFactoryOf { MainViewModel(FakeDI.mainUseCase) },
     ),
 ) {
     val context = LocalContext.current
@@ -394,9 +399,7 @@ fun PreviewMainScreen() {
             widthSize = WindowWidthSizeClass.Compact,
             onNavigationToDrawerItem = {},
             viewModel = viewModel(
-                factory = viewModelProviderFactoryOf {
-                    MainViewModel(FakeDI.previewMainUnreadRepository)
-                },
+                factory = viewModelProviderFactoryOf { MainViewModel(FakeDI.previewMainUseCase) },
             ),
         )
     }

@@ -10,9 +10,8 @@ import com.leovp.module.common.Result
  * Author: Michael Leo
  * Date: 2023/9/4 17:02
  */
-class GetDiscoveryListUseCase(
-    private val repository: DiscoveryRepository
-) {
+class GetDiscoveryListUseCase(private val repository: DiscoveryRepository) {
+
     suspend fun getPersonalRecommends(): Result<List<MusicItem>> =
         repository.getPersonalRecommends()
 

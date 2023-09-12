@@ -1,6 +1,6 @@
-package com.leovp.androidshowcase.ui.main.data
+package com.leovp.androidshowcase.domain.repository
 
-import com.leovp.androidshowcase.ui.main.UnreadModel
+import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.module.common.Result
 
 interface MainRepository {

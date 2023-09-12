@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.main
+package com.leovp.androidshowcase.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

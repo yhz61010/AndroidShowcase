@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.main
+package com.leovp.androidshowcase
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
-import com.leovp.androidshowcase.R
 import com.leovp.log.LogContext
 
 /**

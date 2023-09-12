@@ -1,4 +1,4 @@
-package com.leovp.androidshowcase.ui.main
+package com.leovp.androidshowcase
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -6,6 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.leovp.androidshowcase.presentation.MainScreen
+import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.feature_main_drawer.membercenter.MemberCenterScreen
 import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.ui.theme.SplashTheme

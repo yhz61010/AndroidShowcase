@@ -1,10 +1,10 @@
-package com.leovp.androidshowcase.ui.main
+package com.leovp.androidshowcase.presentation
 
 import androidx.annotation.Keep
-import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leovp.androidshowcase.ui.main.data.MainRepository
+import com.leovp.androidshowcase.domain.model.UnreadModel
+import com.leovp.androidshowcase.domain.usecase.MainUseCase
 import com.leovp.log.LogContext
 import com.leovp.module.common.successOr
 import kotlinx.coroutines.async
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
  * Date: 2023/9/4 14:08
  */
 
-class MainViewModel(private val repository: MainRepository) : ViewModel() {
+class MainViewModel(private val useCase: MainUseCase) : ViewModel() {
     companion object {
         private const val TAG = "MainVM"
     }
@@ -39,7 +39,7 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
         _uiState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
-            val unreadListDeferred = async { repository.getUnreadList("1") }
+            val unreadListDeferred = async { useCase.getUnreadList("1") }
 
             val unreadList = unreadListDeferred.await().successOr(emptyList())
 
@@ -53,20 +53,6 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
     }
 }
 
-@Keep
-@Immutable
-data class UnreadModel(
-    val key: String,
-    val value: Int
-) {
-    companion object {
-        val MESSAGE = Screen.MemberCenterScreen.route
-
-        val DISCOVERY = Screen.Discovery.route
-        val MY = Screen.My.route
-        val COMMUNITY = Screen.Community.route
-    }
-}
 
 /**
  * UI state for the Main screen
