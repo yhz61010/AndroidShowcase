@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.domain.usecase.MainUseCase
 import com.leovp.log.LogContext
-import com.leovp.module.common.successOr
+import com.leovp.module.common.getOrDefault
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +44,7 @@ class MainViewModel @Inject constructor(private val useCase: MainUseCase) : View
         viewModelScope.launch {
             val unreadListDeferred = async { useCase.getUnreadList("1") }
 
-            val unreadList = unreadListDeferred.await().successOr(emptyList())
+            val unreadList = unreadListDeferred.await().getOrDefault(emptyList())
 
             _uiState.update {
                 it.copy(

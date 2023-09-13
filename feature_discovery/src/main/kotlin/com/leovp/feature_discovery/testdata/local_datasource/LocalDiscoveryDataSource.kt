@@ -11,8 +11,11 @@ import com.leovp.feature_discovery.domain.model.Image
 import com.leovp.feature_discovery.domain.model.MusicItem
 import com.leovp.module.common.utils.monthDateFormat
 import java.util.Date
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocalDiscoveryDataSource : DiscoveryDataSource {
+@Singleton
+class LocalDiscoveryDataSource @Inject constructor() : DiscoveryDataSource {
     override fun getCarouselRecommendedList() = listOf(
         CarouselItem(
             id = 1,

@@ -13,6 +13,7 @@ import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
+import com.leovp.feature_discovery.presentation.DiscoveryViewModel
 import com.leovp.feature_main_drawer.membercenter.MemberCenterScreen
 
 /**
@@ -35,18 +36,18 @@ fun NavGraphBuilder.addAppMainGraph(
     }
     composable(route = Screen.Main.route) {
         ImmersiveTheme(
-            systemBarColor = Color.Transparent,
-            dynamicColor = false,
-            lightSystemBar = true
+            systemBarColor = Color.Transparent, dynamicColor = false, lightSystemBar = true
         ) {
             val mainViewModel = hiltViewModel<MainViewModel>()
+            val discoveryViewModel = hiltViewModel<DiscoveryViewModel>()
             MainScreen(
+                modifier = modifier,
                 widthSize = widthSizeClass,
                 onNavigationToDrawerItem = { drawerItemRoute: String ->
                     navigationActions.navigate(drawerItemRoute)
                 },
-                modifier = modifier,
-                viewModel = mainViewModel,
+                mainViewModel = mainViewModel,
+                discoveryViewModel = discoveryViewModel
             )
         }
     }
@@ -65,8 +66,7 @@ fun NavGraphBuilder.addAppDrawerGraph(
         ) {
             MemberCenterScreen(
                 // widthSize = widthSizeClass,
-                onMenuUpAction = { navigationActions.upPress() },
-                modifier = modifier
+                onMenuUpAction = { navigationActions.upPress() }, modifier = modifier
             )
         }
     }

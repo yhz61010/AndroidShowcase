@@ -10,7 +10,7 @@ import javax.inject.Inject
  * Author: Michael Leo
  * Date: 2023/9/4 14:28
  */
-class PreviewMainRepository @Inject constructor(
+class PreviewMainRepositoryImpl @Inject constructor(
     private val dataSource: LocalMainDataSource
 ) : MainRepository {
 

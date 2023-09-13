@@ -33,15 +33,10 @@ class MainActivity : ComponentActivity() {
 
         InitManager.init(application)
 
-        RequestUtil.initNetEngine(
-            baseUrl = GlobalConst.API_BASE_URL
-        )
+        RequestUtil.initNetEngine(baseUrl = GlobalConst.API_BASE_URL)
 
         // This app draws behind the system bars, so we want to handle fitting system windows
-        WindowCompat.setDecorFitsSystemWindows(
-            window,
-            false
-        )
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
@@ -50,24 +45,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     val navController = rememberNavController()
     val navigationActions = rememberNavigationActions(navController = navController)
     NavHost(
-        navController = navController,
-        startDestination = Screen.Splash.route,
-        modifier = Modifier
+        navController = navController, startDestination = Screen.Splash.route, modifier = Modifier
     ) {
-        addAppMainGraph(
-            widthSizeClass = widthSizeClass,
-            navigationActions = navigationActions
-        )
+        addAppMainGraph(widthSizeClass = widthSizeClass, navigationActions = navigationActions)
 
-        addAppDrawerGraph(
-            // widthSizeClass = widthSizeClass,
-            navigationActions = navigationActions
+        addAppDrawerGraph(/* widthSizeClass = widthSizeClass, */
+                          navigationActions = navigationActions
         )
     }
 }

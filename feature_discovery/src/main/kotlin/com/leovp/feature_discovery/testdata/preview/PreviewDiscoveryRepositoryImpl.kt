@@ -6,12 +6,13 @@ import com.leovp.feature_discovery.domain.model.MusicItem
 import com.leovp.feature_discovery.domain.repository.DiscoveryRepository
 import com.leovp.feature_discovery.testdata.local_datasource.LocalDiscoveryDataSource
 import com.leovp.module.common.Result
+import javax.inject.Inject
 
 /**
  * Author: Michael Leo
  * Date: 2023/9/4 13:55
  */
-class PreviewDiscoveryRepository(
+class PreviewDiscoveryRepositoryImpl @Inject constructor(
     private val dataSource: LocalDiscoveryDataSource
 ) : DiscoveryRepository {
 

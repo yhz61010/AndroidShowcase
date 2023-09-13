@@ -35,8 +35,9 @@ class SerializationConverter : NetConverter {
             when {
                 code in 200..299 -> {
                     val bodyString = response.body?.string() ?: return null
-                    val kType = response.request.kType
-                        ?: throw ConvertException(response, "Request does not contain KType")
+                    val kType = response.request.kType ?: throw ConvertException(
+                        response, "Request does not contain KType"
+                    )
                     return bodyString.parseBody<R>(kType)
                 }
 

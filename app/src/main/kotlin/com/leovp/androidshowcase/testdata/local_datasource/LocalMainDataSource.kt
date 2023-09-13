@@ -3,12 +3,14 @@ package com.leovp.androidshowcase.testdata.local_datasource
 import com.leovp.androidshowcase.data.datasource.MainDataSource
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Author: Michael Leo
  * Date: 2023/9/4 14:25
  */
 
+@Singleton
 class LocalMainDataSource @Inject constructor() : MainDataSource {
     override fun getUnreadList(uid: String): List<UnreadModel> {
         return listOf(

@@ -65,7 +65,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.domain.model.UnreadModel
-import com.leovp.androidshowcase.testdata.FakeDI
+import com.leovp.androidshowcase.testdata.PreviewMainModule
 import com.leovp.androidshowcase.ui.AppBottomNavigationItems
 import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.androidshowcase.ui.DrawerDestinations
@@ -77,6 +77,8 @@ import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle3_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_start_color
 import com.leovp.feature_community.presentation.CommunityScreen
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
+import com.leovp.feature_discovery.presentation.DiscoveryViewModel
+import com.leovp.feature_discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature_my.presentation.MyScreen
 import com.leovp.log.LogContext
 import com.leovp.module.common.presentation.compose.composable.SearchBar
@@ -99,13 +101,14 @@ private const val TAB_SWITCH_ANIM_DURATION = 300
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
+    modifier: Modifier = Modifier,
     widthSize: WindowWidthSizeClass,
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: MainViewModel,
+    mainViewModel: MainViewModel,
+    discoveryViewModel: DiscoveryViewModel
 ) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
     val isExpandedScreen = widthSize == WindowWidthSizeClass.Expanded
@@ -156,10 +159,11 @@ fun MainScreen(
                 val newModifier = modifier.padding(contentPadding)
                 MainScreenContent(
                     modifier = newModifier,
-                    onRefresh = { viewModel.refreshAll() },
+                    onRefresh = { mainViewModel.refreshAll() },
                     pagerState = pagerState,
                     scrollState = scrollState,
                     pagerScreenValues = pagerScreenValues,
+                    discoveryViewModel = discoveryViewModel
                 )
             } // end of Scaffold
 
@@ -262,6 +266,7 @@ fun MainScreenContent(
     scrollState: LazyListState,
     pagerScreenValues: Array<AppBottomNavigationItems>,
     onRefresh: () -> Unit,
+    discoveryViewModel: DiscoveryViewModel
 ) {
     HorizontalPager(
         state = pagerState,
@@ -269,7 +274,12 @@ fun MainScreenContent(
         key = { index -> pagerScreenValues[index].ordinal },
     ) { page ->
         when (pagerScreenValues[page]) {
-            AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(scrollState, onRefresh)
+            AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(
+                scrollState = scrollState,
+                onRefresh = onRefresh,
+                discoveryViewModel = discoveryViewModel,
+            )
+
             AppBottomNavigationItems.MY -> MyScreen(/*onRefresh*/)
             AppBottomNavigationItems.COMMUNITY -> CommunityScreen(/*onRefresh*/)
         }
@@ -392,12 +402,20 @@ fun HomeTopAppBar(
 @Composable
 fun PreviewMainScreen() {
     previewInitLog()
+
     AppTheme(dynamicColor = false) {
         MainScreen(
             widthSize = WindowWidthSizeClass.Compact,
             onNavigationToDrawerItem = {},
-            viewModel = viewModel(
-                factory = viewModelProviderFactoryOf { MainViewModel(FakeDI.previewMainUseCase) },
+            mainViewModel = viewModel(
+                factory = viewModelProviderFactoryOf {
+                    MainViewModel(PreviewMainModule.previewMainUseCase)
+                },
+            ),
+            discoveryViewModel = viewModel(
+                factory = viewModelProviderFactoryOf {
+                    DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
+                },
             ),
         )
     }

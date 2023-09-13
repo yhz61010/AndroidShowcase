@@ -71,7 +71,7 @@ import com.leovp.feature_discovery.domain.enum.MarkType
 import com.leovp.feature_discovery.domain.model.CarouselItem
 import com.leovp.feature_discovery.domain.model.EverydayItem
 import com.leovp.feature_discovery.domain.model.MusicItem
-import com.leovp.feature_discovery.testdata.FakeDI
+import com.leovp.feature_discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature_discovery.ui.theme.mark_hot_bg
 import com.leovp.feature_discovery.ui.theme.mark_hot_text_color
 import com.leovp.feature_discovery.ui.theme.mark_quality_border
@@ -96,19 +96,17 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DiscoveryScreen(
+    modifier: Modifier = Modifier,
     scrollState: LazyListState,
     onRefresh: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: DiscoveryViewModel = viewModel(
-        factory = viewModelProviderFactoryOf { DiscoveryViewModel(FakeDI.discoveryListUseCase) },
-    ),
+    discoveryViewModel: DiscoveryViewModel,
 ) {
     val ctx = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by discoveryViewModel.uiState.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.loading,
         onRefresh = {
-            viewModel.refreshAll()
+            discoveryViewModel.refreshAll()
             onRefresh()
         },
     )
@@ -492,9 +490,9 @@ fun PreviewDiscoveryScreen() {
     DiscoveryScreen(
         scrollState = rememberLazyListState(),
         onRefresh = {},
-        viewModel = viewModel(
+        discoveryViewModel = viewModel(
             factory = viewModelProviderFactoryOf {
-                DiscoveryViewModel(FakeDI.previewDiscoveryListUseCase)
+                DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
             },
         ),
     )

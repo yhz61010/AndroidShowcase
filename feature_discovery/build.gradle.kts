@@ -3,11 +3,10 @@ apply(from = "../jacoco.gradle.kts")
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
 plugins {
     alias(libs.plugins.android.library)
-    // alias(libs.plugins.com.android.dynamic.feature)
-    alias(libs.plugins.kotlin.parcelize) // id("kotlin-parcelize")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 
-    // Add ksp only if you use ksp() in dependencies {}
-    // alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.parcelize) // id("kotlin-parcelize")
 
     alias(libs.plugins.android.junit5)
 
@@ -33,6 +32,12 @@ android {
 }
 
 dependencies {
+    // hilt - start
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.compiler)
+    // hilt - end
+
     // By using `projects`, you need to enable `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`
     // in `settings.gradle.kts` where in your root folder.
     api(projects.featureBase)
