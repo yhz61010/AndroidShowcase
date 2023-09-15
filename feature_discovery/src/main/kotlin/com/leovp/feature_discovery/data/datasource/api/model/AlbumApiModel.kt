@@ -27,7 +27,7 @@ data class AlbumApiModel(
 
 fun AlbumApiModel.toDomainModel(index: Int): EverydayItem {
     val images = this.images
-        ?.filterNot { it.size == com.leovp.feature_discovery.data.datasource.api.model.ImageSizeApiModel.UNKNOWN || it.url.isBlank() }
+        ?.filterNot { it.size == ImageSizeApiModel.UNKNOWN || it.url.isBlank() }
         ?.map { it.toDomainModel() }
 
     return EverydayItem(

@@ -2,6 +2,7 @@ package com.leovp.feature_discovery.domain.model
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
+import com.leovp.feature_discovery.domain.enum.ImageSize
 
 /**
  * Author: Michael Leo
@@ -12,5 +13,8 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class CarouselItem(
     val id: Int,
-    val thumbnail: String
-)
+    val thumbnail: List<Image> = emptyList(),
+) {
+    fun getDefaultImageUrl() = this.thumbnail.firstOrNull { it.size == ImageSize.EXTRA_LARGE }?.url
+}
+

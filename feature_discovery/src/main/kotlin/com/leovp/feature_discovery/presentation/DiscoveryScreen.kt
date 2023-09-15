@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
@@ -27,10 +26,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -78,6 +79,7 @@ import com.leovp.feature_discovery.ui.theme.mark_quality_border
 import com.leovp.feature_discovery.ui.theme.mark_quality_text_color
 import com.leovp.feature_discovery.ui.theme.mark_vip_border
 import com.leovp.feature_discovery.ui.theme.mark_vip_text_color
+import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullRefresh
@@ -86,7 +88,7 @@ import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.floorMod
 import com.leovp.module.common.utils.previewInitLog
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 /**
  * Author: Michael Leo
@@ -98,7 +100,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DiscoveryScreen(
     modifier: Modifier = Modifier,
-    scrollState: LazyListState,
+    listState: LazyListState,
     onRefresh: () -> Unit,
     discoveryViewModel: DiscoveryViewModel,
 ) {
@@ -130,17 +132,17 @@ fun DiscoveryScreen(
             LazyColumn(
                 // contentPadding = PaddingValues(horizontal = 0.dp, vertical = 6.dp),
                 modifier = modifier.fillMaxSize(),
-                state = scrollState,
+                state = listState,
             ) {
                 item {
-                    CarouselHeader(uiState.carouselRecommends) { item ->
-                        ctx.toast("Carousel recommend item: $item")
+                    CarouselHeader(uiState.carouselRecommends) { clickedItem ->
+                        ctx.toast("Carousel recommend clickedItem: $clickedItem")
                     }
                 }
                 item {
                     EverydayRecommendsHeader()
-                    EverydayRecommendsContent(uiState.everydayRecommends) { item ->
-                        ctx.toast("Everyday recommend item: $item")
+                    EverydayRecommendsContent(uiState.everydayRecommends) { clickedItem ->
+                        ctx.toast("Everyday recommend clickedItem: $clickedItem")
                     }
                 }
                 item {
@@ -235,7 +237,7 @@ fun EverydayRecommendsContent(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(data.getDefaultImageUrl()).crossfade(true).build(),
                             contentDescription = null,
-                            placeholder = ColorPainter(Color.LightGray),
+                            placeholder = ColorPainter(place_holder_bg_color),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize(),
                         )
@@ -288,81 +290,93 @@ fun CarouselHeader(list: List<CarouselItem>, onItemClick: (CarouselItem) -> Unit
         pageCount = { pageCount },
     )
 
-    val pageCountIndex by remember { derivedStateOf { pagerState.currentPage.floorMod(pageCount) } }
-
     LaunchedEffect(key1 = pagerState.settledPage) {
-        launch {
-            delay(3000L)
-            val target = if (pagerState.currentPage < pageCount - 1) {
-                pagerState.currentPage + 1
-            } else {
-                0
-            }
-
-            pagerState.animateScrollToPage(
-                page = target,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    easing = FastOutSlowInEasing,
-                ),
-            )
-        }
+        yield()
+        delay(3000L)
+        pagerState.animateScrollToPage(
+            page = (pagerState.currentPage + 1) % (pagerState.pageCount),
+            animationSpec = tween(
+                durationMillis = 500,
+                easing = FastOutSlowInEasing,
+            ),
+        )
     }
 
-    Box(modifier = Modifier.padding(bottom = 6.dp)) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 6.dp),
+    ) {
         HorizontalPager(
             state = pagerState,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
+            pageSpacing = 16.dp,
             modifier = Modifier.fillMaxWidth(),
             beyondBoundsPageCount = 1,
             key = { index -> list[index].id },
-        ) { page ->
-            Card(
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .clickable { onItemClick(list[page]) }
-                    .padding(horizontal = 16.dp, vertical = 0.dp)
-                    .fillMaxWidth()
-                    .heightIn(min = 140.dp),
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(list[page].thumbnail)
-                        .crossfade(true).build(),
-                    contentDescription = null,
-                    placeholder = ColorPainter(Color.LightGray),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
+        ) { index ->
+            PagerContent(currentItem = list[index], onItemClick = onItemClick)
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 26.dp, vertical = 10.dp)
-                .align(Alignment.BottomStart),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            repeat(pageCount) { index ->
-                Box(
-                    modifier = Modifier
-                        .padding(start = 2.dp, end = 2.dp)
-                        .width(if (index == pageCountIndex) 12.dp else 4.dp)
-                        .height(4.dp)
-                        .clip(
-                            if (index == pageCountIndex) RoundedCornerShape(2.dp) else CircleShape
-                        )
-                        .background(
-                            color = if (index == pageCountIndex) Color.White else Color.LightGray,
-                            // shape = if (index == pageCountIndex) {
-                            //     RoundedCornerShape(2.dp)
-                            // } else {
-                            //     CircleShape
-                            // }
-                        )
-                )
-            }
-        }
+        PagerIndicator(Modifier.align(Alignment.BottomStart), pagerState)
     }
+}
+
+@Composable
+fun PagerContent(currentItem: CarouselItem, onItemClick: (CarouselItem) -> Unit) {
+    Card(
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = place_holder_bg_color),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onItemClick(currentItem) },
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(currentItem.getDefaultImageUrl()).crossfade(true).build(),
+            contentDescription = null,
+            placeholder = ColorPainter(place_holder_bg_color),
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier.size(140.dp),
+        )
+    } // end of Card
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PagerIndicator(
+    modifier: Modifier = Modifier,
+    pagerState: PagerState,
+) {
+    val currentPageIndex by remember {
+        derivedStateOf { pagerState.currentPage.floorMod(pagerState.pageCount) }
+    }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 26.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        repeat(pagerState.pageCount) { index ->
+            Box(
+                modifier = Modifier
+                    .padding(start = 2.dp, end = 2.dp)
+                    .width(if (index == currentPageIndex) 12.dp else 4.dp)
+                    .height(4.dp)
+                    .clip(
+                        if (index == currentPageIndex) RoundedCornerShape(2.dp) else CircleShape
+                    )
+                    .background(
+                        color = if (index == currentPageIndex) Color.White else Color.LightGray,
+                        // shape = if (index == pageCountIndex) {
+                        //     RoundedCornerShape(2.dp)
+                        // } else {
+                        //     CircleShape
+                        // }
+                    )
+            ) // end of Box
+        }
+    } // end of Row
 }
 
 @Composable
@@ -484,7 +498,7 @@ fun ListItemImage(
             model = ImageRequest.Builder(LocalContext.current).data(imageUrl).crossfade(true)
                 .build(),
             contentDescription = contentDescription,
-            placeholder = ColorPainter(Color.LightGray),
+            placeholder = ColorPainter(place_holder_bg_color),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
         )
@@ -496,7 +510,7 @@ fun ListItemImage(
 fun PreviewDiscoveryScreen() {
     previewInitLog()
     DiscoveryScreen(
-        scrollState = rememberLazyListState(),
+        listState = rememberLazyListState(),
         onRefresh = {},
         discoveryViewModel = viewModel(
             factory = viewModelProviderFactoryOf {

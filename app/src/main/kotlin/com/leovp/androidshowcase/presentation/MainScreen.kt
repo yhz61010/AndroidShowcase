@@ -121,10 +121,10 @@ fun MainScreen(
         pageCount = { pagerScreenValues.size },
     )
 
-    val scrollState = rememberLazyListState()
-    val firstVisibleItemIndex by remember { derivedStateOf { scrollState.firstVisibleItemIndex } }
+    val listState = rememberLazyListState()
+    val firstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     val firstVisibleItemScrollOffset by remember {
-        derivedStateOf { scrollState.firstVisibleItemScrollOffset }
+        derivedStateOf { listState.firstVisibleItemScrollOffset }
     }
     val scrolled = firstVisibleItemIndex != 0 || firstVisibleItemScrollOffset != 0
 
@@ -161,13 +161,13 @@ fun MainScreen(
                     modifier = newModifier,
                     onRefresh = { mainViewModel.refreshAll() },
                     pagerState = pagerState,
-                    scrollState = scrollState,
+                    listState = listState,
                     pagerScreenValues = pagerScreenValues,
                     discoveryViewModel = discoveryViewModel
                 )
             } // end of Scaffold
 
-            LinearGradientBox(scrollState)
+            LinearGradientBox(listState)
         } // end of Box
     }
 }
@@ -263,7 +263,7 @@ private fun TabIcon(screen: Screen) {
 fun MainScreenContent(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
-    scrollState: LazyListState,
+    listState: LazyListState,
     pagerScreenValues: Array<AppBottomNavigationItems>,
     onRefresh: () -> Unit,
     discoveryViewModel: DiscoveryViewModel
@@ -275,7 +275,7 @@ fun MainScreenContent(
     ) { page ->
         when (pagerScreenValues[page]) {
             AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(
-                scrollState = scrollState,
+                listState = listState,
                 onRefresh = onRefresh,
                 discoveryViewModel = discoveryViewModel,
             )

@@ -1,7 +1,5 @@
 
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.internal.dsl.BaseFlavor
-import com.android.build.gradle.internal.dsl.DefaultConfig
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -374,24 +372,4 @@ fun isNonStable(version: String): Boolean {
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()
-}
-
-// --------------------------------------
-
-/** Takes value from Gradle project property and sets it as build config property. */
-fun BaseFlavor.buildConfigFieldFromGradleProperty(gradlePropertyName: String) {
-    val propertyValue = project.properties[gradlePropertyName] as? String
-    checkNotNull(propertyValue) { "Gradle property $gradlePropertyName is null" }
-
-    val androidResourceName = "GRADLE_${gradlePropertyName.toSnakeCase()}".uppercase(Locale.getDefault())
-    buildConfigField("String", androidResourceName, propertyValue)
-}
-
-fun String.toSnakeCase() = this.split(Regex("(?=[A-Z])")).joinToString("_") { it.lowercase(Locale.getDefault()) }
-
-/* Adds a new field to the generated BuildConfig class. */
-fun DefaultConfig.buildConfigField(name: String, value: Array<String>) {
-    // Create String that holds Java String Array code
-    val strValue = value.joinToString(prefix = "{", separator = ",", postfix = "}", transform = { "\"$it\"" })
-    buildConfigField("String[]", name, strValue)
 }

@@ -6,6 +6,8 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.compose.AsyncImage
 import coil.disk.DiskCache
+import com.leovp.log.LogContext
+import com.leovp.module.common.log.MarsXLog
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -17,6 +19,15 @@ import dagger.hilt.android.HiltAndroidApp
 class CustomApplication : MultiDexApplication(), ImageLoaderFactory {
     companion object {
         private const val TAG = "CA"
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        // Log must be initialized first.
+        LogContext.setLogImpl(MarsXLog("AOS").apply {
+            init(this@CustomApplication, BuildConfig.CONSOLE_LOG_OPEN)
+        })
     }
 
     /**

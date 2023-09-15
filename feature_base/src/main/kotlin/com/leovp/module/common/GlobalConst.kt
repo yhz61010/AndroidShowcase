@@ -18,5 +18,6 @@ object GlobalConst {
 
     const val HTTP_GET_SEARCH_ALBUM = "./?method=album.search"
     const val HTTP_GET_ARTIST_TOP_TRACKS = "./?method=artist.gettoptracks"
+    const val HTTP_GET_ARTIST_TOP_ALBUMS = "./?method=artist.gettopalbums"
     // ===== Http request - End =====
 }

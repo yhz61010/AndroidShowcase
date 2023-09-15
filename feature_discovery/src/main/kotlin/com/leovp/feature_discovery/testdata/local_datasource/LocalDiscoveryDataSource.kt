@@ -19,23 +19,48 @@ class LocalDiscoveryDataSource @Inject constructor() : DiscoveryDataSource {
     override fun getCarouselMusicList() = listOf(
         CarouselItem(
             id = 1,
-            thumbnail = "https://images.unsplash.com/photo-1584679109597-c656b19974c9?auto=crop&fit=crop&w=540&h=210&q=80"
+            thumbnail = listOf(
+                Image(
+                    url = "https://images.unsplash.com/photo-1584679109597-c656b19974c9?auto=crop&fit=crop&w=540&h=210&q=80",
+                    size = ImageSize.EXTRA_LARGE
+                )
+            ),
         ),
         CarouselItem(
             id = 2,
-            thumbnail = "https://images.unsplash.com/photo-1502773860571-211a597d6e4b?auto=crop&fit=crop&w=540&h=210&q=80"
+            thumbnail = listOf(
+                Image(
+                    url = "https://images.unsplash.com/photo-1502773860571-211a597d6e4b?auto=crop&fit=crop&w=540&h=210&q=80",
+                    size = ImageSize.EXTRA_LARGE
+                )
+            ),
         ),
         CarouselItem(
             id = 3,
-            thumbnail = "https://images.unsplash.com/photo-1446057032654-9d8885db76c6?auto=crop&fit=crop&w=540&h=210&q=80"
+            thumbnail = listOf(
+                Image(
+                    url = "https://images.unsplash.com/photo-1446057032654-9d8885db76c6?auto=crop&fit=crop&w=540&h=210&q=80",
+                    size = ImageSize.EXTRA_LARGE
+                )
+            ),
         ),
         CarouselItem(
             id = 4,
-            thumbnail = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=crop&fit=crop&w=540&h=210&q=80"
+            thumbnail = listOf(
+                Image(
+                    url = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=crop&fit=crop&w=540&h=210&q=80",
+                    size = ImageSize.EXTRA_LARGE
+                )
+            ),
         ),
         CarouselItem(
             id = 5,
-            thumbnail = "https://images.unsplash.com/photo-1618972676849-feed401eacc5?auto=crop&fit=crop&w=540&h=210&q=80"
+            thumbnail = listOf(
+                Image(
+                    url = "https://images.unsplash.com/photo-1618972676849-feed401eacc5?auto=crop&fit=crop&w=540&h=210&q=80",
+                    size = ImageSize.EXTRA_LARGE
+                )
+            ),
         ),
     )
 

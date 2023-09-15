@@ -6,12 +6,9 @@ import androidx.core.content.ContextCompat
 import com.leovp.android.exts.LeoToast
 import com.leovp.android.ui.ForegroundComponent
 import com.leovp.androidbase.exts.android.closeAndroidPDialog
-import com.leovp.androidshowcase.BuildConfig
 import com.leovp.androidshowcase.R
-import com.leovp.log.LogContext
 import com.leovp.module.common.CrashHandler
 import com.leovp.module.common.GlobalConst
-import com.leovp.module.common.log.MarsXLog
 import com.leovp.pref.LPref
 import com.leovp.pref.PrefContext
 import io.karn.notify.Notify
@@ -27,11 +24,6 @@ object InitManager {
         LeoToast.getInstance(app).init(
             LeoToast.ToastConfig(GlobalConst.DEBUG, R.mipmap.app_ic_launcher_round)
         )
-
-        // Log must be initialized first.
-        LogContext.setLogImpl(MarsXLog("AOS").apply {
-            init(app, BuildConfig.CONSOLE_LOG_OPEN)
-        })
 
         PrefContext.setPrefImpl(LPref(app))
 
