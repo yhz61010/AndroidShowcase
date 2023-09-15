@@ -78,6 +78,7 @@ import com.leovp.feature_discovery.ui.theme.mark_quality_border
 import com.leovp.feature_discovery.ui.theme.mark_quality_text_color
 import com.leovp.feature_discovery.ui.theme.mark_vip_border
 import com.leovp.feature_discovery.ui.theme.mark_vip_text_color
+import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullRefresh
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.rememberPullRefreshState
@@ -110,6 +111,13 @@ fun DiscoveryScreen(
             onRefresh()
         },
     )
+
+    uiState.exception?.let {
+        val apiException = it as ApiException
+        val code = apiException.code
+        val message = apiException.message
+        ctx.toast("$code: $message", error = true)
+    }
 
     Box(
         modifier = Modifier

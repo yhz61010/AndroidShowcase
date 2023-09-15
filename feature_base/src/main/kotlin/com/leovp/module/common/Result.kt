@@ -2,11 +2,16 @@
 
 package com.leovp.module.common
 
+import com.drake.net.exception.HttpResponseException
+import com.drake.net.exception.RequestParamsException
+import com.leovp.module.common.exception.ApiException
+import com.leovp.module.common.http.model.ApiErrorResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 
 /**
  * A generic class that holds a value or an exception
@@ -74,11 +79,52 @@ inline fun <T, R> Result<T>.fold(
 
 // ----------
 
+/**
+ * Wrap the [block] result into [com.leovp.module.common.Result].
+ *
+ * Note that, this function is very useful when you wrap your http request block.
+ * In this project, it wraps http request which is implemented by _Net_.
+ *
+ * If the [Result] is failure, the [ApiException] will be used as [Result.Failure] parameter.
+ *
+ * @param dispatcher The dispatcher for suspend [block] function. [Dispatchers.Main] by default.
+ */
 suspend inline fun <reified R> result(
     dispatcher: CoroutineDispatcher = Dispatchers.Main,
     crossinline block: suspend CoroutineScope.() -> R,
 ): Result<R> = supervisorScope {
     runCatching {
         Result.Success(withContext(dispatcher) { block() })
-    }.getOrElse { Result.Failure(it) }
+    }.getOrElse { err ->
+        val errorCodeDefault = -65535
+        var code = errorCodeDefault
+        var message: String? = err.message
+        var exception: Throwable = err
+
+        // err can be one of the following exception:
+        // RequestParamsException
+        // ServerResponseException
+        // ConvertException
+        // All above exceptions are inherited from HttpResponseException.
+
+        if (err is RequestParamsException) {
+            err.response.body?.string()?.let { bodyString ->
+                runCatching {
+                    val errorData = Json.decodeFromString<ApiErrorResult>(bodyString)
+                    code = errorData.code
+                    message = errorData.message
+                }.onFailure {
+                    // SerializationException
+                    // IllegalArgumentException
+                    exception = it
+                }
+            }
+        } else {
+            if (err is HttpResponseException) {
+                code = err.response.code
+                message = err.response.message
+            }
+        }
+        Result.Failure(ApiException(code, message, exception))
+    }
 }

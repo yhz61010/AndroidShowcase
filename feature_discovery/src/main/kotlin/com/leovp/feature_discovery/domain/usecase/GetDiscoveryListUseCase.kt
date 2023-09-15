@@ -18,12 +18,9 @@ class GetDiscoveryListUseCase @Inject constructor(
     @DiscoveryRepositoryImplement private val repository: DiscoveryRepository
 ) {
 
-    suspend fun getPersonalRecommends(): Result<List<MusicItem>> =
-        repository.getPersonalRecommends()
+    suspend fun getPersonalMusic(): Result<List<MusicItem>> = repository.getPersonalMusic()
 
-    suspend fun getEverydayRecommends(): Result<List<EverydayItem>> =
-        repository.getEverydayRecommends()
+    suspend fun getEverydayMusic(): Result<List<EverydayItem>> = repository.getEverydayMusic()
 
-    suspend fun getCarouselRecommends(): Result<List<CarouselItem>> =
-        repository.getCarouselRecommends()
+    suspend fun getCarouselMusic(): Result<List<CarouselItem>> = repository.getCarouselMusic()
 }

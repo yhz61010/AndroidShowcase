@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class LocalDiscoveryDataSource @Inject constructor() : DiscoveryDataSource {
-    override fun getCarouselRecommendedList() = listOf(
+    override fun getCarouselMusicList() = listOf(
         CarouselItem(
             id = 1,
             thumbnail = "https://images.unsplash.com/photo-1584679109597-c656b19974c9?auto=crop&fit=crop&w=540&h=210&q=80"
@@ -39,7 +39,7 @@ class LocalDiscoveryDataSource @Inject constructor() : DiscoveryDataSource {
         ),
     )
 
-    override fun getEverydayRecommendedList() = listOf(
+    override fun getEverydayMusicList() = listOf(
         EverydayItem(
             id = 1,
             thumbnail = listOf(
@@ -114,7 +114,7 @@ class LocalDiscoveryDataSource @Inject constructor() : DiscoveryDataSource {
         ),
     )
 
-    override fun getPersonalRecommendedMusicList() = listOf(
+    override fun getPersonalMusicList() = listOf(
         MusicItem(
             id = 100,
             thumbnail = listOf(

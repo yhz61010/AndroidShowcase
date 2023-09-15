@@ -8,6 +8,7 @@ import com.leovp.feature_discovery.domain.model.EverydayItem
 import com.leovp.feature_discovery.domain.model.MusicItem
 import com.leovp.feature_discovery.domain.usecase.GetDiscoveryListUseCase
 import com.leovp.log.LogContext
+import com.leovp.module.common.exceptionOrNull
 import com.leovp.module.common.getOrDefault
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -55,13 +56,17 @@ class DiscoveryViewModel @Inject constructor(
         _uiState.update { it.copy(loading = true) }
 
         job = viewModelScope.launch {
-            val carouselDeferred = async { useCase.getCarouselRecommends() }
-            val everydayDeferred = async { useCase.getEverydayRecommends() }
-            val personalDeferred = async { useCase.getPersonalRecommends() }
+            val carouselDeferred = async { useCase.getCarouselMusic() }
+            val everydayDeferred = async { useCase.getEverydayMusic() }
+            val personalDeferred = async { useCase.getPersonalMusic() }
 
             val carouselRecommendsResult = carouselDeferred.await()
             val everydayRecommendsResult = everydayDeferred.await()
             val personalRecommendsResult = personalDeferred.await()
+
+            val ex = carouselRecommendsResult.exceptionOrNull()
+                ?: everydayRecommendsResult.exceptionOrNull()
+                ?: personalRecommendsResult.exceptionOrNull()
 
             _uiState.update {
                 it.copy(
@@ -69,6 +74,7 @@ class DiscoveryViewModel @Inject constructor(
                     carouselRecommends = carouselRecommendsResult.getOrDefault(emptyList()),
                     everydayRecommends = everydayRecommendsResult.getOrDefault(emptyList()),
                     personalRecommends = personalRecommendsResult.getOrDefault(emptyList()),
+                    exception = ex
                 )
             }
         }
@@ -83,5 +89,6 @@ data class DiscoveryUiState(
     val carouselRecommends: List<CarouselItem> = emptyList(),
     val everydayRecommends: List<EverydayItem> = emptyList(),
     val personalRecommends: List<MusicItem> = emptyList(),
-    val loading: Boolean = false
+    val loading: Boolean = false,
+    val exception: Throwable? = null
 )

@@ -9,9 +9,9 @@ import com.leovp.feature_discovery.domain.model.MusicItem
  * Date: 2023/9/5 14:54
  */
 interface DiscoveryDataSource {
-    fun getCarouselRecommendedList(): List<CarouselItem>
+    fun getCarouselMusicList(): List<CarouselItem>
 
-    fun getEverydayRecommendedList(): List<EverydayItem>
+    fun getEverydayMusicList(): List<EverydayItem>
 
-    fun getPersonalRecommendedMusicList(): List<MusicItem>
+    fun getPersonalMusicList(): List<MusicItem>
 }

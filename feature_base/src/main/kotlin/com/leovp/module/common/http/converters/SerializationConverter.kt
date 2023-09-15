@@ -42,6 +42,7 @@ class SerializationConverter : NetConverter {
                 }
 
                 code in 400..499 -> throw RequestParamsException(response, code.toString())
+
                 code >= 500 -> throw ServerResponseException(response, code.toString())
                 else -> throw ConvertException(response)
             }

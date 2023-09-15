@@ -11,9 +11,9 @@ import com.leovp.module.common.Result
  */
 
 interface DiscoveryRepository {
-    suspend fun getCarouselRecommends(): Result<List<CarouselItem>>
+    suspend fun getCarouselMusic(): Result<List<CarouselItem>>
 
-    suspend fun getEverydayRecommends(): Result<List<EverydayItem>>
+    suspend fun getEverydayMusic(): Result<List<EverydayItem>>
 
-    suspend fun getPersonalRecommends(): Result<List<MusicItem>>
+    suspend fun getPersonalMusic(): Result<List<MusicItem>>
 }

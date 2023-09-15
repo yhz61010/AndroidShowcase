@@ -23,12 +23,12 @@ class DiscoveryRepositoryImpl @Inject constructor(
     private val dataSource: DiscoveryDataSource
 ) : DiscoveryRepository {
 
-    override suspend fun getCarouselRecommends(): Result<List<CarouselItem>> =
+    override suspend fun getCarouselMusic(): Result<List<CarouselItem>> =
         result(Dispatchers.IO) {
-            dataSource.getCarouselRecommendedList()
+            dataSource.getCarouselMusicList()
         }
 
-    override suspend fun getEverydayRecommends(): Result<List<EverydayItem>> =
+    override suspend fun getEverydayMusic(): Result<List<EverydayItem>> =
         result(Dispatchers.IO) {
             Get<SearchAlbumResponse>(GlobalConst.HTTP_GET_SEARCH_ALBUM) {
                 param("album", "Teresa Teng")
@@ -39,14 +39,13 @@ class DiscoveryRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getPersonalRecommends(): Result<List<MusicItem>> =
-        result(Dispatchers.IO) {
-            Get<GetTopTracks>(GlobalConst.HTTP_GET_ARTIST_TOP_TRACKS) {
-                param("artist", "Teresa Teng")
-                param("limit", 10)
-                param("page", 1) // start from 1
-            }.await().toptracks.track.mapIndexed { index, track ->
-                track.toDomainModel(index)
-            }
+    override suspend fun getPersonalMusic(): Result<List<MusicItem>> = result(Dispatchers.IO) {
+        Get<GetTopTracks>(GlobalConst.HTTP_GET_ARTIST_TOP_TRACKS) {
+            param("artist", "Teresa Teng")
+            param("limit", 10)
+            param("page", 1) // start from 1
+        }.await().toptracks.track.mapIndexed { index, track ->
+            track.toDomainModel(index)
         }
+    }
 }
