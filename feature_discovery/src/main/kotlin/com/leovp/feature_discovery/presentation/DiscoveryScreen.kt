@@ -1,8 +1,5 @@
 package com.leovp.feature_discovery.presentation
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
@@ -25,10 +21,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,14 +31,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -81,14 +69,13 @@ import com.leovp.feature_discovery.ui.theme.mark_vip_border
 import com.leovp.feature_discovery.ui.theme.mark_vip_text_color
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.module.common.exception.ApiException
+import com.leovp.module.common.presentation.compose.composable.pager.DefaultPagerIndicator
+import com.leovp.module.common.presentation.compose.composable.pager.HorizontalAutoPager
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullRefresh
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.rememberPullRefreshState
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
-import com.leovp.module.common.utils.floorMod
 import com.leovp.module.common.utils.previewInitLog
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.yield
 
 /**
  * Author: Michael Leo
@@ -123,7 +110,7 @@ fun DiscoveryScreen(
 
     Box(
         modifier = Modifier
-            .padding(PaddingValues(horizontal = 0.dp, vertical = 6.dp))
+            .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 6.dp)
             .fillMaxSize()
             .pullRefresh(pullRefreshState),
         contentAlignment = Alignment.TopCenter,
@@ -188,7 +175,7 @@ fun MusicContentHeader() {
 @Composable
 fun EverydayRecommendsHeader() {
     Row(
-        modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp),
+        modifier = Modifier.padding(start = 16.dp, top = 14.dp, end = 16.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -280,46 +267,21 @@ fun EverydayRecommendsContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+/**
+ * Check [HorizontalPagerLoopingIndicatorSample](https://bit.ly/48jS1Fg) for reference.
+ */
 @Composable
 fun CarouselHeader(list: List<CarouselItem>, onItemClick: (CarouselItem) -> Unit) {
+    // The display items count
     val pageCount = list.size
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        initialPageOffsetFraction = 0f,
-        pageCount = { pageCount },
-    )
-
-    LaunchedEffect(key1 = pagerState.settledPage) {
-        yield()
-        delay(3000L)
-        pagerState.animateScrollToPage(
-            page = (pagerState.currentPage + 1) % (pagerState.pageCount),
-            animationSpec = tween(
-                durationMillis = 500,
-                easing = FastOutSlowInEasing,
-            ),
-        )
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 6.dp),
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
-            pageSpacing = 16.dp,
-            modifier = Modifier.fillMaxWidth(),
-            beyondBoundsPageCount = 1,
-            key = { index -> list[index].id },
-        ) { index ->
-            PagerContent(currentItem = list[index], onItemClick = onItemClick)
-        }
-
-        PagerIndicator(Modifier.align(Alignment.BottomStart), pagerState)
-    }
+    HorizontalAutoPager(
+        modifier = Modifier.fillMaxWidth(),
+        pageCount = pageCount,
+        indicatorAlignment = Alignment.BottomStart,
+        indicatorContent = { index, pageTotalCount ->
+            DefaultPagerIndicator(currentPageIndex = index, pageCount = pageTotalCount)
+        },
+    ) { index -> PagerContent(currentItem = list[index], onItemClick = onItemClick) }
 }
 
 @Composable
@@ -340,43 +302,6 @@ fun PagerContent(currentItem: CarouselItem, onItemClick: (CarouselItem) -> Unit)
             modifier = Modifier.size(140.dp),
         )
     } // end of Card
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun PagerIndicator(
-    modifier: Modifier = Modifier,
-    pagerState: PagerState,
-) {
-    val currentPageIndex by remember {
-        derivedStateOf { pagerState.currentPage.floorMod(pagerState.pageCount) }
-    }
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 26.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        repeat(pagerState.pageCount) { index ->
-            Box(
-                modifier = Modifier
-                    .padding(start = 2.dp, end = 2.dp)
-                    .width(if (index == currentPageIndex) 12.dp else 4.dp)
-                    .height(4.dp)
-                    .clip(
-                        if (index == currentPageIndex) RoundedCornerShape(2.dp) else CircleShape
-                    )
-                    .background(
-                        color = if (index == currentPageIndex) Color.White else Color.LightGray,
-                        // shape = if (index == pageCountIndex) {
-                        //     RoundedCornerShape(2.dp)
-                        // } else {
-                        //     CircleShape
-                        // }
-                    )
-            ) // end of Box
-        }
-    } // end of Row
 }
 
 @Composable

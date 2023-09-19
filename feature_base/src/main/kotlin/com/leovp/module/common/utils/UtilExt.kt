@@ -9,6 +9,11 @@ import java.util.TimeZone
  * Date: 2023/7/28 15:16
  */
 
+/**
+ * See the source from Google.
+ *
+ * https://bit.ly/3ri7hlp
+ */
 fun Int.floorMod(other: Int): Int = when (other) {
     0 -> this
     else -> this - floorDiv(other) * other
@@ -22,4 +27,5 @@ fun Int.toBadgeText(limitation: Int = 99): String {
     }
 }
 
-val monthDateFormat = SimpleDateFormat("MM-dd", Locale.CHINA).apply { timeZone = TimeZone.getDefault() }
+val monthDateFormat =
+    SimpleDateFormat("MM-dd", Locale.CHINA).apply { timeZone = TimeZone.getDefault() }
