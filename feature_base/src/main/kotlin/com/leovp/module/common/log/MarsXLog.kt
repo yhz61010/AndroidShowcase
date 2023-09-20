@@ -3,7 +3,7 @@
 package com.leovp.module.common.log
 
 import android.content.Context
-import com.leovp.log.base.ILog
+import com.leovp.log.base.AbsLog
 import com.leovp.module.common.GlobalConst
 import com.tencent.mars.xlog.Log
 import com.tencent.mars.xlog.Xlog
@@ -13,15 +13,11 @@ import java.io.File
  * Author: Michael Leo
  * Date: 2023/7/6 15:54
  */
-class MarsXLog(private val prefix: String) : ILog {
+class MarsXLog(prefix: String) : AbsLog(prefix) {
 
     companion object {
         private const val CACHE_DAYS = 5
     }
-
-    override var enableLog = true
-
-    override fun getTagName(tag: String) = "$prefix-$tag"
 
     private val defaultLevel = if (GlobalConst.DEBUG) Xlog.LEVEL_DEBUG else Xlog.LEVEL_INFO
 
