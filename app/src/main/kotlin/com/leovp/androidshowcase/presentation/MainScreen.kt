@@ -151,7 +151,11 @@ fun MainScreen(
                         context.toast("Recording is not yet implemented.")
                     },
                 ) {
-                    HomeTopAppBarContent(pagerState, scrolled)
+                    HomeTopAppBarContent(
+                        pagerState = pagerState,
+                        scrolled = scrolled,
+                        onClick = { context.toast("Click search bar.") },
+                    )
                 }
             }, bottomBar = {
                 CustomBottomBar(pagerState, coroutineScope, uiState.unreadList)
@@ -174,11 +178,16 @@ fun MainScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeTopAppBarContent(pagerState: PagerState, scrolled: Boolean) {
+fun HomeTopAppBarContent(
+    pagerState: PagerState,
+    scrolled: Boolean,
+    onClick: () -> Unit = {},
+) {
     val context = LocalContext.current
     when (pagerState.currentPage) {
         AppBottomNavigationItems.DISCOVERY.ordinal -> {
             SearchBar(
+                searchText = "Wellerman Nathan Evans",
                 border = if (scrolled) {
                     BorderStroke(width = 0.5.dp, color = Color.LightGray)
                 } else {
@@ -190,7 +199,7 @@ fun HomeTopAppBarContent(pagerState: PagerState, scrolled: Boolean) {
                     .padding(vertical = 6.dp),
                 searchIndicatorIcon = painterResource(id = R.drawable.app_search),
                 actionIcon = painterResource(id = R.drawable.app_qr_code),
-                onClick = { context.toast("Click search bar.") },
+                onClick = onClick,
                 onActionClick = { context.toast("Click scan button on search bar.") },
             )
         }

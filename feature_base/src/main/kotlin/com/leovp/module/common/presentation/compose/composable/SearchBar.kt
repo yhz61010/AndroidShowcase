@@ -44,6 +44,7 @@ fun SearchBar(
     backgroundBrush: Brush? = null,
     searchIndicatorIcon: Painter? = null,
     actionIcon: Painter? = null,
+    searchText: String? = null,
     onClick: () -> Unit,
     onActionClick: () -> Unit
 ) {
@@ -79,7 +80,7 @@ fun SearchBar(
             }
             Text(
                 modifier = Modifier.weight(1f),
-                text = "Wellerman Nathan Evans",
+                text = searchText ?: "",
                 color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Gray,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
@@ -122,6 +123,7 @@ val defaultLinearGradient: Brush
 @Composable
 private fun PreviewSearchBar() {
     SearchBar(
+        searchText = "Wellerman Nathan Evans",
         border = BorderStroke(
             width = 0.5.dp,
             brush = defaultLinearGradient,
