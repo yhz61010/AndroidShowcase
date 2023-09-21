@@ -14,7 +14,7 @@ import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.androidshowcase.ui.theme.immersive_sys_ui
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
-import com.leovp.feature_main_drawer.membercenter.MemberCenterScreen
+import com.leovp.feature_main_drawer.membercenter.presentation.MemberCenterScreen
 
 /**
  * Author: Michael Leo
@@ -43,6 +43,7 @@ fun NavGraphBuilder.addAppMainGraph(
             MainScreen(
                 modifier = modifier,
                 widthSize = widthSizeClass,
+                onSearchBarClick = { navigationActions.navigate(Screen.SearchScreen.route) },
                 onNavigationToDrawerItem = { drawerItemRoute: String ->
                     navigationActions.navigate(drawerItemRoute)
                 },

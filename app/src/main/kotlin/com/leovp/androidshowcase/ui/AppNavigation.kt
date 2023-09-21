@@ -49,6 +49,8 @@ class AppNavigationActions(private val navController: NavHostController) {
 
             Screen.MemberCenterScreen.route,
 
+            Screen.SearchScreen.route,
+
             Screen.MessageScreen.route,
 
             Screen.SettingScreen.route -> navController.navigateSingleTopTo(route)

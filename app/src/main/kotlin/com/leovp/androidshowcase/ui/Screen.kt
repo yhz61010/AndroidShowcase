@@ -24,7 +24,9 @@ sealed class Screen(
     data object Splash : Screen("app_splash")
     data object Main : Screen("app_main")
 
-    // Home tab screens
+    // ============================
+    // ===== Home tab screens =====
+    // ============================
     data object Discovery : Screen(
         route = "app_discovery",
         nameResId = R.string.app_main_tab_discovery,
@@ -42,8 +44,11 @@ sealed class Screen(
         nameResId = R.string.app_main_tab_community,
         iconResId = R.drawable.app_speaker_notes
     )
+    // ==============================
 
-    // Drawer item screens
+    // ===============================
+    // ===== Drawer item screens =====
+    // ===============================
     data object MemberCenterScreen : Screen(
         route = "drawer_member_center",
         nameResId = com.leovp.feature_main_drawer.R.string.drawer_member_center,
@@ -60,5 +65,11 @@ sealed class Screen(
         "drawer_setting",
         com.leovp.feature_main_drawer.R.string.drawer_settings_label,
         iconResId = R.drawable.app_settings
+    )
+    // ==============================
+
+    data object SearchScreen : Screen(
+        "search_screen",
+        com.leovp.feature_discovery.R.string.dis_search_screen_title,
     )
 }

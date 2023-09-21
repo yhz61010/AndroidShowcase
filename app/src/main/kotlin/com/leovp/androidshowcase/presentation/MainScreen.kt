@@ -104,6 +104,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     widthSize: WindowWidthSizeClass,
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
+    onSearchBarClick: () -> Unit = {},
     mainViewModel: MainViewModel,
     discoveryViewModel: DiscoveryViewModel
 ) {
@@ -154,7 +155,7 @@ fun MainScreen(
                     HomeTopAppBarContent(
                         pagerState = pagerState,
                         scrolled = scrolled,
-                        onClick = { context.toast("Click search bar.") },
+                        onClick = onSearchBarClick,
                     )
                 }
             }, bottomBar = {

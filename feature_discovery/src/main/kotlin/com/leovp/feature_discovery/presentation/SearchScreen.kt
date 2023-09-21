@@ -1,13 +1,9 @@
-package com.leovp.feature_main_drawer.membercenter
+package com.leovp.feature_discovery.presentation
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -20,41 +16,44 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.leovp.feature_main_drawer.R
+import com.leovp.feature_discovery.R
 
 /**
  * Author: Michael Leo
- * Date: 2023/7/19 15:02
+ * Date: 2023/9/21 08:37
  */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemberCenterScreen(
+fun SearchScreen(
+    modifier: Modifier = Modifier,
     // widthSize: WindowWidthSizeClass,
-    onMenuUpAction: () -> Unit, modifier: Modifier = Modifier
+    onMenuUpAction: () -> Unit,
 ) {
     // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
     Scaffold(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
-            val title = stringResource(id = R.string.drawer_member_center)
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            val title = stringResource(id = R.string.dis_search_screen_title)
             CenterAlignedTopAppBar(
                 // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 //     containerColor = Color.Cyan
                 // ),
                 // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-                title = { Text(title) }, navigationIcon = {
+                title = {
+                    Text(text = title)
+                },
+                navigationIcon = {
                     IconButton(onClick = onMenuUpAction) {
                         Icon(
                             painter = painterResource(
@@ -64,10 +63,12 @@ fun MemberCenterScreen(
                             tint = MaterialTheme.colorScheme.primary,
                         )
                     }
-                }, scrollBehavior = scrollBehavior
-            )
-        }) { contentPadding ->
-        MemberCenterContent(
+                },
+                scrollBehavior = scrollBehavior,
+            ) // end of CenterAlignedTopAppBar
+        }, // end of topBar
+    ) { contentPadding ->
+        SearchScreenContent(
             modifier = Modifier
                 // .nestedScroll(scrollBehavior.nestedScrollConnection)
                 // innerPadding takes into account the top and bottom bar
@@ -77,35 +78,14 @@ fun MemberCenterScreen(
 }
 
 @Composable
-fun MemberCenterContent(
+fun SearchScreenContent(
     modifier: Modifier = Modifier, state: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
         contentPadding = PaddingValues(16.dp), modifier = modifier, state = state
     ) {
-        memberCenterScreenContentItems()
-    }
-}
-
-fun LazyListScope.memberCenterScreenContentItems() {
-    item {
-        Image(
-            painterResource(R.drawable.drawer_beauty),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = MaterialTheme.shapes.medium),
-            alignment = Alignment.TopStart,
-            contentScale = ContentScale.FillWidth,
-        )
-    }
-    repeat(100) {
         item {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    modifier = Modifier.padding(2.dp, 16.dp), text = "item: $it"
-                )
-            }
+            Text(text = "Search Screen")
         }
     }
 }
@@ -113,8 +93,9 @@ fun LazyListScope.memberCenterScreenContentItems() {
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewMemberCenterScreen() {
-    MemberCenterScreen(
+fun PreviewSearchScreen() {
+    SearchScreen(
         // widthSize = WindowWidthSizeClass.Compact,
-        onMenuUpAction = {})
+        onMenuUpAction = {},
+    )
 }

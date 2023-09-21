@@ -2,4 +2,6 @@
 <resources>
     <string name="dis_discovery_tab_chinese_curated">华语精选</string>
     <string name="dis_discovery_tab_everyday_recommends">每日推荐</string>
+
+    <string name="dis_search_screen_title">音乐搜索</string>
 </resources>
