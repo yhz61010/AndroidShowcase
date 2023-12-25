@@ -1,3 +1,5 @@
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.leovp.module.common.presentation.compose.composable.loading
 
 import androidx.compose.animation.core.Animatable
@@ -56,7 +58,9 @@ fun RippleAnimation(
     }
 
     // outer circle
-    Box(modifier = Modifier.size(size = size).background(color = Color.Transparent)) {
+    Box(modifier = Modifier
+        .size(size = size)
+        .background(color = Color.Transparent)) {
         // animating circles
         circles.forEachIndexed { _, animatable ->
             Box(
