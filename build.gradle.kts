@@ -1,8 +1,7 @@
-
 import com.android.build.gradle.BaseExtension
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import java.util.Locale
 
@@ -18,7 +17,8 @@ val customGroup = "com.leovp"
  * val jdkVersion: JavaVersion by rootProject.extra
  * ```
  */
-val jdkVersion: JavaVersion by extra { JavaVersion.VERSION_11 }
+val jdkVersion: JavaVersion by extra { JavaVersion.VERSION_17 }
+val kotlinApiVersion by extra { org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9 }
 
 /**
  * resourcePrefix 的校验规则：
@@ -51,6 +51,8 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
+    // https://developer.android.com/develop/ui/compose/compiler?hl=zh-cn
+    alias(libs.plugins.kotlin.compose.compiler) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.serialization) apply false
 
@@ -139,6 +141,9 @@ allprojects {
 
     afterEvaluate {
         configureCompileVersion()
+
+        // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
+        configureCompilerOptions()
     }
 
     // configurations.all {
@@ -183,11 +188,23 @@ fun Project.configureCompileVersion() {
         targetCompatibility = jdkVersion.toString()
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = jdkVersion.toString()
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(jdkVersion.toString()))
+            apiVersion.set(kotlinApiVersion)
+            languageVersion.set(kotlinApiVersion)
         }
     }
+}
+
+// https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
+fun Project.configureCompilerOptions() {
+    // tasks.withType<ComposeCompilerGradlePluginExtension>().configureEach {
+    //     composeCompiler {
+    //         enableStrongSkippingMode = true
+    //         includeSourceInformati0 = true
+    //     }
+    // }
 }
 
 fun Project.configureBase(): BaseExtension {
@@ -219,7 +236,10 @@ fun Project.configureBase(): BaseExtension {
         }
         buildTypes {
             getByName("release") {
-                proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+                proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+                )
             }
         }
 
@@ -347,13 +367,15 @@ task("staticCheck") {
 
         // Get modules with "testDebugUnitTest" task (app module does not have it)
         val testTasks =
-            subprojects.mapNotNull { "${it.name}:testDebugUnitTest" }.filter { it != "app:testDebugUnitTest" }
+            subprojects.mapNotNull { "${it.name}:testDebugUnitTest" }
+                .filter { it != "app:testDebugUnitTest" }
 
         // All task dependencies
-        val taskDependencies = mutableListOf("app:assembleAndroidTest", "ktlintCheck", "detekt").also {
-            it.addAll(lintTasks)
-            it.addAll(testTasks)
-        }
+        val taskDependencies =
+            mutableListOf("app:assembleAndroidTest", "ktlintCheck", "detekt").also {
+                it.addAll(lintTasks)
+                it.addAll(testTasks)
+            }
 
         // By defining Gradle dependency all dependent tasks will run before this "empty" task
         dependsOn(taskDependencies)
@@ -368,7 +390,8 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase(Locale.getDefault()).contains(it) }
+    val stableKeyword =
+        listOf("RELEASE", "FINAL", "GA").any { version.uppercase(Locale.getDefault()).contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()

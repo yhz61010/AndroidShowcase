@@ -6,6 +6,8 @@ apply(from = "../jacoco.gradle.kts")
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
 plugins {
     alias(libs.plugins.android.library)
+    // Apply the `compose.compiler` plugin to every module that uses Jetpack Compose.
+    alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.kotlin.parcelize) // id("kotlin-parcelize")
 
     // Add ksp only if you use ksp() in dependencies {}
@@ -29,16 +31,8 @@ android {
         // viewBinding = true
         // aidl = true
 
-        // Enable compose feature
-        compose = true
-
         // Add this line as needed
         buildConfig = true
-    }
-
-    // Compose options setting
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     defaultConfig {
