@@ -30,17 +30,17 @@ target-sdk = "34"
 ndk-sdk = "25.2.9519653"
 
 # @keep
-versionCode = "3"
+versionName = "1.0.3"
 # @keep
-versionName = "1.0.2"
+versionCode = "103"
 
 # @keep
-leo-version = "5.12.36"
+leo-version = "5.12.39"
 
 #===================
 #===== Compile =====
 #===================
-agp = "8.4.1"
+agp = "8.5.2"
 kotlin = "2.0.0"
 ksp = "2.0.0-1.0.21"
 # Compose Compiler & Kotlin versions
@@ -50,18 +50,18 @@ ksp = "2.0.0-1.0.21"
 #=================================
 #===== Android dependencies ======
 #=================================
-compose-bom = "2024.05.00"
-compose-activity = "1.9.0"
+compose-bom = "2024.06.00"
+compose-activity = "1.9.1"
 compose-navigation = "2.7.7"
 #compose-constraintlayout= "1.0.1"
 
 hilt = "2.51.1"
 hilt-navigation-compose = "1.2.0"
 core-ktx = "1.13.1"
-lifecycle = "2.8.0" # https://stackoverflow.com/a/78490417/6091500
+lifecycle = "2.8.4" # https://stackoverflow.com/a/78490417/6091500
 multidex = "2.0.1"
 coroutines = "1.8.1"
-annotation = "1.8.0"
+annotation = "1.8.2"
 
 #=======================
 #===== Third party =====
@@ -91,12 +91,12 @@ sonarqube = "5.0.0.4638" # 4.2.0.3129
 #===== Test =====
 #================
 jupiter = "5.10.2" # JUnit 5
-androidx-test = "1.5.0"
-androidx-test-ext = "1.1.5"
-androidx-test-runner = "1.5.2"
-androidx-test-monitor = "1.6.1"
+androidx-test = "1.6.1"
+androidx-test-ext = "1.2.1"
+androidx-test-runner = "1.6.2"
+androidx-test-monitor = "1.7.2"
 androidx-test-uiautomator = "2.3.0"
-espresso-core = "3.5.1"
+espresso-core = "3.6.1"
 kluent = "1.73"
 mockk = "1.13.11"
 arch = "2.2.0"
@@ -105,7 +105,7 @@ robolectric-version = "4.12.2"
 mannodermaus-android-junit5 = "1.10.0.0"
 mannodermaus-junit5 = "1.4.0"
 junit = "4.13.2"
-appcompat = "1.6.1"
+appcompat = "1.7.0"
 material = "1.12.0"
 
 #===================#===================#===================#===================

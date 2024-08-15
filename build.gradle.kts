@@ -139,11 +139,11 @@ allprojects {
         useJUnitPlatform()
     }
 
+    // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
+    configureCompilerOptions()
+
     afterEvaluate {
         configureCompileVersion()
-
-        // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
-        configureCompilerOptions()
     }
 
     // configurations.all {
@@ -197,9 +197,10 @@ fun Project.configureCompileVersion() {
     }
 }
 
+// TODO: How to configurate composeCompiler globally?
 // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
-fun Project.configureCompilerOptions() {
-    // tasks.withType<ComposeCompilerGradlePluginExtension>().configureEach {
+fun org.gradle.api.Project.configureCompilerOptions() {
+    // tasks.withType<org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension>().configureEach {
     //     composeCompiler {
     //         enableStrongSkippingMode = true
     //         includeSourceInformati0 = true
