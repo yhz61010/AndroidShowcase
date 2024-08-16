@@ -12,6 +12,8 @@ import java.util.TimeZone
 /**
  * See the source from Google.
  *
+ * Make sure the result is between 0 and [other] - 1.
+ *
  * https://bit.ly/3ri7hlp
  */
 fun Int.floorMod(other: Int): Int = when (other) {

@@ -22,12 +22,15 @@ import com.leovp.androidshowcase.utils.InitManager
 import com.leovp.feature_discovery.presentation.SearchScreen
 import com.leovp.module.common.GlobalConst
 import com.leovp.module.common.http.RequestUtil
+import com.leovp.module.common.log.d
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Author: Michael Leo
  * Date: 2023/7/14 13:07
  */
+
+private const val TAG = "MA"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -36,6 +39,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         InitManager.init(application)
+        d(TAG) { "=> Enter MainActivity <=" }
 
         RequestUtil.initNetEngine(baseUrl = GlobalConst.API_BASE_URL)
 
@@ -51,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
+    d(TAG) { "=> Enter ShowcaseApp <=" }
     val navController = rememberNavController()
     val navigationActions = rememberNavigationActions(navController = navController)
     NavHost(

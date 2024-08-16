@@ -49,7 +49,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -60,7 +59,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
@@ -77,10 +75,12 @@ import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle3_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_start_color
 import com.leovp.feature_community.presentation.CommunityScreen
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
+import com.leovp.feature_discovery.presentation.DiscoveryUiState
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
 import com.leovp.feature_discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature_my.presentation.MyScreen
 import com.leovp.log.LogContext
+import com.leovp.module.common.log.d
 import com.leovp.module.common.presentation.compose.composable.SearchBar
 import com.leovp.module.common.presentation.compose.composable.defaultLinearGradient
 import com.leovp.module.common.presentation.compose.composable.rememberSizeAwareDrawerState
@@ -103,19 +103,20 @@ private const val TAB_SWITCH_ANIM_DURATION = 300
 fun MainScreen(
     modifier: Modifier = Modifier,
     widthSize: WindowWidthSizeClass,
+    mainUiState: MainUiState,
+    discoveryUiState: DiscoveryUiState,
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
-    onSearchBarClick: () -> Unit = {},
-    mainViewModel: MainViewModel,
-    discoveryViewModel: DiscoveryViewModel
+    onSearchBarClick: () -> Unit,
+    onDiscoveryRefresh: () -> Unit,
 ) {
+    d(TAG) { "=> Enter MainScreen <=" }
     val context = LocalContext.current
-    val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
     val isExpandedScreen = widthSize == WindowWidthSizeClass.Expanded
     val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
 
-    val pagerScreenValues = AppBottomNavigationItems.values()
+    val pagerScreenValues = AppBottomNavigationItems.entries.toTypedArray()
     val pagerState = rememberPagerState(
         initialPage = AppBottomNavigationItems.DISCOVERY.ordinal,
         initialPageOffsetFraction = 0f,
@@ -123,12 +124,6 @@ fun MainScreen(
     )
 
     val listState = rememberLazyListState()
-    val firstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
-    val firstVisibleItemScrollOffset by remember {
-        derivedStateOf { listState.firstVisibleItemScrollOffset }
-    }
-    val scrolled = firstVisibleItemIndex != 0 || firstVisibleItemScrollOffset != 0
-
     ModalNavigationDrawer(
         drawerContent = {
             AppDrawer(
@@ -145,7 +140,7 @@ fun MainScreen(
             Scaffold(modifier = modifier, topBar = {
                 HomeTopAppBar(
                     modifier = modifier,
-                    unread = uiState.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
+                    unread = mainUiState.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
                     pagerState = pagerState,
                     onNavigationClick = { coroutineScope.launch { sizeAwareDrawerState.open() } },
                     onActionClick = {
@@ -153,22 +148,22 @@ fun MainScreen(
                     },
                 ) {
                     HomeTopAppBarContent(
+                        listState = listState,
                         pagerState = pagerState,
-                        scrolled = scrolled,
                         onClick = onSearchBarClick,
                     )
                 }
             }, bottomBar = {
-                CustomBottomBar(pagerState, coroutineScope, uiState.unreadList)
+                CustomBottomBar(pagerState, coroutineScope, mainUiState.unreadList)
             }) { contentPadding ->
                 val newModifier = modifier.padding(contentPadding)
                 MainScreenContent(
                     modifier = newModifier,
-                    onRefresh = { mainViewModel.refreshAll() },
+                    onDiscoveryRefresh = onDiscoveryRefresh,
                     pagerState = pagerState,
                     listState = listState,
                     pagerScreenValues = pagerScreenValues,
-                    discoveryViewModel = discoveryViewModel
+                    discoveryUiState = discoveryUiState,
                 )
             } // end of Scaffold
 
@@ -180,21 +175,25 @@ fun MainScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeTopAppBarContent(
+    listState: LazyListState,
     pagerState: PagerState,
-    scrolled: Boolean,
     onClick: () -> Unit = {},
 ) {
+    d(TAG) { "=> Enter HomeTopAppBarContent <=" }
     val context = LocalContext.current
+
+    // val firstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
+    // val firstVisibleItemScrollOffset by remember {
+    //     derivedStateOf { listState.firstVisibleItemScrollOffset }
+    // }
+    // val scrolled = firstVisibleItemIndex != 0 || firstVisibleItemScrollOffset != 0
+
     when (pagerState.currentPage) {
         AppBottomNavigationItems.DISCOVERY.ordinal -> {
             SearchBar(
                 searchText = "Wellerman Nathan Evans",
-                border = if (scrolled) {
-                    BorderStroke(width = 0.5.dp, color = Color.LightGray)
-                } else {
-                    BorderStroke(width = 0.5.dp, brush = defaultLinearGradient)
-                },
-                backgroundBrush = if (scrolled) null else defaultLinearGradient,
+                border = BorderStroke(width = 0.5.dp, brush = defaultLinearGradient),
+                backgroundBrush = defaultLinearGradient,
                 modifier = Modifier
                     .height(48.dp)
                     .padding(vertical = 6.dp),
@@ -214,8 +213,9 @@ fun CustomBottomBar(
     coroutineScope: CoroutineScope,
     unreadList: List<UnreadModel> = emptyList()
 ) {
+    d(TAG) { "=> Enter CustomBottomBar <=" }
     NavigationBar {
-        AppBottomNavigationItems.values().forEachIndexed { index, bottomItemData ->
+        AppBottomNavigationItems.entries.forEachIndexed { index, bottomItemData ->
             val badgeNum =
                 unreadList.firstOrNull { it.key == bottomItemData.screen.route }?.value ?: 0
             NavigationBarItem(
@@ -275,9 +275,10 @@ fun MainScreenContent(
     pagerState: PagerState,
     listState: LazyListState,
     pagerScreenValues: Array<AppBottomNavigationItems>,
-    onRefresh: () -> Unit,
-    discoveryViewModel: DiscoveryViewModel
+    discoveryUiState: DiscoveryUiState,
+    onDiscoveryRefresh: () -> Unit,
 ) {
+    d(TAG) { "=> Enter MainScreenContent <=" }
     HorizontalPager(
         state = pagerState,
         modifier = modifier,
@@ -286,8 +287,8 @@ fun MainScreenContent(
         when (pagerScreenValues[page]) {
             AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(
                 listState = listState,
-                onRefresh = onRefresh,
-                discoveryViewModel = discoveryViewModel,
+                uiState = discoveryUiState,
+                onRefresh = onDiscoveryRefresh,
             )
 
             AppBottomNavigationItems.MY -> MyScreen(/*onRefresh*/)
@@ -298,6 +299,7 @@ fun MainScreenContent(
 
 @Composable
 fun LinearGradientBox(scrollState: LazyListState) {
+    d(TAG) { "=> Enter LinearGradientBox <=" }
     val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding().value
     val targetHeight = LocalDensity.current.run {
         // (56 + 150 + 2 * 8 + statusBarHeight).dp.toPx()
@@ -348,6 +350,7 @@ fun HomeTopAppBar(
     onActionClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    d(TAG) { "=> Enter HomeTopAppBar <=" }
     val topBarHeight = 54.dp
 
     Column(
@@ -413,20 +416,26 @@ fun HomeTopAppBar(
 fun PreviewMainScreen() {
     previewInitLog()
 
+    val mainViewModel: MainViewModel = viewModel(
+        factory = viewModelProviderFactoryOf {
+            MainViewModel(PreviewMainModule.previewMainUseCase)
+        },
+    )
+
+    val discoveryViewModel: DiscoveryViewModel = viewModel(
+        factory = viewModelProviderFactoryOf {
+            DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
+        },
+    )
+
     AppTheme(dynamicColor = false) {
         MainScreen(
             widthSize = WindowWidthSizeClass.Compact,
             onNavigationToDrawerItem = {},
-            mainViewModel = viewModel(
-                factory = viewModelProviderFactoryOf {
-                    MainViewModel(PreviewMainModule.previewMainUseCase)
-                },
-            ),
-            discoveryViewModel = viewModel(
-                factory = viewModelProviderFactoryOf {
-                    DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
-                },
-            ),
+            mainUiState = mainViewModel.uiState.value,
+            discoveryUiState = discoveryViewModel.uiState.value,
+            onSearchBarClick = {},
+            onDiscoveryRefresh = {},
         )
     }
 }

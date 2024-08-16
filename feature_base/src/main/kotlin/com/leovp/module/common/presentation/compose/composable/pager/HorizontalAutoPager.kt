@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.leovp.module.common.log.d
 import com.leovp.module.common.utils.floorMod
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
@@ -29,6 +30,8 @@ import kotlinx.coroutines.yield
  * Author: Michael Leo
  * Date: 2023/9/19 14:32
  */
+
+private const val TAG = "HAP"
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -43,9 +46,12 @@ fun HorizontalAutoPager(
     pageCount: Int,
     pagerContent: @Composable (index: Int) -> Unit,
 ) {
-    val loopingCount = Int.MAX_VALUE
-    // We start the pager in the middle of the raw number of pages
+    d(TAG) { "=> Enter HorizontalAutoPager <=" }
+    // TODO Bug for Compose when set it to Int.MAX_VALUE.
+    val loopingCount = 1024 // Int.MAX_VALUE
+    // // We start the pager in the middle of the raw number of pages
     val startIndex = loopingCount / 2
+    // val startIndex = 0 // if (pageCount % 2 != 0) ((pageCount + 1) / 2 - 1) else 0
     val pagerState = rememberPagerState(
         initialPage = startIndex,
         initialPageOffsetFraction = 0f,
@@ -55,6 +61,13 @@ fun HorizontalAutoPager(
     fun pageMapper(index: Int): Int {
         return (index - startIndex).floorMod(pageCount)
     }
+
+    // d {
+    //     "HorizontalAutoPager -> startIndex=$startIndex  " +
+    //             "pageCount=$pageCount  " +
+    //             "currentPage=${pagerState.currentPage}  " +
+    //             "pageMapper(currentPage)=${pageMapper(pagerState.currentPage)}"
+    // }
 
     Box(modifier = modifier) {
         HorizontalPager(
@@ -71,25 +84,31 @@ fun HorizontalAutoPager(
         }
 
         indicatorContent?.let { indicator ->
-            val currentPageIndex by remember { derivedStateOf { pageMapper(pagerState.currentPage) } }
+            val currentPageIndex by remember {
+                derivedStateOf {
+                    val offset = if (pageCount % 2 == 0) 0 else pageCount / 2
+                    pageMapper(pagerState.currentPage + offset)
+                }
+            }
+            // d { "indicatorContent -> currentPageIndex=$currentPageIndex  pageCount=$pageCount" }
             Column(modifier = Modifier.align(indicatorAlignment)) {
                 indicator(currentPageIndex, pageCount)
             }
         }
 
-        //// This way is not the best way because it will always re-launch LaunchedEffect
-        //// when pagerState.settledPage is changed.
-        // LaunchedEffect(key1 = pagerState.settledPage) {
-        //     yield()
-        //     delay(3000L)
-        //     pagerState.animateScrollToPage(
-        //         page = pagerState.currentPage + 1,
-        //         animationSpec = tween(
-        //             durationMillis = 500,
-        //             easing = FastOutSlowInEasing,
-        //         ),
-        //     )
-        // }
+        // //// This way is not the best way because it will always re-launch LaunchedEffect
+        // //// when pagerState.settledPage is changed.
+        // // LaunchedEffect(key1 = pagerState.settledPage) {
+        // //     yield()
+        // //     delay(3000L)
+        // //     pagerState.animateScrollToPage(
+        // //         page = pagerState.currentPage + 1,
+        // //         animationSpec = tween(
+        // //             durationMillis = 500,
+        // //             easing = FastOutSlowInEasing,
+        // //         ),
+        // //     )
+        // // }
 
         var underDragging by remember { mutableStateOf(false) }
 
@@ -118,6 +137,10 @@ fun HorizontalAutoPager(
                         if (underDragging.not()) {
                             val toPage = nextPage.takeIf { nextPage < pagerState.pageCount }
                                 ?: (currentPos + startIndex + 1)
+                            // d {
+                            //     "current=$current  currentPos=$currentPos  " +
+                            //             "nextPage=$nextPage  toPage=$toPage"
+                            // }
                             if (toPage > current) {
                                 pagerState.animateScrollToPage(
                                     page = toPage,

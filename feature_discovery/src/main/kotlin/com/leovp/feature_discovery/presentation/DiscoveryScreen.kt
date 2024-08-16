@@ -31,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -50,7 +49,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -69,6 +67,7 @@ import com.leovp.feature_discovery.ui.theme.mark_vip_border
 import com.leovp.feature_discovery.ui.theme.mark_vip_text_color
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.module.common.exception.ApiException
+import com.leovp.module.common.log.d
 import com.leovp.module.common.presentation.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.module.common.presentation.compose.composable.pager.HorizontalAutoPager
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
@@ -82,23 +81,20 @@ import com.leovp.module.common.utils.previewInitLog
  * Date: 2023/7/18 15:06
  */
 
-// private const val TAG = "Discovery"
+private const val TAG = "Discovery"
 
 @Composable
 fun DiscoveryScreen(
-    modifier: Modifier = Modifier,
     listState: LazyListState,
+    uiState: DiscoveryUiState,
+    modifier: Modifier = Modifier,
     onRefresh: () -> Unit,
-    discoveryViewModel: DiscoveryViewModel,
 ) {
+    d(TAG) { "=> Enter DiscoveryScreen <=" }
     val ctx = LocalContext.current
-    val uiState by discoveryViewModel.uiState.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.loading,
-        onRefresh = {
-            discoveryViewModel.refreshAll()
-            onRefresh()
-        },
+        onRefresh = onRefresh,
     )
 
     uiState.exception?.let {
@@ -122,7 +118,7 @@ fun DiscoveryScreen(
                 state = listState,
             ) {
                 item {
-                    CarouselHeader(uiState.carouselRecommends) { clickedItem ->
+                    CarouselContent(uiState.carouselRecommends) { clickedItem ->
                         ctx.toast("Carousel recommend clickedItem: $clickedItem")
                     }
                 }
@@ -133,10 +129,13 @@ fun DiscoveryScreen(
                     }
                 }
                 item {
-                    MusicContentHeader()
+                    PersonalRecommendsHeader()
                 }
-                items(uiState.personalRecommends) { data ->
-                    MusicContentItem(data)
+                items(
+                    items = uiState.personalRecommends,
+                    key = { it.id }
+                ) { data ->
+                    PersonalRecommendsItem(data)
                 }
             } // end LazyColumn
         } // end if
@@ -150,7 +149,8 @@ fun DiscoveryScreen(
 }
 
 @Composable
-fun MusicContentHeader() {
+fun PersonalRecommendsHeader() {
+    d(TAG) { "=> Enter PersonalRecommendsHeader <=" }
     Row(
         modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -174,6 +174,7 @@ fun MusicContentHeader() {
 
 @Composable
 fun EverydayRecommendsHeader() {
+    d(TAG) { "=> Enter EverydayRecommendsHeader <=" }
     Row(
         modifier = Modifier.padding(start = 16.dp, top = 14.dp, end = 16.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -206,6 +207,7 @@ fun EverydayRecommendsHeader() {
 fun EverydayRecommendsContent(
     list: List<EverydayItem>, onItemClick: (EverydayItem) -> Unit
 ) {
+    d(TAG) { "=> Enter EverydayRecommendsContent <=" }
     val cardWidth = 120.dp
 
     LazyRow(
@@ -271,7 +273,8 @@ fun EverydayRecommendsContent(
  * Check [HorizontalPagerLoopingIndicatorSample](https://bit.ly/48jS1Fg) for reference.
  */
 @Composable
-fun CarouselHeader(list: List<CarouselItem>, onItemClick: (CarouselItem) -> Unit) {
+fun CarouselContent(list: List<CarouselItem>, onItemClick: (CarouselItem) -> Unit) {
+    d(TAG) { "=> Enter CarouselContent <=" }
     // The display items count
     val pageCount = list.size
     HorizontalAutoPager(
@@ -281,11 +284,12 @@ fun CarouselHeader(list: List<CarouselItem>, onItemClick: (CarouselItem) -> Unit
         indicatorContent = { index, pageTotalCount ->
             DefaultPagerIndicator(currentPageIndex = index, pageCount = pageTotalCount)
         },
-    ) { index -> PagerContent(currentItem = list[index], onItemClick = onItemClick) }
+    ) { index -> CarouselItem(currentItem = list[index], onItemClick = onItemClick) }
 }
 
 @Composable
-fun PagerContent(currentItem: CarouselItem, onItemClick: (CarouselItem) -> Unit) {
+fun CarouselItem(currentItem: CarouselItem, onItemClick: (CarouselItem) -> Unit) {
+    d(TAG) { "=> Enter CarouselItem <=" }
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = place_holder_bg_color),
@@ -305,7 +309,8 @@ fun PagerContent(currentItem: CarouselItem, onItemClick: (CarouselItem) -> Unit)
 }
 
 @Composable
-fun MusicContentItem(data: MusicItem) {
+fun PersonalRecommendsItem(data: MusicItem) {
+    // d(TAG) { "=> Enter PersonalRecommendsItem <=" }
     val context = LocalContext.current
     ListItem(
         modifier = Modifier.clickable { context.toast("You clicked item ${data.title}") },
@@ -414,6 +419,7 @@ fun ListItemImage(
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp
 ) {
+    // d(TAG) { "=> Enter ListItemImage <=" }
     Surface(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier,
@@ -434,13 +440,14 @@ fun ListItemImage(
 @Composable
 fun PreviewDiscoveryScreen() {
     previewInitLog()
+    val discoveryViewModel: DiscoveryViewModel = viewModel(
+        factory = viewModelProviderFactoryOf {
+            DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
+        },
+    )
     DiscoveryScreen(
         listState = rememberLazyListState(),
-        onRefresh = {},
-        discoveryViewModel = viewModel(
-            factory = viewModelProviderFactoryOf {
-                DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
-            },
-        ),
+        uiState = discoveryViewModel.uiState.value,
+        onRefresh = {}
     )
 }

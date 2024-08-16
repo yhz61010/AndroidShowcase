@@ -47,7 +47,7 @@ class DiscoveryRepositoryImpl @Inject constructor(
     override suspend fun getPersonalMusic(): Result<List<MusicItem>> = result(Dispatchers.IO) {
         Get<GetTopTracksResponse>(GlobalConst.HTTP_GET_ARTIST_TOP_TRACKS) {
             param("artist", "Teresa Teng")
-            param("limit", 10)
+            // param("limit", 10)
             param("page", 1) // start from 1
         }.await().toptracks.track.mapIndexed { index, track ->
             track.toDomainModel(index)
