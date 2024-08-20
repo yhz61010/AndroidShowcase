@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -340,6 +339,13 @@ fun LinearGradientBox(scrollState: LazyListState) {
     }
 }
 
+@Composable
+fun HomeTopMenu(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(painterResource(R.drawable.app_menu), null)
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeTopAppBar(
@@ -354,7 +360,7 @@ fun HomeTopAppBar(
     val topBarHeight = 54.dp
 
     Column(
-        modifier = modifier.fillMaxWidth()/*.background(color = Color.Cyan)*/,
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
     ) {
         Spacer(
@@ -368,33 +374,25 @@ fun HomeTopAppBar(
                 .heightIn(topBarHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier.wrapContentSize(),
-                contentAlignment = Alignment.TopEnd,
-            ) {
-                IconButton(
-                    // .background(color = Color.Yellow),
-                    onClick = onNavigationClick
-                ) { Icon(painterResource(R.drawable.app_menu), null) }
-                val badgeNum = unread ?: 0
-                if (badgeNum > 0) {
-                    BadgedBox(
-                        modifier = Modifier.padding(
-                            0.dp, 22.dp, if (badgeNum < 10) 20.dp else 24.dp, 0.dp
-                        ),
-                        badge = {
-                            Badge(
-                                modifier = Modifier.border(
-                                    width = 2.dp,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    shape = CircleShape,
-                                )
-                            ) {
-                                Text(text = badgeNum.toBadgeText())
-                            }
-                        },
-                    ) {}
+            val badgeNum = unread ?: 0
+            if (badgeNum > 0) {
+                Box {
+                    HomeTopMenu(onNavigationClick)
+                    Badge(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(6.dp)
+                            .border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                shape = CircleShape,
+                            )
+                    ) {
+                        Text(text = badgeNum.toBadgeText())
+                    }
                 }
+            } else {
+                HomeTopMenu(onNavigationClick)
             }
             Row(modifier = modifier.weight(1f)) {
                 content()
