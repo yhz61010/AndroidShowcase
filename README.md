@@ -7,9 +7,9 @@
 [![Compatibility Java Version](https://img.shields.io/badge/Compatibility%20Java%20-17-green)](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
 [![NDK](https://img.shields.io/badge/NDK-25.2.9519653-green)](https://developer.android.com/ndk/downloads)
 
-A pure Android kotlin template project that let you create Android Kotlin project.
+An Android kotlin showcase project by using Jetpack Compose UI.
 
-Using `Android + Kotlin + ktlint + Detekt + Gradle Kotlin DSL + Version Catalog(TOML)`
+Using `Android + Jetpack Compose UI + Kotlin + ktlint + Detekt + Gradle Kotlin DSL + Version Catalog(TOML)`
 
 ## Attention
 Project configurations:

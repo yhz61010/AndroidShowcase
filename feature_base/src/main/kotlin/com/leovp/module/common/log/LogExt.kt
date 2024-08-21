@@ -17,6 +17,7 @@ inline fun d(
     outputType: Int = -1,
     generateMsg: () -> Any?
 ) {
+    @Suppress("SENSELESS_COMPARISON")
     if (GlobalConst.DEBUG) {
         val ret = generateMsg()
         if (ret is String?) {

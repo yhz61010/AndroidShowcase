@@ -21,6 +21,8 @@ sealed class Screen(
 ) {
     inline fun <reified T : Any> getIcon(): T = (iconVector ?: iconResId) as T
 
+    val routeName: String = route.substringBefore("/", route)
+
     data object Splash : Screen("app_splash")
     data object Main : Screen("app_main")
 
@@ -71,5 +73,9 @@ sealed class Screen(
     data object SearchScreen : Screen(
         "search_screen",
         com.leovp.feature_discovery.R.string.dis_search_screen_title,
+    )
+
+    data object PlayerScreen : Screen(
+        "player_screen/{id}/{title}"
     )
 }

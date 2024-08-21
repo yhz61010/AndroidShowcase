@@ -8,18 +8,15 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leovp.androidshowcase.ui.Screen
 import com.leovp.androidshowcase.ui.addAppDrawerGraph
 import com.leovp.androidshowcase.ui.addAppMainGraph
+import com.leovp.androidshowcase.ui.addOtherGraph
 import com.leovp.androidshowcase.ui.rememberNavigationActions
-import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.utils.InitManager
-import com.leovp.feature_discovery.presentation.SearchScreen
 import com.leovp.module.common.GlobalConst
 import com.leovp.module.common.http.RequestUtil
 import com.leovp.module.common.log.d
@@ -59,29 +56,16 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     val navController = rememberNavController()
     val navigationActions = rememberNavigationActions(navController = navController)
     NavHost(
-        navController = navController, startDestination = Screen.Splash.route, modifier = Modifier
+        navController = navController,
+        startDestination = Screen.Splash.route,
+        modifier = Modifier,
     ) {
-        addAppMainGraph(widthSizeClass = widthSizeClass, navigationActions = navigationActions)
-
-        addAppDrawerGraph(/* widthSizeClass = widthSizeClass, */ navigationActions = navigationActions)
-
-        composable(route = Screen.SearchScreen.route) {
-            ImmersiveTheme(
-                systemBarColor = Color.Transparent, dynamicColor = false, lightSystemBar = true
-            ) {
-                // val mainViewModel = hiltViewModel<MainViewModel>()
-                // val discoveryViewModel = hiltViewModel<DiscoveryViewModel>()
-                SearchScreen(
-                    modifier = Modifier,
-                    // widthSize = widthSizeClass,
-                    // onNavigationToDrawerItem = { drawerItemRoute: String ->
-                    //     navigationActions.navigate(drawerItemRoute)
-                    // },
-                    // mainViewModel = mainViewModel,
-                    // discoveryViewModel = discoveryViewModel
-                    onMenuUpAction = { navigationActions.upPress() }
-                )
-            }
-        }
+        addAppMainGraph(
+            widthSizeClass = widthSizeClass,
+            navigationActions = navigationActions,
+        )
+        /* widthSizeClass = widthSizeClass, */
+        addAppDrawerGraph(navigationActions = navigationActions)
+        addOtherGraph(navigationActions = navigationActions)
     }
 }

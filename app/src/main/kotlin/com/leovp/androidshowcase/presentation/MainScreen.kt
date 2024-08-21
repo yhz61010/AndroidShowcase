@@ -73,6 +73,7 @@ import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle2_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle3_color
 import com.leovp.androidshowcase.ui.theme.discovery_top_section_start_color
 import com.leovp.feature_community.presentation.CommunityScreen
+import com.leovp.feature_discovery.domain.model.MusicItem
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
 import com.leovp.feature_discovery.presentation.DiscoveryUiState
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
@@ -107,6 +108,7 @@ fun MainScreen(
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
     onSearchBarClick: () -> Unit,
     onDiscoveryRefresh: () -> Unit,
+    onPersonalItemClick: (data: MusicItem) -> Unit
 ) {
     d(TAG) { "=> Enter MainScreen <=" }
     val context = LocalContext.current
@@ -147,7 +149,7 @@ fun MainScreen(
                     },
                 ) {
                     HomeTopAppBarContent(
-                        listState = listState,
+                        // listState = listState,
                         pagerState = pagerState,
                         onClick = onSearchBarClick,
                     )
@@ -163,6 +165,7 @@ fun MainScreen(
                     listState = listState,
                     pagerScreenValues = pagerScreenValues,
                     discoveryUiState = discoveryUiState,
+                    onPersonalItemClick = onPersonalItemClick,
                 )
             } // end of Scaffold
 
@@ -174,7 +177,7 @@ fun MainScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeTopAppBarContent(
-    listState: LazyListState,
+    // listState: LazyListState,
     pagerState: PagerState,
     onClick: () -> Unit = {},
 ) {
@@ -276,6 +279,7 @@ fun MainScreenContent(
     pagerScreenValues: Array<AppBottomNavigationItems>,
     discoveryUiState: DiscoveryUiState,
     onDiscoveryRefresh: () -> Unit,
+    onPersonalItemClick: (data: MusicItem) -> Unit
 ) {
     d(TAG) { "=> Enter MainScreenContent <=" }
     HorizontalPager(
@@ -288,6 +292,7 @@ fun MainScreenContent(
                 listState = listState,
                 uiState = discoveryUiState,
                 onRefresh = onDiscoveryRefresh,
+                onPersonalItemClick = onPersonalItemClick
             )
 
             AppBottomNavigationItems.MY -> MyScreen(/*onRefresh*/)
@@ -434,6 +439,7 @@ fun PreviewMainScreen() {
             discoveryUiState = discoveryViewModel.uiState.value,
             onSearchBarClick = {},
             onDiscoveryRefresh = {},
+            onPersonalItemClick = {},
         )
     }
 }

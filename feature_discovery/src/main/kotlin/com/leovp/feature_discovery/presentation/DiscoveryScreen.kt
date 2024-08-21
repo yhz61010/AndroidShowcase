@@ -89,6 +89,7 @@ fun DiscoveryScreen(
     uiState: DiscoveryUiState,
     modifier: Modifier = Modifier,
     onRefresh: () -> Unit,
+    onPersonalItemClick: (data: MusicItem) -> Unit
 ) {
     d(TAG) { "=> Enter DiscoveryScreen <=" }
     val ctx = LocalContext.current
@@ -135,7 +136,7 @@ fun DiscoveryScreen(
                     items = uiState.personalRecommends,
                     key = { it.id }
                 ) { data ->
-                    PersonalRecommendsItem(data)
+                    PersonalRecommendsItem(data, onPersonalItemClick)
                 }
             } // end LazyColumn
         } // end if
@@ -309,11 +310,10 @@ fun CarouselItem(currentItem: CarouselItem, onItemClick: (CarouselItem) -> Unit)
 }
 
 @Composable
-fun PersonalRecommendsItem(data: MusicItem) {
+fun PersonalRecommendsItem(data: MusicItem, onItemClick: (data: MusicItem) -> Unit) {
     // d(TAG) { "=> Enter PersonalRecommendsItem <=" }
-    val context = LocalContext.current
     ListItem(
-        modifier = Modifier.clickable { context.toast("You clicked item ${data.title}") },
+        modifier = Modifier.clickable { onItemClick(data) },
         headlineContent = {
             Text(
                 text = data.title,
@@ -448,6 +448,7 @@ fun PreviewDiscoveryScreen() {
     DiscoveryScreen(
         listState = rememberLazyListState(),
         uiState = discoveryViewModel.uiState.value,
-        onRefresh = {}
+        onRefresh = {},
+        onPersonalItemClick = {}
     )
 }

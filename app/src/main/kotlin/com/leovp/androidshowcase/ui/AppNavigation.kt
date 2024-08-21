@@ -1,9 +1,11 @@
 package com.leovp.androidshowcase.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
-import com.leovp.log.LogContext
+import com.leovp.module.common.log.d
+import com.leovp.module.common.log.i
 
 /**
  * Author: Michael Leo
@@ -16,7 +18,7 @@ private const val TAG = "Nav"
 // Drawer destinations
 // --------------------
 object DrawerDestinations {
-    const val NO_ROUTE = "drawer_no"
+    const val NO_ROUTE = "drawer_dst"
 }
 
 /**
@@ -41,19 +43,17 @@ class AppNavigationActions(private val navController: NavHostController) {
         navController.navigateUp()
     }
 
-    fun navigate(route: String) {
-        LogContext.log.i(TAG, "-> navigate to: $route")
-        outputGraphInfo(route, navController)
+    fun navigate(route: String, arguments: String? = null) {
+        i(TAG) { "-> navigate to: $route" }
+        d { outputGraphInfo(route, navController) }
         return when (route) {
             Screen.Main.route -> navController.navigateToMain()
 
             Screen.MemberCenterScreen.route,
-
             Screen.SearchScreen.route,
-
+            Screen.PlayerScreen.routeName,
             Screen.MessageScreen.route,
-
-            Screen.SettingScreen.route -> navController.navigateSingleTopTo(route)
+            Screen.SettingScreen.route -> navController.navigateSingleTopTo(route, arguments)
 
             else -> error("Illegal route: $route")
         }
@@ -73,15 +73,19 @@ fun NavHostController.navigateToMain() = this.navigate(Screen.Main.route) {
     restoreState = false
 }
 
-fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) {
-    // Pop up to the start destination of the graph to
-    // avoid building up a large stack of destinations
-    // on the back stack as users select items
-    popUpTo(Screen.Main.route) { saveState = true }
-    // Avoid multiple copies of the same destination when re-selecting the same item
-    launchSingleTop = true
-    // Whether to restore state when re-selecting a previously selected item
-    restoreState = true
+fun NavHostController.navigateSingleTopTo(route: String, arguments: String? = null) {
+    val arg: String? = arguments?.trimStart('/')
+    this.navigate(
+        route.takeIf { arguments == null } ?: "$route/$arg") {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destinations
+        // on the back stack as users select items
+        popUpTo(Screen.Main.route) { saveState = true }
+        // Avoid multiple copies of the same destination when re-selecting the same item
+        launchSingleTop = true
+        // Whether to restore state when re-selecting a previously selected item
+        restoreState = true
+    }
 }
 
 @Composable
@@ -89,12 +93,10 @@ fun rememberNavigationActions(navController: NavHostController): AppNavigationAc
     return remember { AppNavigationActions(navController) }
 }
 
+@SuppressLint("RestrictedApi")
 private fun outputGraphInfo(route: String, navController: NavHostController) {
-    LogContext.log.d(
-        TAG,
-        "  current: $route  previous=${navController.currentDestination?.route}",
-    )
+    d(TAG) { "  current: $route  previous=${navController.currentDestination?.route}" }
     for ((i, dest) in navController.currentBackStack.value.withIndex()) {
-        LogContext.log.d(TAG, "    Stack $i: ${dest.destination.route}")
+        d(TAG) { "    Stack $i: ${dest.destination.route}" }
     }
 }
