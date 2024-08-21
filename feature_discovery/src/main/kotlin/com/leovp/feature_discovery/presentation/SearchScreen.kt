@@ -2,6 +2,7 @@ package com.leovp.feature_discovery.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -23,6 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.feature_discovery.R
+import com.leovp.module.common.utils.previewInitLog
+import com.leovp.ui.theme.AppTheme
 
 /**
  * Author: Michael Leo
@@ -82,7 +85,9 @@ fun SearchScreenContent(
     modifier: Modifier = Modifier, state: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(16.dp), modifier = modifier, state = state
+        contentPadding = PaddingValues(16.dp),
+        modifier = modifier.fillMaxSize(),
+        state = state
     ) {
         item {
             Text(text = "Search Screen")
@@ -94,8 +99,12 @@ fun SearchScreenContent(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewSearchScreen() {
-    SearchScreen(
-        // widthSize = WindowWidthSizeClass.Compact,
-        onMenuUpAction = {},
-    )
+    previewInitLog()
+
+    AppTheme {
+        SearchScreen(
+            // widthSize = WindowWidthSizeClass.Compact,
+            onMenuUpAction = {},
+        )
+    }
 }

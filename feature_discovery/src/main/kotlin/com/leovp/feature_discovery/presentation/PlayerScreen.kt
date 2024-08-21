@@ -2,6 +2,7 @@ package com.leovp.feature_discovery.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -22,6 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.module.common.log.d
+import com.leovp.module.common.utils.previewInitLog
+import com.leovp.ui.theme.AppTheme
 
 /**
  * Author: Michael Leo
@@ -83,7 +86,9 @@ fun PlayerScreenContent(
     state: LazyListState = rememberLazyListState(),
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(16.dp), modifier = modifier, state = state
+        contentPadding = PaddingValues(16.dp),
+        modifier = modifier.fillMaxSize(),
+        state = state,
     ) {
         item {
             Text(text = "Player Screen")
@@ -95,8 +100,12 @@ fun PlayerScreenContent(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewPlayerScreen() {
-    PlayerScreen(
-        topBarTitle = "VIP 专属好歌推荐",
-        onMenuUpAction = {},
-    )
+    previewInitLog()
+
+    AppTheme {
+        PlayerScreen(
+            topBarTitle = "VIP 专属好歌推荐",
+            onMenuUpAction = {},
+        )
+    }
 }

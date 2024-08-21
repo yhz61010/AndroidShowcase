@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package com.leovp.androidshowcase.ui.theme
+package com.leovp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

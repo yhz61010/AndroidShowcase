@@ -68,10 +68,10 @@ import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.androidshowcase.ui.DrawerDestinations
 import com.leovp.androidshowcase.ui.Screen
 import com.leovp.androidshowcase.ui.theme.AppTheme
-import com.leovp.androidshowcase.ui.theme.discovery_top_section_end_color
-import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle2_color
-import com.leovp.androidshowcase.ui.theme.discovery_top_section_middle3_color
-import com.leovp.androidshowcase.ui.theme.discovery_top_section_start_color
+import com.leovp.ui.theme.discovery_top_section_end_color
+import com.leovp.ui.theme.discovery_top_section_middle2_color
+import com.leovp.ui.theme.discovery_top_section_middle3_color
+import com.leovp.ui.theme.discovery_top_section_start_color
 import com.leovp.feature_community.presentation.CommunityScreen
 import com.leovp.feature_discovery.domain.model.MusicItem
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
