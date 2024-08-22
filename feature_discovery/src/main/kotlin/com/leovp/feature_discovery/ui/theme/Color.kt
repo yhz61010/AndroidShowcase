@@ -16,7 +16,9 @@ val mark_quality_border = Color(0xffe7dcc2)
 val mark_quality_bg = Color.Transparent
 
 val mark_vip_text_color = Color(0x92ff0000)
+val mark_vip2_text_color = Color(0xccf3f3f3)
 val mark_vip_border = Color(0x70ff0000)
 val mark_vip_bg = Color.Transparent
+val mark_vip_bg2 = Color(0x33f3e6e9)
 
 val place_holder_bg_color = Color(0xffeeeeee)

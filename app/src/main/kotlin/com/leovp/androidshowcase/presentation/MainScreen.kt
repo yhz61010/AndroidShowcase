@@ -67,7 +67,6 @@ import com.leovp.androidshowcase.ui.AppBottomNavigationItems
 import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.androidshowcase.ui.DrawerDestinations
 import com.leovp.androidshowcase.ui.Screen
-import com.leovp.androidshowcase.ui.theme.AppTheme
 import com.leovp.ui.theme.discovery_top_section_end_color
 import com.leovp.ui.theme.discovery_top_section_middle2_color
 import com.leovp.ui.theme.discovery_top_section_middle3_color
@@ -87,6 +86,7 @@ import com.leovp.module.common.presentation.compose.composable.rememberSizeAware
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.previewInitLog
 import com.leovp.module.common.utils.toBadgeText
+import com.leovp.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
