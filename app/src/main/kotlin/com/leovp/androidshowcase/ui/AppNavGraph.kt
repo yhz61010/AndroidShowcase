@@ -4,12 +4,14 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.presentation.MainScreen
 import com.leovp.androidshowcase.presentation.MainViewModel
 import com.leovp.androidshowcase.presentation.SplashScreen
@@ -97,6 +99,7 @@ fun NavGraphBuilder.addAppDrawerGraph(
 
 fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
     d(TAG) { "=> Enter addOtherGraph <=" }
+
     composable(route = Screen.SearchScreen.route) {
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
@@ -125,6 +128,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
             navArgument("title") { type = NavType.StringType },
         )
     ) {
+        val ctx = LocalContext.current
         val id = it.arguments?.getLong("id")
         val title = it.arguments?.getString("title")
         d(TAG) { "route: ${it.destination.route}  id=$id  title=$title" }
@@ -144,7 +148,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
                 // mainViewModel = mainViewModel,
                 // discoveryViewModel = discoveryViewModel
                 onMenuUpAction = { navigationActions.upPress() },
-                onShareAction = {},
+                onShareAction = { ctx.toast("Click [Share] button") },
                 modifier = Modifier
             )
         }
