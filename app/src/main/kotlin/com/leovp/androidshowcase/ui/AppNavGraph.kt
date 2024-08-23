@@ -13,14 +13,14 @@ import androidx.navigation.navArgument
 import com.leovp.androidshowcase.presentation.MainScreen
 import com.leovp.androidshowcase.presentation.MainViewModel
 import com.leovp.androidshowcase.presentation.SplashScreen
-import com.leovp.androidshowcase.ui.theme.ImmersiveTheme
 import com.leovp.androidshowcase.ui.theme.SplashTheme
-import com.leovp.ui.theme.immersive_sys_ui
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
 import com.leovp.feature_discovery.presentation.PlayerScreen
 import com.leovp.feature_discovery.presentation.SearchScreen
 import com.leovp.feature_main_drawer.membercenter.presentation.MemberCenterScreen
 import com.leovp.module.common.log.d
+import com.leovp.ui.theme.ImmersiveTheme
+import com.leovp.ui.theme.immersive_sys_ui
 import java.net.URLEncoder
 
 /**
@@ -144,6 +144,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
                 // mainViewModel = mainViewModel,
                 // discoveryViewModel = discoveryViewModel
                 onMenuUpAction = { navigationActions.upPress() },
+                onShareAction = {},
                 modifier = Modifier
             )
         }
