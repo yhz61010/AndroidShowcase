@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -60,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.leovp.feature_discovery.ui.theme.mark_vip2_text_color
 import com.leovp.feature_discovery.ui.theme.mark_vip_bg2
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.module.common.log.d
@@ -84,7 +80,8 @@ fun PlayerScreen(
     d(TAG) { "=> Enter PlayerScreen <=" }
     // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
+    // val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
     val containerBg = MaterialTheme.colorScheme.primary
     Scaffold(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
@@ -111,6 +108,7 @@ fun PlayerScreen(
                 navigationIcon = {
                     IconButton(onClick = onMenuUpAction) {
                         Icon(
+                            modifier = Modifier.requiredSize(32.dp),
                             painter = painterResource(
                                 id = com.leovp.feature_discovery.R.drawable.dis_baseline_keyboard_arrow_down_24,
                             ),
@@ -138,8 +136,7 @@ fun PlayerScreen(
             modifier = Modifier
                 // .nestedScroll(scrollBehavior.nestedScrollConnection)
                 // innerPadding takes into account the top and bottom bar
-                .padding(contentPadding),
-            state = rememberLazyListState(),
+                .padding(contentPadding)
         )
     }
 }
@@ -168,17 +165,43 @@ fun TrackBadge(@DrawableRes id: Int, text: String) {
 }
 
 @Composable
+fun CommentItem() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp, 12.dp, 16.dp, 0.dp),
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = "热评：放给舍友听的时候，她只回一句这... >",
+            modifier = Modifier
+                .background(
+                    color = mark_vip_bg2,
+                    shape = MaterialTheme.shapes.extraLarge,
+                )
+                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .alpha(0.6f),
+            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.titleSmall.copy(
+                fontWeight = FontWeight.Black
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
 fun TrackArtistItem() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp, 16.dp, 16.dp, 0.dp),
+            .padding(16.dp, 20.dp, 16.dp, 0.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(0.55f)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
                 val smallRounded = MaterialTheme.shapes.small
                 Text(
@@ -193,13 +216,13 @@ fun TrackArtistItem() {
                             color = mark_vip_bg2,
                             shape = smallRounded,
                         )
-                        .padding(horizontal = 4.dp, vertical = 0.dp),
+                        .padding(horizontal = 4.dp, vertical = 0.dp)
+                        .alpha(0.6f),
                     text = "VIP",
-                    color = mark_vip2_text_color,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.labelSmall,
                     fontSize = 8.0.sp,
                     fontWeight = FontWeight.Black,
-                    // fontFamily = FontFamily.SansSerif
                 )
             }
             Row(
@@ -233,8 +256,7 @@ fun TrackArtistItem() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             TrackBadge(
-                com.leovp.feature_discovery.R.drawable.dis_favorite_24px,
-                "100w+"
+                com.leovp.feature_discovery.R.drawable.dis_favorite_24px, "100w+"
             )
             Spacer(modifier = Modifier.width(28.dp))
             TrackBadge(com.leovp.feature_discovery.R.drawable.dis_chat_24px, "100w+")
@@ -256,14 +278,10 @@ fun DurationItem(text: String, onClick: () -> Unit = {}) {
 @Composable
 fun SeekbarItem(posState: MutableState<Float>, maxValue: Float) {
     val sliderState = remember {
-        SliderState(
-            value = posState.value,
-            valueRange = 0f..maxValue,
-            onValueChangeFinished = {
-                // launch some business logic update with the state you hold
-                // viewModel.updateSelectedSliderValue(sliderPosition)
-            }
-        )
+        SliderState(value = posState.value, valueRange = 0f..maxValue, onValueChangeFinished = {
+            // launch some business logic update with the state you hold
+            // viewModel.updateSelectedSliderValue(sliderPosition)
+        })
     }
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     val colors = SliderDefaults.colors(
@@ -276,32 +294,30 @@ fun SeekbarItem(posState: MutableState<Float>, maxValue: Float) {
             .fillMaxWidth()
             .padding(8.dp, 24.dp, 8.dp, 0.dp)
     ) {
-        Slider(
-            state = sliderState,
-            modifier = Modifier
-                .semantics { contentDescription = "Seekbar" }
-                .height(2.dp)
-                .fillMaxWidth(),
-            interactionSource = interactionSource,
-            thumb = {
-                Icon(
-                    painter = painterResource(com.leovp.feature_discovery.R.drawable.dis_baseline_circle_24),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(0.dp, 3.5f.dp)
-                        .size(ButtonDefaults.IconSize)
-                        .scale(0.7f, 0.7f),
-                    tint = colors.thumbColor,
-                )
-            },
-            track = {
-                SliderDefaults.Track(
-                    modifier = Modifier.scale(1f, 0.5f),
-                    colors = colors,
-                    sliderState = sliderState,
-                )
-            }
-        ) // end of Slider
+        Slider(state = sliderState,
+               modifier = Modifier
+                   .semantics { contentDescription = "Seekbar" }
+                   .height(2.dp)
+                   .fillMaxWidth(),
+               interactionSource = interactionSource,
+               thumb = {
+                   Icon(
+                       painter = painterResource(com.leovp.feature_discovery.R.drawable.dis_baseline_circle_24),
+                       contentDescription = null,
+                       modifier = Modifier
+                           .padding(0.dp, 3.5f.dp)
+                           .size(ButtonDefaults.IconSize)
+                           .scale(0.7f, 0.7f),
+                       tint = colors.thumbColor,
+                   )
+               },
+               track = {
+                   SliderDefaults.Track(
+                       modifier = Modifier.scale(1f, 0.5f),
+                       colors = colors,
+                       sliderState = sliderState,
+                   )
+               }) // end of Slider
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -310,7 +326,7 @@ fun SeekbarItem(posState: MutableState<Float>, maxValue: Float) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             DurationItem("00:00")
-            DurationItem("高清臻音", {})
+            DurationItem("高清臻音") {}
             DurationItem("04:37")
         } // end of duration row
     }
@@ -350,45 +366,53 @@ fun ControllerItem() {
 }
 
 @Composable
+fun ExtraControllerItem() {
+    val size = 28.dp
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp, 12.dp)
+            .alpha(0.5f),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_music_cast_24px, {}, size)
+        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_download_24px, {}, size)
+        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_more_horiz_24px, {}, size)
+    }
+}
+
+@Composable
 fun PlayerScreenContent(
     modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
 ) {
-    LazyColumn(
+    var posState = remember { mutableStateOf(60f) }
+
+    Column(
         // contentPadding = PaddingValues(16.dp),
         modifier = modifier.fillMaxSize(),
-        state = state,
     ) {
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(420.dp),
-                verticalArrangement = Arrangement.Top,
-            ) {
-                AsyncImage(
-                    model = ImageRequest
-                        .Builder(LocalContext.current)
-                        .data("https://lib.leovp.com/img/zhangshaohan-Aurora.jpg")
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    placeholder = ColorPainter(place_holder_bg_color),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp),
+            verticalArrangement = Arrangement.Top,
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data("https://lib.leovp.com/img/zhangshaohan-Aurora.jpg").crossfade(true)
+                    .build(),
+                contentDescription = null,
+                placeholder = ColorPainter(place_holder_bg_color),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.fillMaxSize(),
+            )
         }
-        item {
-            TrackArtistItem()
-        }
-        item {
-            var posState = remember { mutableStateOf(60f) }
-            SeekbarItem(posState, 357f)
-        }
-        item {
-            ControllerItem()
-        }
+        CommentItem()
+        TrackArtistItem()
+        SeekbarItem(posState, 357f)
+        ControllerItem()
+        Spacer(modifier = Modifier.weight(1f))
+        ExtraControllerItem()
     }
 }
 
