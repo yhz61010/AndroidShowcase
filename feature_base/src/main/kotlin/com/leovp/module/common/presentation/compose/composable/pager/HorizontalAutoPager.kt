@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.leovp.module.common.log.d
 import com.leovp.module.common.utils.floorMod
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
@@ -37,7 +36,7 @@ private const val TAG = "HAP"
 @Composable
 fun HorizontalAutoPager(
     modifier: Modifier = Modifier,
-    looping: Boolean = true,
+    auto: Boolean = true,
     delay: Long = 3000L,
     indicatorAlignment: Alignment = Alignment.BottomStart,
     indicatorContent: @Composable ((index: Int, pageCount: Int) -> Unit)? = { index, count ->
@@ -46,7 +45,7 @@ fun HorizontalAutoPager(
     pageCount: Int,
     pagerContent: @Composable (index: Int) -> Unit,
 ) {
-    d(TAG) { "=> Enter HorizontalAutoPager <=" }
+    // d(TAG) { "=> Enter HorizontalAutoPager <=" }
     // TODO Bug for Compose when set it to Int.MAX_VALUE.
     val loopingCount = 1024 // Int.MAX_VALUE
     // // We start the pager in the middle of the raw number of pages
@@ -125,7 +124,7 @@ fun HorizontalAutoPager(
             }
         } // end of LaunchedEffect
 
-        if (underDragging.not() && looping) {
+        if (underDragging.not() && auto) {
             LaunchedEffect(underDragging) {
                 runCatching {
                     while (true) {

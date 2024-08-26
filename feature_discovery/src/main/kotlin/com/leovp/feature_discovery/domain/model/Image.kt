@@ -3,6 +3,7 @@ package com.leovp.feature_discovery.domain.model
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import com.leovp.feature_discovery.domain.enum.ImageSize
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,6 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Keep
 @Immutable
+@OptIn(InternalSerializationApi::class)
 @Serializable
 data class Image(
     val url: String,

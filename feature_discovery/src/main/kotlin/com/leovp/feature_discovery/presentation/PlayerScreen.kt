@@ -33,7 +33,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -55,11 +57,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.leovp.android.exts.toast
+import com.leovp.feature_discovery.testdata.PreviewPlayerModule
 import com.leovp.feature_discovery.ui.theme.mark_vip_bg2
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
+import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.log.d
+import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.previewInitLog
 import com.leovp.ui.theme.AppTheme
 
@@ -72,12 +80,40 @@ private const val TAG = "PlayerScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerScreen(
-    topBarTitle: String?,
+    viewModel: PlayerViewModel,
+    artist: String,
+    track: String,
     onMenuUpAction: () -> Unit,
     onShareAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     d(TAG) { "=> Enter PlayerScreen <=" }
+    val ctx = LocalContext.current
+
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    LaunchedEffect(Unit) {
+        viewModel.getData(artist = artist, album = track)
+    }
+
+    uiState.exception?.let {
+        val apiException = it as ApiException
+        val code = apiException.code
+        val message = apiException.message
+        ctx.toast("$code: $message", error = true)
+    }
+
+    val songInfo = uiState.songInfo
+
+    // uiState.value.exception?.let {
+    //     val apiException = it as ApiException
+    //     val code = apiException.code
+    //     val message = apiException.message
+    //     ctx.toast("$code: $message", error = true)
+    // }
+
+    SideEffect {
+        d(TAG) { "Player loading=${viewModel.loading}  name=${songInfo?.name}" }
+    }
     // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
     // val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
@@ -96,7 +132,7 @@ fun PlayerScreen(
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
                 title = {
                     Text(
-                        text = topBarTitle ?: "",
+                        text = track,
                         color = MaterialTheme.colorScheme.onPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -201,7 +237,8 @@ fun TrackArtistItem() {
     ) {
         Column(modifier = Modifier.weight(0.55f)) {
             Row(
-                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 val smallRounded = MaterialTheme.shapes.small
                 Text(
@@ -394,7 +431,7 @@ fun PlayerScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(400.dp),
+                .height(420.dp),
             verticalArrangement = Arrangement.Top,
         ) {
             AsyncImage(
@@ -422,9 +459,16 @@ fun PlayerScreenContent(
 fun PreviewPlayerScreen() {
     previewInitLog()
 
+    val viewModel: PlayerViewModel = viewModel(
+        factory = viewModelProviderFactoryOf {
+            PlayerViewModel(PreviewPlayerModule.previewPlayerUseCase)
+        },
+    )
     AppTheme {
         PlayerScreen(
-            topBarTitle = "VIP 专属好歌推荐",
+            viewModel = viewModel,
+            artist = "鄧麗君",
+            track = "甜蜜蜜",
             onMenuUpAction = {},
             onShareAction = {},
         )

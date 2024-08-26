@@ -7,9 +7,9 @@ import com.leovp.feature_discovery.domain.model.CarouselItem
 import com.leovp.feature_discovery.domain.model.EverydayItem
 import com.leovp.feature_discovery.domain.model.MusicItem
 import com.leovp.feature_discovery.domain.usecase.GetDiscoveryListUseCase
-import com.leovp.log.LogContext
 import com.leovp.module.common.exceptionOrNull
 import com.leovp.module.common.getOrDefault
+import com.leovp.module.common.log.i
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -47,7 +47,7 @@ class DiscoveryViewModel @Inject constructor(
     }
 
     fun refreshAll() {
-        LogContext.log.i(TAG, "Discovery -> refreshAll()")
+        i(TAG) { "Discovery -> refreshAll()" }
         if (job != null) {
             job?.cancel()
             job = null

@@ -9,6 +9,7 @@ package com.leovp.module.common
 object GlobalConst {
     // private const val TAG = "GlobalConst"
 
+    @Suppress("SENSELESS_COMPARISON")
     const val DEBUG = BuildConfig.DEBUG_MODE
     const val VERSION_NAME = BuildConfig.VERSION_NAME
 
@@ -16,8 +17,9 @@ object GlobalConst {
     const val API_BASE_URL = BuildConfig.GRADLE_API_BASE_URL
     const val API_TOKEN = BuildConfig.GRADLE_API_TOKEN
 
-    const val HTTP_GET_SEARCH_ALBUM = "./?method=album.search"
+    const val HTTP_GET_SEARCH_ALBUM      = "./?method=album.search"
     const val HTTP_GET_ARTIST_TOP_TRACKS = "./?method=artist.gettoptracks"
     const val HTTP_GET_ARTIST_TOP_ALBUMS = "./?method=artist.gettopalbums"
+    const val HTTP_GET_TRACK_GET_INFO    = "./?method=track.getinfo"
     // ===== Http request - End =====
 }

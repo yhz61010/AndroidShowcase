@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.leovp.module.common.exception
 
 /**

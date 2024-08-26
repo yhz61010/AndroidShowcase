@@ -23,13 +23,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
+import com.leovp.module.common.log.d
 import com.leovp.module.common.res.Dimen
+import com.leovp.module.common.utils.previewInitLog
 import com.leovp.ui.theme.AppTheme
 
 /**
  * Author: Michael Leo
  * Date: 2023/7/17 10:07
  */
+
+private const val TAG = "AppDrawer"
 
 enum class AppBottomNavigationItems(val screen: Screen) {
     DISCOVERY(Screen.Discovery),
@@ -46,6 +50,7 @@ fun AppDrawer(
     onCloseDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    d(TAG) { "=> Enter AppDrawer <=" }
     ModalDrawerSheet(modifier) {
         AppLogo(
             modifier = Modifier.padding(
@@ -113,6 +118,7 @@ fun AppDrawer(
 
 @Composable
 private fun AppLogo(modifier: Modifier = Modifier) {
+    d(TAG) { "=> Enter AppLogo <=" }
     Row(
         modifier = modifier, verticalAlignment = Alignment.CenterVertically
     ) {
@@ -133,9 +139,13 @@ private fun AppLogo(modifier: Modifier = Modifier) {
 @Preview("Drawer contents (dark)", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewAppDrawer() {
+    previewInitLog()
+
     AppTheme(dynamicColor = false) {
-        AppDrawer(currentRoute = DrawerDestinations.NO_ROUTE,
-                  onNavigateTo = { },
-                  onCloseDrawer = { })
+        AppDrawer(
+            currentRoute = DrawerDestinations.NO_ROUTE,
+            onNavigateTo = { },
+            onCloseDrawer = { },
+        )
     }
 }
