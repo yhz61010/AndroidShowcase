@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -18,9 +17,11 @@ import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
 import com.leovp.feature_discovery.presentation.PlayerScreen
+import com.leovp.feature_discovery.presentation.PlayerViewModel
 import com.leovp.feature_discovery.presentation.SearchScreen
 import com.leovp.feature_main_drawer.membercenter.presentation.MemberCenterScreen
 import com.leovp.module.common.log.d
+import com.leovp.module.common.log.i
 import com.leovp.ui.theme.ImmersiveTheme
 import com.leovp.ui.theme.immersive_sys_ui
 import java.net.URLEncoder
@@ -51,8 +52,8 @@ fun NavGraphBuilder.addAppMainGraph(
             // val context = LocalContext.current
             val mainViewModel = hiltViewModel<MainViewModel>()
             val discoveryViewModel = hiltViewModel<DiscoveryViewModel>()
-            val mainUiState = mainViewModel.uiState.collectAsStateWithLifecycle()
-            val discoveryUiState = discoveryViewModel.uiState.collectAsStateWithLifecycle()
+            val mainUiState = mainViewModel.uiState
+            val discoveryUiState = discoveryViewModel.uiState
             MainScreen(
                 modifier = modifier,
                 widthSize = widthSizeClass,
@@ -60,15 +61,20 @@ fun NavGraphBuilder.addAppMainGraph(
                 onNavigationToDrawerItem = { drawerItemRoute: String ->
                     navigationActions.navigate(drawerItemRoute)
                 },
-                mainUiState = mainUiState.value,
-                discoveryUiState = discoveryUiState.value,
+                mainUiStateFlow = mainUiState,
+                discoveryUiStateFlow = discoveryUiState,
                 onDiscoveryRefresh = {
                     discoveryViewModel.refreshAll()
                     mainViewModel.refreshAll()
                 },
                 onPersonalItemClick = { data ->
-                    val encodedTitle = URLEncoder.encode(data.title, "UTF-8")
-                    navigationActions.navigate(Screen.PlayerScreen.routeName, "${data.id}/$encodedTitle")
+                    val artist = URLEncoder.encode(data.subTitle, "UTF-8")
+                    val track = URLEncoder.encode(data.title, "UTF-8")
+                    i(TAG) { "Click [Personal Item] artist=$artist  track=$track" }
+                    navigationActions.navigate(
+                        Screen.PlayerScreen.routeName,
+                        "$artist/$track",
+                    )
                 }
             )
         }
@@ -124,23 +130,26 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
     composable(
         route = Screen.PlayerScreen.route,
         arguments = listOf(
-            navArgument("id") { type = NavType.LongType },
-            navArgument("title") { type = NavType.StringType },
+            navArgument("artist") { type = NavType.StringType },
+            navArgument("track") { type = NavType.StringType },
         )
     ) {
         val ctx = LocalContext.current
-        val id = it.arguments?.getLong("id")
-        val title = it.arguments?.getString("title")
-        d(TAG) { "route: ${it.destination.route}  id=$id  title=$title" }
+        val artist = it.arguments?.getString("artist")
+        val track = it.arguments?.getString("track")
+        requireNotNull(artist) { "artist can not be null for Player Screen." }
+        requireNotNull(track) { "track can not be null for Player Screen." }
+        d(TAG) { "route: ${it.destination.route}  artist=$artist  track=$track" }
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
             dynamicColor = false,
             lightSystemBar = true,
         ) {
-            // val mainViewModel = hiltViewModel<MainViewModel>()
-            // val discoveryViewModel = hiltViewModel<DiscoveryViewModel>()
+            val playerViewModel = hiltViewModel<PlayerViewModel>()
             PlayerScreen(
-                topBarTitle = title,
+                viewModel = playerViewModel,
+                artist = artist,
+                track = track,
                 // widthSize = widthSizeClass,
                 // onNavigationToDrawerItem = { drawerItemRoute: String ->
                 //     navigationActions.navigate(drawerItemRoute)

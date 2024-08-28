@@ -5,7 +5,11 @@ import com.drake.net.exception.ConvertException
 import com.drake.net.exception.RequestParamsException
 import com.drake.net.exception.ServerResponseException
 import com.drake.net.request.kType
+import com.leovp.kotlin.exts.multiCatch
+import com.leovp.module.common.exception.ApiException
+import com.leovp.module.common.http.model.ApiErrorResult
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import okhttp3.Response
@@ -35,6 +39,19 @@ class SerializationConverter : NetConverter {
             when {
                 code in 200..299 -> {
                     val bodyString = response.body?.string() ?: return null
+
+                    multiCatch(
+                        runBlock = {
+                            // Business error.
+                            val errorRes: ApiErrorResult = jsonDecoder.decodeFromString(bodyString)
+                            throw ApiException(errorRes.code, errorRes.message, e)
+                        },
+                        exceptions = arrayOf(
+                            SerializationException::class,
+                            IllegalArgumentException::class
+                        )
+                    )
+
                     val kType = response.request.kType ?: throw ConvertException(
                         response, "Request does not contain KType"
                     )

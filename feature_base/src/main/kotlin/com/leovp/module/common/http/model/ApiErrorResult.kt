@@ -2,6 +2,7 @@ package com.leovp.module.common.http.model
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -12,6 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Keep
 @Serializable
+@OptIn(InternalSerializationApi::class)
 @Immutable
 data class ApiErrorResult(
     @SerialName("error") val code: Int,

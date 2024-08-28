@@ -21,7 +21,7 @@ import javax.inject.Inject
  * Date: 2023/7/25 13:14
  */
 class DiscoveryRepositoryImpl @Inject constructor(
-    private val dataSource: DiscoveryDataSource
+    @Suppress("unused") private val dataSource: DiscoveryDataSource
 ) : DiscoveryRepository {
 
     override suspend fun getCarouselMusic(): Result<List<CarouselItem>> = result(Dispatchers.IO) {
@@ -29,7 +29,7 @@ class DiscoveryRepositoryImpl @Inject constructor(
             param("artist", "Teresa Teng")
             param("limit", 5)
             param("page", 1) // start from 1
-        }.await().topalbums.album.mapIndexed { index, album ->
+        }.await().topAlbums.album.mapIndexed { index, album ->
             album.toDomainModel(index)
         }
     }

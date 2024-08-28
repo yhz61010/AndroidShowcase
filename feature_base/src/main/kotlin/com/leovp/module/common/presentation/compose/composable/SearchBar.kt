@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.module.common.presentation.compose.ext.noRippleClickable
+import com.leovp.module.common.utils.previewInitLog
 
 /**
  * Author: Michael Leo
@@ -122,6 +123,8 @@ val defaultLinearGradient: Brush
 @Preview("Searchbar (dark)", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewSearchBar() {
+    previewInitLog()
+
     SearchBar(
         searchText = "Wellerman Nathan Evans",
         border = BorderStroke(

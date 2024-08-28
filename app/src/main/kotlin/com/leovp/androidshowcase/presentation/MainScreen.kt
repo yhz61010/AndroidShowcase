@@ -41,6 +41,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -67,10 +68,6 @@ import com.leovp.androidshowcase.ui.AppBottomNavigationItems
 import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.androidshowcase.ui.DrawerDestinations
 import com.leovp.androidshowcase.ui.Screen
-import com.leovp.ui.theme.discovery_top_section_end_color
-import com.leovp.ui.theme.discovery_top_section_middle2_color
-import com.leovp.ui.theme.discovery_top_section_middle3_color
-import com.leovp.ui.theme.discovery_top_section_start_color
 import com.leovp.feature_community.presentation.CommunityScreen
 import com.leovp.feature_discovery.domain.model.MusicItem
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
@@ -87,7 +84,12 @@ import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.previewInitLog
 import com.leovp.module.common.utils.toBadgeText
 import com.leovp.ui.theme.AppTheme
+import com.leovp.ui.theme.discovery_top_section_end_color
+import com.leovp.ui.theme.discovery_top_section_middle2_color
+import com.leovp.ui.theme.discovery_top_section_middle3_color
+import com.leovp.ui.theme.discovery_top_section_start_color
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -103,8 +105,8 @@ private const val TAB_SWITCH_ANIM_DURATION = 300
 fun MainScreen(
     modifier: Modifier = Modifier,
     widthSize: WindowWidthSizeClass,
-    mainUiState: MainUiState,
-    discoveryUiState: DiscoveryUiState,
+    mainUiStateFlow: StateFlow<MainUiState>,
+    discoveryUiStateFlow: StateFlow<DiscoveryUiState>,
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
     onSearchBarClick: () -> Unit,
     onDiscoveryRefresh: () -> Unit,
@@ -114,7 +116,7 @@ fun MainScreen(
     val context = LocalContext.current
 
     val coroutineScope = rememberCoroutineScope()
-    val isExpandedScreen = widthSize == WindowWidthSizeClass.Expanded
+    val isExpandedScreen by remember { mutableStateOf(widthSize == WindowWidthSizeClass.Expanded) }
     val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
 
     val pagerScreenValues = AppBottomNavigationItems.entries.toTypedArray()
@@ -133,15 +135,16 @@ fun MainScreen(
                 onCloseDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
                 modifier = Modifier.requiredWidth(300.dp)
             )
-        }, drawerState = sizeAwareDrawerState,
+        },
+        drawerState = sizeAwareDrawerState,
         // Only enable opening the drawer via gestures if the screen is not expanded
-        gesturesEnabled = !isExpandedScreen
+        gesturesEnabled = !isExpandedScreen,
     ) {
         Box(contentAlignment = Alignment.TopEnd) {
             Scaffold(modifier = modifier, topBar = {
                 HomeTopAppBar(
                     modifier = modifier,
-                    unread = mainUiState.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
+                    unread = mainUiStateFlow.value.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
                     pagerState = pagerState,
                     onNavigationClick = { coroutineScope.launch { sizeAwareDrawerState.open() } },
                     onActionClick = {
@@ -155,7 +158,7 @@ fun MainScreen(
                     )
                 }
             }, bottomBar = {
-                CustomBottomBar(pagerState, coroutineScope, mainUiState.unreadList)
+                CustomBottomBar(pagerState, coroutineScope, mainUiStateFlow.value.unreadList)
             }) { contentPadding ->
                 val newModifier = modifier.padding(contentPadding)
                 MainScreenContent(
@@ -164,12 +167,13 @@ fun MainScreen(
                     pagerState = pagerState,
                     listState = listState,
                     pagerScreenValues = pagerScreenValues,
-                    discoveryUiState = discoveryUiState,
+                    discoveryUiStateFlow = discoveryUiStateFlow,
                     onPersonalItemClick = onPersonalItemClick,
                 )
             } // end of Scaffold
 
-            LinearGradientBox(listState)
+            // // The gradient box will significantly impact display performance.
+            // LinearGradientBox(listState)
         } // end of Box
     }
 }
@@ -277,7 +281,7 @@ fun MainScreenContent(
     pagerState: PagerState,
     listState: LazyListState,
     pagerScreenValues: Array<AppBottomNavigationItems>,
-    discoveryUiState: DiscoveryUiState,
+    discoveryUiStateFlow: StateFlow<DiscoveryUiState>,
     onDiscoveryRefresh: () -> Unit,
     onPersonalItemClick: (data: MusicItem) -> Unit
 ) {
@@ -290,7 +294,7 @@ fun MainScreenContent(
         when (pagerScreenValues[page]) {
             AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(
                 listState = listState,
-                uiState = discoveryUiState,
+                uiStateFlow = discoveryUiStateFlow,
                 onRefresh = onDiscoveryRefresh,
                 onPersonalItemClick = onPersonalItemClick
             )
@@ -301,6 +305,7 @@ fun MainScreenContent(
     }
 }
 
+@Suppress("unused")
 @Composable
 fun LinearGradientBox(scrollState: LazyListState) {
     d(TAG) { "=> Enter LinearGradientBox <=" }
@@ -435,8 +440,8 @@ fun PreviewMainScreen() {
         MainScreen(
             widthSize = WindowWidthSizeClass.Compact,
             onNavigationToDrawerItem = {},
-            mainUiState = mainViewModel.uiState.value,
-            discoveryUiState = discoveryViewModel.uiState.value,
+            mainUiStateFlow = mainViewModel.uiState,
+            discoveryUiStateFlow = discoveryViewModel.uiState,
             onSearchBarClick = {},
             onDiscoveryRefresh = {},
             onPersonalItemClick = {},

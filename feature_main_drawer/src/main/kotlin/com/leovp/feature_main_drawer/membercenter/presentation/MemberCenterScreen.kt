@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.feature_main_drawer.R
+import com.leovp.module.common.utils.previewInitLog
 
 /**
  * Author: Michael Leo
@@ -114,7 +115,10 @@ fun LazyListScope.memberCenterScreenContentItems() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewMemberCenterScreen() {
+    previewInitLog()
+
     MemberCenterScreen(
         // widthSize = WindowWidthSizeClass.Compact,
-        onMenuUpAction = {})
+        onMenuUpAction = {},
+    )
 }

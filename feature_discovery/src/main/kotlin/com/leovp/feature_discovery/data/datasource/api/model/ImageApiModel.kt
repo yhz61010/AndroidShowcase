@@ -14,8 +14,8 @@ import kotlinx.serialization.Serializable
 
 @Keep
 @Immutable
-@Serializable
 @OptIn(InternalSerializationApi::class)
+@Serializable
 data class ImageApiModel(
     @SerialName("#text") val url: String,
     val size: ImageSizeApiModel

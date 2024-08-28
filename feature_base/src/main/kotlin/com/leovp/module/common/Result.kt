@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 /**
@@ -22,6 +23,15 @@ sealed interface Result<out R> {
 
     val isSuccess: Boolean get() = this is Success
     val isFailure: Boolean get() = this is Failure
+
+    companion object {
+        @OptIn(ExperimentalSerializationApi::class)
+        val jsonDecoder = Json {
+            explicitNulls = false
+            ignoreUnknownKeys = true
+            coerceInputValues = false
+        }
+    }
 }
 
 fun <R, T : R> Result<T>.getOrDefault(defaultValue: T): R = when {
@@ -96,8 +106,7 @@ suspend inline fun <reified R> result(
     runCatching {
         Result.Success(withContext(dispatcher) { block() })
     }.getOrElse { err ->
-        val errorCodeDefault = -65535
-        var code = errorCodeDefault
+        var code = -65535
         var message: String? = err.message
         var exception: Throwable = err
 
@@ -107,24 +116,34 @@ suspend inline fun <reified R> result(
         // ConvertException
         // All above exceptions are inherited from HttpResponseException.
 
-        if (err is RequestParamsException) {
-            err.response.body?.string()?.let { bodyString ->
-                runCatching {
-                    val errorData = Json.decodeFromString<ApiErrorResult>(bodyString)
-                    code = errorData.code
-                    message = errorData.message
-                }.onFailure {
-                    // SerializationException
-                    // IllegalArgumentException
-                    exception = it
+        when (err) {
+            is RequestParamsException -> {
+                err.response.body?.string()?.let { bodyString ->
+                    runCatching {
+                        val errorData =
+                            Result.jsonDecoder.decodeFromString<ApiErrorResult>(bodyString)
+                        code = errorData.code
+                        message = errorData.message
+                    }.onFailure {
+                        // SerializationException
+                        // IllegalArgumentException
+                        message = it.message
+                    }
                 }
             }
-        } else {
-            if (err is HttpResponseException) {
-                code = err.response.code
-                message = err.response.message
+
+            is HttpResponseException -> {
+                val cause = err.cause
+                if (cause is ApiException) {
+                    code = cause.code
+                    message = cause.message
+                } else {
+                    code = err.response.code
+                    message = err.response.message
+                }
             }
         }
+
         Result.Failure(ApiException(code, message, exception))
     }
 }

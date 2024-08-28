@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -68,6 +70,7 @@ import com.leovp.feature_discovery.ui.theme.mark_vip_text_color
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.log.d
+import com.leovp.module.common.log.i
 import com.leovp.module.common.presentation.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.module.common.presentation.compose.composable.pager.HorizontalAutoPager
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
@@ -75,6 +78,7 @@ import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullR
 import com.leovp.module.common.presentation.compose.composable.pullrefresh.rememberPullRefreshState
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.previewInitLog
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Author: Michael Leo
@@ -86,12 +90,23 @@ private const val TAG = "Discovery"
 @Composable
 fun DiscoveryScreen(
     listState: LazyListState,
-    uiState: DiscoveryUiState,
-    modifier: Modifier = Modifier,
+    uiStateFlow: StateFlow<DiscoveryUiState>,
     onRefresh: () -> Unit,
-    onPersonalItemClick: (data: MusicItem) -> Unit
+    onPersonalItemClick: (data: MusicItem) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    d(TAG) { "=> Enter DiscoveryScreen <=" }
+    val uiState = uiStateFlow.collectAsStateWithLifecycle().value
+    val carouselRecommends = uiState.carouselRecommends
+    val everydayRecommends = uiState.everydayRecommends
+    val personalRecommends = uiState.personalRecommends
+    SideEffect {
+        i(TAG) {
+            "=> Enter DiscoveryScreen <=  " +
+                    "carousel=${carouselRecommends.size}  " +
+                    "everyday=${everydayRecommends.size}  " +
+                    "personal=${personalRecommends.size}"
+        }
+    }
     val ctx = LocalContext.current
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.loading,
@@ -118,25 +133,31 @@ fun DiscoveryScreen(
                 modifier = modifier.fillMaxSize(),
                 state = listState,
             ) {
-                item {
-                    CarouselContent(uiState.carouselRecommends) { clickedItem ->
-                        ctx.toast("Carousel recommend clickedItem: $clickedItem")
+                if (carouselRecommends.isNotEmpty()) {
+                    item {
+                        CarouselContent(carouselRecommends) { clickedItem ->
+                            ctx.toast("Carousel recommend clickedItem: $clickedItem")
+                        }
                     }
                 }
-                item {
-                    EverydayRecommendsHeader()
-                    EverydayRecommendsContent(uiState.everydayRecommends) { clickedItem ->
-                        ctx.toast("Everyday recommend clickedItem: $clickedItem")
+                if (everydayRecommends.isNotEmpty()) {
+                    item {
+                        EverydayRecommendsHeader()
+                        EverydayRecommendsContent(everydayRecommends) { clickedItem ->
+                            ctx.toast("Everyday recommend clickedItem: $clickedItem")
+                        }
                     }
                 }
-                item {
-                    PersonalRecommendsHeader()
-                }
-                items(
-                    items = uiState.personalRecommends,
-                    key = { it.id }
-                ) { data ->
-                    PersonalRecommendsItem(data, onPersonalItemClick)
+                if (personalRecommends.isNotEmpty()) {
+                    item {
+                        PersonalRecommendsHeader()
+                    }
+                    items(
+                        items = personalRecommends,
+                        key = { it.id }
+                    ) { data ->
+                        PersonalRecommendsItem(data, onPersonalItemClick)
+                    }
                 }
             } // end LazyColumn
         } // end if
@@ -208,7 +229,7 @@ fun EverydayRecommendsHeader() {
 fun EverydayRecommendsContent(
     list: List<EverydayItem>, onItemClick: (EverydayItem) -> Unit
 ) {
-    d(TAG) { "=> Enter EverydayRecommendsContent <=" }
+    // d(TAG) { "=> Enter EverydayRecommendsContent <=" }
     val cardWidth = 120.dp
 
     LazyRow(
@@ -216,7 +237,10 @@ fun EverydayRecommendsContent(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        items(list) { data ->
+        items(
+            items = list,
+            key = { it.id },
+        ) { data ->
             Column {
                 Card(modifier = Modifier
                     .clickable { onItemClick(data) }
@@ -275,7 +299,7 @@ fun EverydayRecommendsContent(
  */
 @Composable
 fun CarouselContent(list: List<CarouselItem>, onItemClick: (CarouselItem) -> Unit) {
-    d(TAG) { "=> Enter CarouselContent <=" }
+    SideEffect { d(TAG) { "=> Enter CarouselContent <=  size=${list.size}" } }
     // The display items count
     val pageCount = list.size
     HorizontalAutoPager(
@@ -290,7 +314,7 @@ fun CarouselContent(list: List<CarouselItem>, onItemClick: (CarouselItem) -> Uni
 
 @Composable
 fun CarouselItem(currentItem: CarouselItem, onItemClick: (CarouselItem) -> Unit) {
-    d(TAG) { "=> Enter CarouselItem <=" }
+    // d(TAG) { "=> Enter CarouselItem <=" }
     Card(
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = place_holder_bg_color),
@@ -447,7 +471,7 @@ fun PreviewDiscoveryScreen() {
     )
     DiscoveryScreen(
         listState = rememberLazyListState(),
-        uiState = discoveryViewModel.uiState.value,
+        uiStateFlow = discoveryViewModel.uiState,
         onRefresh = {},
         onPersonalItemClick = {}
     )
