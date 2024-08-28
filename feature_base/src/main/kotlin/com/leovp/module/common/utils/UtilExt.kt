@@ -3,6 +3,7 @@ package com.leovp.module.common.utils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 /**
  * Author: Michael Leo
@@ -21,13 +22,24 @@ fun Int.floorMod(other: Int): Int = when (other) {
     else -> this - floorDiv(other) * other
 }
 
-fun Int.toBadgeText(limitation: Int = 99): String {
+fun Long.toCounterBadgeText(limitation: Int = 99): String {
     return when {
-        this <= 0 -> ""
-        this in 1..limitation -> this.toString()
+        this < 1L -> ""
+        this in 1L..limitation -> this.toString()
+        this > 9999L -> "${this / 10000}w+"
         else -> "$limitation+"
     }
 }
 
+fun Int.toCounterBadgeText(limitation: Int = 99): String {
+    return this.toLong().toCounterBadgeText(limitation)
+}
+
 val monthDateFormat =
     SimpleDateFormat("MM-dd", Locale.CHINA).apply { timeZone = TimeZone.getDefault() }
+
+fun Long.formatTimestampShort(): String {
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(this)
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(this) - TimeUnit.MINUTES.toSeconds(minutes)
+    return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds)
+}

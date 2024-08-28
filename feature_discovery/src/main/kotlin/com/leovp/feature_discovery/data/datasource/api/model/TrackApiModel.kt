@@ -22,16 +22,15 @@ data class TrackApiModel(
 
     @SerialName("@attr") val attr: AttrApiModel?, // nullable for ?method=track.getInfo
     val artist: ArtistApiModel,
-    val duration: Int?,
-    @SerialName("image")
-    val images: List<ImageApiModel>?,
+    val duration: Long?,
+    @SerialName("image") val images: List<ImageApiModel>?,
     val listeners: Int,
-    @SerialName("mbid") val mbId: String?, // nullable from api
+    val mbid: String?, // nullable from api
     val name: String,
     val url: String,
 
     val album: AlbumApiModel?,
-    val playcount: Int?,
+    @SerialName("playcount") val playCount: Int?,
 )
 
 fun TrackApiModel.toDomainModel(index: Int): MusicItem {
@@ -50,14 +49,15 @@ fun TrackApiModel.toDomainModel(index: Int): MusicItem {
 }
 
 fun TrackApiModel.toSongDomainModel(): SongItem {
-    requireNotNull(this.mbId) { "mbid can not be null for track.getInfo" }
+    requireNotNull(this.mbid) { "mbid can not be null for track.getInfo" }
     val images = this.images?.filterNot { it.size == ImageSizeApiModel.UNKNOWN || it.url.isBlank() }
         ?.map { it.toDomainModel() }
     return SongItem(
-        mbid = this.mbId,
+        mbid = this.mbid,
         name = this.name,
         duration = this.duration ?: 0,
         artist = this.artist.name,
         albumImages = images ?: emptyList(),
+        quality = SongItem.Quality.STANDARD,
     )
 }

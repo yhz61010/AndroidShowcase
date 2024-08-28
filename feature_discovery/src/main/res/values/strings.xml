@@ -4,4 +4,26 @@
     <string name="dis_discovery_tab_everyday_recommends">每日推荐</string>
 
     <string name="dis_search_screen_title">音乐搜索</string>
+
+    <string-array name="dis_player_song_quality_id">
+        <item>standard</item>
+        <item>higher</item>
+        <item>exhigh</item>
+        <item>lossless</item>
+        <item>hires</item>
+        <item>jyeffect</item>
+        <item>sky</item>
+        <item>jymaster</item>
+    </string-array>
+
+    <string-array name="dis_player_song_quality_name">
+        <item>标准</item>
+        <item>较高</item>
+        <item>极高</item>
+        <item>无损</item>
+        <item>Hi-Res</item>
+        <item>高清环绕声</item>
+        <item>沉浸环绕声</item>
+        <item>超清母带</item>
+    </string-array>
 </resources>

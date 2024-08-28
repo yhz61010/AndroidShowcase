@@ -140,7 +140,12 @@ allprojects {
     }
 
     // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
-    configureCompilerOptions()
+    // Configure it in your each compose module.
+    // composeCompiler {
+    //     enableStrongSkippingMode = true
+    //     includeSourceInformation = true
+    // }
+    // configureCompilerOptions()
 
     afterEvaluate {
         configureCompileVersion()
@@ -197,16 +202,13 @@ fun Project.configureCompileVersion() {
     }
 }
 
-// TODO: How to configurate composeCompiler globally?
 // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
-fun org.gradle.api.Project.configureCompilerOptions() {
-    // tasks.withType<org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension>().configureEach {
-    //     composeCompiler {
-    //         enableStrongSkippingMode = true
-    //         includeSourceInformati0 = true
-    //     }
-    // }
-}
+// fun Project.configureCompilerOptions() {
+//     extensions.getByType<ComposeCompilerGradlePluginExtension>().apply {
+//         enableStrongSkippingMode = true
+//         includeSourceInformation = true
+//     }
+// }
 
 fun Project.configureBase(): BaseExtension {
     return extensions.getByName<BaseExtension>("android").apply {

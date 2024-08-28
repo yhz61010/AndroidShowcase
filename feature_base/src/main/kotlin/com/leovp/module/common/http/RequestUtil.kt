@@ -26,12 +26,12 @@ object RequestUtil {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
-            addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
             addInterceptor(AuthenticationInterceptor(GlobalConst.API_TOKEN))
             addInterceptor(UserAgentInterceptor())
             addInterceptor(HeaderInterceptor(headerMap))
+            addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
             addInterceptor(RetryInterceptor(3))
             // setConverter(GsonConverter())
             setConverter(SerializationConverter())

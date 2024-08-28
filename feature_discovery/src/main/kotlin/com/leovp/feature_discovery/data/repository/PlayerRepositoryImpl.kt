@@ -20,10 +20,10 @@ import javax.inject.Inject
 class PlayerRepositoryImpl @Inject constructor(
     private val dataSource: PlayerDataSource
 ) : PlayerRepository {
-    override suspend fun getSongInfo(artist: String, album: String): Result<SongItem> = result(Dispatchers.IO) {
+    override suspend fun getSongInfo(artist: String, track: String): Result<SongItem> = result(Dispatchers.IO) {
         Get<GetTrackInfoResponse>(GlobalConst.HTTP_GET_TRACK_GET_INFO) {
             param("artist", artist)
-            param("track", album)
+            param("track", track)
         }.await().track.toSongDomainModel()
     }
 }

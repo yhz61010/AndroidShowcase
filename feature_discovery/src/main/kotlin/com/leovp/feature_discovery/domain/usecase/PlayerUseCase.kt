@@ -15,6 +15,6 @@ import javax.inject.Singleton
 class PlayerUseCase @Inject constructor(
     @PlayerRepositoryImplement private val repository: PlayerRepository
 ) {
-    suspend fun getSongInfo(artist: String, album: String): Result<SongItem> =
-        repository.getSongInfo(artist = artist, album = album)
+    suspend fun getSongInfo(artist: String, track: String): Result<SongItem> =
+        repository.getSongInfo(artist = artist, track = track)
 }
