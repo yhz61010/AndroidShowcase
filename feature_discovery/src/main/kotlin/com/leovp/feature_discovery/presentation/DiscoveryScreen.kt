@@ -117,7 +117,7 @@ fun DiscoveryScreen(
         val apiException = it as ApiException
         val code = apiException.code
         val message = apiException.message
-        ctx.toast("$code: $message", error = true)
+        ctx.toast("$code: $message", error = true, longDuration = true)
     }
 
     Box(

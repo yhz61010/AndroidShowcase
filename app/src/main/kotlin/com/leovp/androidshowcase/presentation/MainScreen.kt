@@ -82,7 +82,7 @@ import com.leovp.module.common.presentation.compose.composable.defaultLinearGrad
 import com.leovp.module.common.presentation.compose.composable.rememberSizeAwareDrawerState
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.previewInitLog
-import com.leovp.module.common.utils.toBadgeText
+import com.leovp.module.common.utils.toCounterBadgeText
 import com.leovp.ui.theme.AppTheme
 import com.leovp.ui.theme.discovery_top_section_end_color
 import com.leovp.ui.theme.discovery_top_section_middle2_color
@@ -227,7 +227,7 @@ fun CustomBottomBar(
             NavigationBarItem(
                 icon = {
                     if (badgeNum > 0) {
-                        val badgeNumber = badgeNum.toBadgeText(999)
+                        val badgeNumber = badgeNum.toCounterBadgeText(999)
                         val unreadContentDescription = stringResource(
                             R.string.app_tab_unread_count, badgeNumber
                         )
@@ -398,7 +398,7 @@ fun HomeTopAppBar(
                                 shape = CircleShape,
                             )
                     ) {
-                        Text(text = badgeNum.toBadgeText())
+                        Text(text = badgeNum.toCounterBadgeText())
                     }
                 }
             } else {

@@ -12,18 +12,22 @@ import kotlin.String
 
 @Singleton
 class LocalPlayerDataSource @Inject constructor() : PlayerDataSource {
-    override fun getSongInfo(artist: String, album: String): SongItem {
+    override fun getSongInfo(artist: String, track: String): SongItem {
         return SongItem(
             mbid = "b7ec58ec-9865-4f8f-90cc-826f408d63f4",
-            name = "甜蜜蜜",
+            name = "Track: $track",
             duration = 209000,
-            artist = "鄧麗君",
+            artist = "Artist: $artist",
             albumImages = listOf(
                 Image(
                     url = "https://lastfm.freetls.fastly.net/i/u/300x300/fa98cc920f8fc322c5efb2a8986164fe.png",
                     size = ImageSize.EXTRA_LARGE,
                 )
-            )
+            ),
+            quality = SongItem.Quality.JYMASTER,
+            favoriteCount = 1_234_567L,
+            commentCount = 890_123L,
+            commentData = SongItem.Comment(1L, "热评：放给舍友听的时候，她只回一句这..."),
         )
     }
 }

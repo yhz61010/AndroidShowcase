@@ -18,6 +18,10 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Badge
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -51,6 +55,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,13 +69,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
+import com.leovp.feature_discovery.domain.model.SongItem
 import com.leovp.feature_discovery.testdata.PreviewPlayerModule
 import com.leovp.feature_discovery.ui.theme.mark_vip_bg2
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.log.d
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
+import com.leovp.module.common.utils.formatTimestampShort
 import com.leovp.module.common.utils.previewInitLog
+import com.leovp.module.common.utils.toCounterBadgeText
 import com.leovp.ui.theme.AppTheme
 
 /**
@@ -90,29 +100,22 @@ fun PlayerScreen(
     d(TAG) { "=> Enter PlayerScreen <=" }
     val ctx = LocalContext.current
 
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     LaunchedEffect(Unit) {
-        viewModel.getData(artist = artist, album = track)
+        // d(TAG) { "=> Enter PlayerScreen <= -> LaunchedEffect" }
+        viewModel.getData(artist = artist, track = track)
     }
 
+    val uiStateFlow = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = uiStateFlow.value
     uiState.exception?.let {
         val apiException = it as ApiException
         val code = apiException.code
         val message = apiException.message
-        ctx.toast("$code: $message", error = true)
+        ctx.toast("$code: $message", error = true, longDuration = true)
     }
 
-    val songInfo = uiState.songInfo
-
-    // uiState.value.exception?.let {
-    //     val apiException = it as ApiException
-    //     val code = apiException.code
-    //     val message = apiException.message
-    //     ctx.toast("$code: $message", error = true)
-    // }
-
     SideEffect {
-        d(TAG) { "Player loading=${viewModel.loading}  name=${songInfo?.name}" }
+        d(TAG) { "Player loading=${viewModel.loading}  $artist-$track" }
     }
     // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
@@ -132,7 +135,7 @@ fun PlayerScreen(
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
                 title = {
                     Text(
-                        text = track,
+                        text = uiState.getSongFullName(defArtist = artist, defTrack = track),
                         color = MaterialTheme.colorScheme.onPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -169,16 +172,19 @@ fun PlayerScreen(
         }, // end of topBar
     ) { contentPadding ->
         PlayerScreenContent(
+            viewModel = viewModel,
+            artist = artist,
+            track = track,
             modifier = Modifier
                 // .nestedScroll(scrollBehavior.nestedScrollConnection)
                 // innerPadding takes into account the top and bottom bar
-                .padding(contentPadding)
+                .padding(contentPadding),
         )
     }
 }
 
 @Composable
-fun TrackBadge(@DrawableRes id: Int, text: String) {
+fun TrackBadge(@DrawableRes id: Int, count: Long) {
     Box {
         Icon(
             painter = painterResource(id = id),
@@ -194,14 +200,35 @@ fun TrackBadge(@DrawableRes id: Int, text: String) {
         ) {
             Text(
                 modifier = Modifier.background(Color.Transparent),
-                text = text,
+                text = count.toCounterBadgeText(9999),
             )
         }
     }
 }
 
 @Composable
-fun CommentItem() {
+fun CommentItem(commentData: SongItem.Comment) {
+    val inlineMoreContentId = "more"
+    val text = buildAnnotatedString {
+        append(commentData.comment)
+        appendInlineContent(inlineMoreContentId, "[more]")
+    }
+    val inlineContent = mapOf(
+        inlineMoreContentId to InlineTextContent(
+            placeholder = Placeholder(
+                width = 22.sp,
+                height = 22.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                modifier = Modifier.size(22.dp),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    )
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -209,7 +236,8 @@ fun CommentItem() {
         horizontalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "热评：放给舍友听的时候，她只回一句这... >",
+            text = text,
+            inlineContent = inlineContent,
             modifier = Modifier
                 .background(
                     color = mark_vip_bg2,
@@ -228,7 +256,12 @@ fun CommentItem() {
 }
 
 @Composable
-fun TrackArtistItem() {
+fun TrackArtistItem(
+    artist: String,
+    track: String,
+    favoriteCount: Long,
+    commentCount: Long,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -242,7 +275,7 @@ fun TrackArtistItem() {
             ) {
                 val smallRounded = MaterialTheme.shapes.small
                 Text(
-                    text = "我想大声告诉你",
+                    text = track,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -270,7 +303,7 @@ fun TrackArtistItem() {
             ) {
                 Text(
                     modifier = Modifier.wrapContentSize(),
-                    text = "梵凡",
+                    text = artist,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -292,11 +325,15 @@ fun TrackArtistItem() {
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            TrackBadge(
-                com.leovp.feature_discovery.R.drawable.dis_favorite_24px, "100w+"
-            )
-            Spacer(modifier = Modifier.width(28.dp))
-            TrackBadge(com.leovp.feature_discovery.R.drawable.dis_chat_24px, "100w+")
+            if (favoriteCount > 0) {
+                TrackBadge(
+                    com.leovp.feature_discovery.R.drawable.dis_favorite_24px, favoriteCount
+                )
+            }
+            if (commentCount > 0) {
+                Spacer(modifier = Modifier.width(28.dp))
+                TrackBadge(com.leovp.feature_discovery.R.drawable.dis_chat_24px, commentCount)
+            }
         }
     } // end of music title row
 }
@@ -311,14 +348,25 @@ fun DurationItem(text: String, onClick: () -> Unit = {}) {
     )
 }
 
+/**
+ * @param duration The duration in milliseconds.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SeekbarItem(posState: MutableState<Float>, maxValue: Float) {
+fun SeekbarItem(
+    posState: MutableState<Float>,
+    duration: Float,
+    quality: String,
+) {
     val sliderState = remember {
-        SliderState(value = posState.value, valueRange = 0f..maxValue, onValueChangeFinished = {
-            // launch some business logic update with the state you hold
-            // viewModel.updateSelectedSliderValue(sliderPosition)
-        })
+        SliderState(
+            value = posState.value,
+            valueRange = 0f..(duration / 1000),
+            onValueChangeFinished = {
+                // launch some business logic update with the state you hold
+                // viewModel.updateSelectedSliderValue(sliderPosition)
+            },
+        )
     }
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     val colors = SliderDefaults.colors(
@@ -363,8 +411,8 @@ fun SeekbarItem(posState: MutableState<Float>, maxValue: Float) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             DurationItem("00:00")
-            DurationItem("高清臻音") {}
-            DurationItem("04:37")
+            DurationItem(quality) {}
+            DurationItem(duration.toLong().formatTimestampShort())
         } // end of duration row
     }
 }
@@ -420,8 +468,18 @@ fun ExtraControllerItem() {
 
 @Composable
 fun PlayerScreenContent(
+    viewModel: PlayerViewModel,
+    artist: String,
+    track: String,
     modifier: Modifier = Modifier,
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+
+    SideEffect {
+        d(TAG) { "=> Enter PlayerScreenContent <=  songInfo=${uiState.songInfo}" }
+        d(TAG) { "artist=$artist  track=$track  duration=${uiState.getSongDuration()}" }
+        d(TAG) { "comment=${uiState.songInfo?.commentData}" }
+    }
     var posState = remember { mutableStateOf(60f) }
 
     Column(
@@ -444,9 +502,21 @@ fun PlayerScreenContent(
                 modifier = Modifier.fillMaxSize(),
             )
         }
-        CommentItem()
-        TrackArtistItem()
-        SeekbarItem(posState, 357f)
+        val commentData = uiState.songInfo?.commentData
+        if (commentData != null) {
+            CommentItem(commentData)
+        }
+        TrackArtistItem(
+            artist = artist,
+            track = track,
+            favoriteCount = uiState.getSongFavoriteCount(),
+            commentCount = uiState.getSongCommentCount(),
+        )
+        SeekbarItem(
+            posState = posState,
+            duration = uiState.getSongDuration().toFloat(),
+            quality = uiState.getSongQualityName(LocalContext.current.resources),
+        )
         ControllerItem()
         Spacer(modifier = Modifier.weight(1f))
         ExtraControllerItem()
@@ -464,6 +534,9 @@ fun PreviewPlayerScreen() {
             PlayerViewModel(PreviewPlayerModule.previewPlayerUseCase)
         },
     )
+
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    d("PreviewPlayerScreen") { "---> data: ${uiState.songInfo}" }
     AppTheme {
         PlayerScreen(
             viewModel = viewModel,

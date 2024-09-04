@@ -1,8 +1,10 @@
 package com.leovp.feature_discovery.presentation
 
+import android.content.res.Resources
 import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.model.SongItem
 import com.leovp.feature_discovery.domain.usecase.PlayerUseCase
 import com.leovp.module.common.exceptionOrNull
@@ -42,7 +44,7 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
 
     private var job: Job? = null
 
-    fun getData(artist: String, album: String) {
+    fun getData(artist: String, track: String) {
         i(TAG) { "Player -> getData()" }
         loading = true
         if (job != null) {
@@ -51,7 +53,7 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
         }
 
         job = viewModelScope.launch {
-            val songInfoDeferred = async { useCase.getSongInfo(artist = artist, album = album) }
+            val songInfoDeferred = async { useCase.getSongInfo(artist = artist, track = track) }
 
             val songInfoResult = songInfoDeferred.await()
 
@@ -76,4 +78,17 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
 data class PlayerUiState(
     val songInfo: SongItem? = null,
     val exception: Throwable? = null,
-)
+) {
+    fun getSongName(def: String = ""): String = songInfo?.name ?: def
+    fun getSongArtist(def: String = ""): String = songInfo?.artist ?: def
+    fun getSongDuration(): Long = songInfo?.duration ?: 0
+    fun getSongQuality(): SongItem.Quality = songInfo?.quality ?: SongItem.Quality.STANDARD
+    fun getSongQualityName(res: Resources): String =
+        res.getStringArray(R.array.dis_player_song_quality_name)[getSongQuality().ordinal]
+
+    fun getSongFavoriteCount(): Long = songInfo?.favoriteCount ?: 0
+    fun getSongCommentCount(): Long = songInfo?.commentCount ?: 0
+
+    fun getSongFullName(defArtist: String = "", defTrack: String = ""): String =
+        "${getSongArtist(defArtist)}-${getSongName(defTrack)}"
+}

@@ -8,5 +8,5 @@ import com.leovp.module.common.Result
   * Date: 2024/8/26 13:56
   */
 interface PlayerRepository {
-    suspend fun getSongInfo(artist: String, album: String): Result<SongItem>
+    suspend fun getSongInfo(artist: String, track: String): Result<SongItem>
 }

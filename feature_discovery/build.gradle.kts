@@ -27,6 +27,11 @@ android {
     }
 }
 
+composeCompiler {
+    enableStrongSkippingMode = true
+    includeSourceInformation = true
+}
+
 dependencies {
     // hilt - start
     implementation(libs.hilt.android)

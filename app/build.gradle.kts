@@ -176,6 +176,19 @@ android {
     }
 }
 
+/** Note that, the composeCompiler is outside the android node. */
+// composeCompiler {
+//     enableStrongSkippingMode = true
+//
+//     reportsDestination = layout.buildDirectory.dir("compose_compiler")
+//     stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+// }
+
+composeCompiler {
+    enableStrongSkippingMode = true
+    includeSourceInformation = true
+}
+
 // 获取当前分支的提交总次数
 fun gitCommitCount(): Int {
 //    val cmd = 'git rev-list HEAD --first-parent --count'
@@ -255,6 +268,7 @@ dependencies {
     implementation(projects.featureMainDrawer)
 
     // ==============================
+    implementation(libs.compose.runtime.tracing)
     testImplementation(libs.bundles.test)
     // testRuntimeOnly(libs.bundles.test.runtime.only)
     // androidTestImplementation(libs.bundles.test)

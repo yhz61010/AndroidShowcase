@@ -13,7 +13,7 @@ import javax.inject.Inject
 class PreviewPlayerRepositoryImpl @Inject constructor(
     private val dataSource: LocalPlayerDataSource
 ) : PlayerRepository {
-    override suspend fun getSongInfo(artist: String, album: String): Result<SongItem> {
-        return Result.Success(dataSource.getSongInfo(artist = artist, album = album))
+    override suspend fun getSongInfo(artist: String, track: String): Result<SongItem> {
+        return Result.Success(dataSource.getSongInfo(artist = artist, track = track))
     }
 }

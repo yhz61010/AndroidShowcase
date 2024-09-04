@@ -67,6 +67,11 @@ android {
     }
 }
 
+composeCompiler {
+    enableStrongSkippingMode = true
+    includeSourceInformation = true
+}
+
 dependencies {
     api(platform(libs.androidx.compose.bom))
     // Material Design 3
