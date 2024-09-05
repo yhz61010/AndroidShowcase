@@ -1,10 +1,8 @@
 package com.leovp.feature_discovery.presentation
 
-import android.content.res.Resources
 import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.model.SongItem
 import com.leovp.feature_discovery.domain.usecase.PlayerUseCase
 import com.leovp.module.common.exceptionOrNull
@@ -69,6 +67,58 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
             d(TAG) { "Player -> getData() done." }
         }
     }
+
+    fun onHotCommentClick() {
+        i(TAG) { "Click on Hot Comment." }
+    }
+
+    fun onArtistClick(artist: String) {
+        i(TAG) { "Click on Artist: $artist" }
+    }
+
+    fun onFavoriteClick() {
+        i(TAG) { "Click on Favorite." }
+    }
+
+    fun onCommentClick() {
+        i(TAG) { "Click on Comment." }
+    }
+
+    fun onQualityClick() {
+        i(TAG) { "Click on Quality." }
+    }
+
+    fun onRepeatClick() {
+        i(TAG) { "Click on Repeat." }
+    }
+
+    fun onBackwardClick() {
+        i(TAG) { "Click on Backward." }
+    }
+
+    fun onPlayPauseClick() {
+        i(TAG) { "Click on Play/Pause." }
+    }
+
+    fun onForwardClick() {
+        i(TAG) { "Click on Forward." }
+    }
+
+    fun onPlaylistClick() {
+        i(TAG) { "Click on Playlist." }
+    }
+
+    fun onMirrorClick() {
+        i(TAG) { "Click on Mirror." }
+    }
+
+    fun onDownloadClick() {
+        i(TAG) { "Click on Download." }
+    }
+
+    fun onInfoClick() {
+        i(TAG) { "Click on Information." }
+    }
 }
 
 /**
@@ -83,8 +133,6 @@ data class PlayerUiState(
     fun getSongArtist(def: String = ""): String = songInfo?.artist ?: def
     fun getSongDuration(): Long = songInfo?.duration ?: 0
     fun getSongQuality(): SongItem.Quality = songInfo?.quality ?: SongItem.Quality.STANDARD
-    fun getSongQualityName(res: Resources): String =
-        res.getStringArray(R.array.dis_player_song_quality_name)[getSongQuality().ordinal]
 
     fun getSongFavoriteCount(): Long = songInfo?.favoriteCount ?: 0
     fun getSongCommentCount(): Long = songInfo?.commentCount ?: 0

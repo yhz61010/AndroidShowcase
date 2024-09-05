@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Badge
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -45,7 +46,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
@@ -59,6 +59,7 @@ import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -69,6 +70,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
+import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.model.SongItem
 import com.leovp.feature_discovery.testdata.PreviewPlayerModule
 import com.leovp.feature_discovery.ui.theme.mark_vip_bg2
@@ -148,9 +150,7 @@ fun PlayerScreen(
                     IconButton(onClick = onMenuUpAction) {
                         Icon(
                             modifier = Modifier.requiredSize(32.dp),
-                            painter = painterResource(
-                                id = com.leovp.feature_discovery.R.drawable.dis_baseline_keyboard_arrow_down_24,
-                            ),
+                            imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimary,
                         )
@@ -160,7 +160,7 @@ fun PlayerScreen(
                     IconButton(onClick = onShareAction) {
                         Icon(
                             painter = painterResource(
-                                id = com.leovp.feature_discovery.R.drawable.dis_share_circle_fill,
+                                id = R.drawable.dis_share_circle_fill,
                             ),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimary,
@@ -184,8 +184,8 @@ fun PlayerScreen(
 }
 
 @Composable
-fun TrackBadge(@DrawableRes id: Int, count: Long) {
-    Box {
+fun TrackBadge(@DrawableRes id: Int, count: Long, onClick: () -> Unit) {
+    Box(modifier = Modifier.clickable(onClick = onClick)) {
         Icon(
             painter = painterResource(id = id),
             contentDescription = null,
@@ -207,7 +207,7 @@ fun TrackBadge(@DrawableRes id: Int, count: Long) {
 }
 
 @Composable
-fun CommentItem(commentData: SongItem.Comment) {
+fun CommentItem(commentData: SongItem.Comment, onClick: () -> Unit) {
     val inlineMoreContentId = "more"
     val text = buildAnnotatedString {
         append(commentData.comment)
@@ -232,7 +232,8 @@ fun CommentItem(commentData: SongItem.Comment) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp, 12.dp, 16.dp, 0.dp),
+            .padding(16.dp, 12.dp, 16.dp, 0.dp)
+            .clickable(onClick = onClick),
         horizontalArrangement = Arrangement.Center,
     ) {
         Text(
@@ -261,6 +262,9 @@ fun TrackArtistItem(
     track: String,
     favoriteCount: Long,
     commentCount: Long,
+    onArtistClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    onCommentClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -298,23 +302,22 @@ fun TrackArtistItem(
             Row(
                 modifier = Modifier
                     .alpha(0.8f)
-                    .fillMaxWidth(),
+                    .clickable(onClick = onArtistClick),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     text = artist,
+                    textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(
                     modifier = Modifier
-                        .size(22.dp)
-                        .rotate(-90f),
-                    painter = painterResource(
-                        id = com.leovp.feature_discovery.R.drawable.dis_baseline_keyboard_arrow_down_24,
-                    ),
+                        .align(alignment = Alignment.CenterVertically)
+                        .padding(start = 0.dp, top = 2.dp, end = 0.dp, bottom = 0.dp),
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -327,12 +330,18 @@ fun TrackArtistItem(
         ) {
             if (favoriteCount > 0) {
                 TrackBadge(
-                    com.leovp.feature_discovery.R.drawable.dis_favorite_24px, favoriteCount
+                    id = R.drawable.dis_favorite_24px,
+                    count = favoriteCount,
+                    onClick = onFavoriteClick,
                 )
             }
             if (commentCount > 0) {
                 Spacer(modifier = Modifier.width(28.dp))
-                TrackBadge(com.leovp.feature_discovery.R.drawable.dis_chat_24px, commentCount)
+                TrackBadge(
+                    id = R.drawable.dis_chat_24px,
+                    count = commentCount,
+                    onClick = onCommentClick,
+                )
             }
         }
     } // end of music title row
@@ -356,8 +365,13 @@ fun DurationItem(text: String, onClick: () -> Unit = {}) {
 fun SeekbarItem(
     posState: MutableState<Float>,
     duration: Float,
-    quality: String,
+    quality: SongItem.Quality,
+    onQualityClick: () -> Unit,
 ) {
+    val ctx = LocalContext.current
+    val qualityIdx = quality.ordinal
+    val qualityName = ctx.resources.getStringArray(R.array.dis_player_song_quality_name)[qualityIdx]
+
     val sliderState = remember {
         SliderState(
             value = posState.value,
@@ -387,7 +401,7 @@ fun SeekbarItem(
                interactionSource = interactionSource,
                thumb = {
                    Icon(
-                       painter = painterResource(com.leovp.feature_discovery.R.drawable.dis_baseline_circle_24),
+                       painter = painterResource(R.drawable.dis_baseline_circle_24),
                        contentDescription = null,
                        modifier = Modifier
                            .padding(0.dp, 3.5f.dp)
@@ -411,7 +425,7 @@ fun SeekbarItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             DurationItem("00:00")
-            DurationItem(quality) {}
+            DurationItem(text = qualityName, onClick = onQualityClick)
             DurationItem(duration.toLong().formatTimestampShort())
         } // end of duration row
     }
@@ -434,7 +448,13 @@ fun ControllerIconButton(
 }
 
 @Composable
-fun ControllerItem() {
+fun ControllerItem(
+    onRepeatClick: () -> Unit,
+    onBackwardClick: () -> Unit,
+    onPlayPauseClick: () -> Unit,
+    onForwardClick: () -> Unit,
+    onPlaylistClick: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -442,16 +462,20 @@ fun ControllerItem() {
             .alpha(0.9f),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_refresh_24px, {})
-        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_skip_previous_24px, {})
-        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_play_arrow_24px, {}, 56.dp)
-        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_skip_next_24px, {})
-        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_queue_music_24px, {})
+        ControllerIconButton(R.drawable.dis_refresh_24px, onRepeatClick)
+        ControllerIconButton(R.drawable.dis_skip_previous_24px, onBackwardClick)
+        ControllerIconButton(R.drawable.dis_play_arrow_24px, onPlayPauseClick, 56.dp)
+        ControllerIconButton(R.drawable.dis_skip_next_24px, onForwardClick)
+        ControllerIconButton(R.drawable.dis_queue_music_24px, onPlaylistClick)
     }
 }
 
 @Composable
-fun ExtraControllerItem() {
+fun ExtraControllerItem(
+    onMirrorClick: () -> Unit,
+    onDownloadClick: () -> Unit,
+    onInfoClick: () -> Unit,
+) {
     val size = 28.dp
     Row(
         modifier = Modifier
@@ -460,9 +484,9 @@ fun ExtraControllerItem() {
             .alpha(0.5f),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_music_cast_24px, {}, size)
-        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_download_24px, {}, size)
-        ControllerIconButton(com.leovp.feature_discovery.R.drawable.dis_more_horiz_24px, {}, size)
+        ControllerIconButton(R.drawable.dis_music_cast_24px, onMirrorClick, size)
+        ControllerIconButton(R.drawable.dis_download_24px, onDownloadClick, size)
+        ControllerIconButton(R.drawable.dis_more_horiz_24px, onInfoClick, size)
     }
 }
 
@@ -473,6 +497,7 @@ fun PlayerScreenContent(
     track: String,
     modifier: Modifier = Modifier,
 ) {
+    val ctx = LocalContext.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     SideEffect {
@@ -493,7 +518,7 @@ fun PlayerScreenContent(
             verticalArrangement = Arrangement.Top,
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
+                model = ImageRequest.Builder(ctx)
                     .data("https://lib.leovp.com/img/zhangshaohan-Aurora.jpg").crossfade(true)
                     .build(),
                 contentDescription = null,
@@ -504,22 +529,75 @@ fun PlayerScreenContent(
         }
         val commentData = uiState.songInfo?.commentData
         if (commentData != null) {
-            CommentItem(commentData)
+            CommentItem(commentData) {
+                ctx.toast("You click on Hot Comment.")
+                viewModel.onHotCommentClick()
+            }
         }
         TrackArtistItem(
             artist = artist,
             track = track,
             favoriteCount = uiState.getSongFavoriteCount(),
             commentCount = uiState.getSongCommentCount(),
+            onArtistClick = {
+                ctx.toast("You click on Artist: $artist")
+                viewModel.onArtistClick(artist)
+            },
+            onFavoriteClick = {
+                ctx.toast("You click on Favorite.")
+                viewModel.onFavoriteClick()
+            },
+            onCommentClick = {
+                ctx.toast("You click on Comment.")
+                viewModel.onCommentClick()
+            },
         )
         SeekbarItem(
             posState = posState,
             duration = uiState.getSongDuration().toFloat(),
-            quality = uiState.getSongQualityName(LocalContext.current.resources),
+            quality = uiState.getSongQuality(),
+            onQualityClick = {
+                ctx.toast("You click on Quality.")
+                viewModel.onQualityClick()
+            }
         )
-        ControllerItem()
+        ControllerItem(
+            onRepeatClick = {
+                ctx.toast("You click on Repeat.")
+                viewModel.onRepeatClick()
+            },
+            onBackwardClick = {
+                ctx.toast("You click on Backward.")
+                viewModel.onBackwardClick()
+            },
+            onPlayPauseClick = {
+                ctx.toast("You click on Play/Pause.")
+                viewModel.onPlayPauseClick()
+            },
+            onForwardClick = {
+                ctx.toast("You click on Forward.")
+                viewModel.onForwardClick()
+            },
+            onPlaylistClick = {
+                ctx.toast("You click on Playlist.")
+                viewModel.onPlaylistClick()
+            },
+        )
         Spacer(modifier = Modifier.weight(1f))
-        ExtraControllerItem()
+        ExtraControllerItem(
+            onMirrorClick = {
+                ctx.toast("You click on Mirror.")
+                viewModel.onMirrorClick()
+            },
+            onDownloadClick = {
+                ctx.toast("You click on Download.")
+                viewModel.onDownloadClick()
+            },
+            onInfoClick = {
+                ctx.toast("You click on Mirror.")
+                viewModel.onInfoClick()
+            }
+        )
     }
 }
 
