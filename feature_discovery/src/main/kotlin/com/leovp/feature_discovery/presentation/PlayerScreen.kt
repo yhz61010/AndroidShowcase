@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,29 +23,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Badge
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -81,7 +75,10 @@ import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.formatTimestampShort
 import com.leovp.module.common.utils.previewInitLog
 import com.leovp.module.common.utils.toCounterBadgeText
-import com.leovp.ui.theme.AppTheme
+import com.leovp.ui.theme.ImmersiveTheme
+import com.smarttoolfactory.slider.ColorfulSlider
+import com.smarttoolfactory.slider.MaterialSliderDefaults
+import com.smarttoolfactory.slider.SliderBrushColor
 
 /**
  * Author: Michael Leo
@@ -358,12 +355,13 @@ fun DurationItem(text: String, onClick: () -> Unit = {}) {
 }
 
 /**
+ * @param positionState The value of the slider in milliseconds.
  * @param duration The duration in milliseconds.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SeekbarItem(
-    posState: MutableState<Float>,
+    positionState: MutableFloatState,
     duration: Float,
     quality: SongItem.Quality,
     onQualityClick: () -> Unit,
@@ -372,51 +370,34 @@ fun SeekbarItem(
     val qualityIdx = quality.ordinal
     val qualityName = ctx.resources.getStringArray(R.array.dis_player_song_quality_name)[qualityIdx]
 
-    val sliderState = remember {
-        SliderState(
-            value = posState.value,
-            valueRange = 0f..(duration / 1000),
-            onValueChangeFinished = {
-                // launch some business logic update with the state you hold
-                // viewModel.updateSelectedSliderValue(sliderPosition)
-            },
-        )
-    }
-    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-    val colors = SliderDefaults.colors(
-        thumbColor = MaterialTheme.colorScheme.primaryContainer,
-        activeTrackColor = MaterialTheme.colorScheme.primaryContainer,
-        inactiveTrackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
-    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp, 24.dp, 8.dp, 0.dp)
     ) {
-        Slider(state = sliderState,
-               modifier = Modifier
-                   .semantics { contentDescription = "Seekbar" }
-                   .height(2.dp)
-                   .fillMaxWidth(),
-               interactionSource = interactionSource,
-               thumb = {
-                   Icon(
-                       painter = painterResource(R.drawable.dis_baseline_circle_24),
-                       contentDescription = null,
-                       modifier = Modifier
-                           .padding(0.dp, 3.5f.dp)
-                           .size(ButtonDefaults.IconSize)
-                           .scale(0.7f, 0.7f),
-                       tint = colors.thumbColor,
-                   )
-               },
-               track = {
-                   SliderDefaults.Track(
-                       modifier = Modifier.scale(1f, 0.5f),
-                       colors = colors,
-                       sliderState = sliderState,
-                   )
-               }) // end of Slider
+        ColorfulSlider(
+            value = positionState.floatValue,
+            onValueChange = { pos: Float -> positionState.floatValue = pos },
+            modifier = Modifier
+                .semantics { contentDescription = "Seekbar" }
+                .fillMaxWidth(),
+            valueRange = 0f..duration,
+            onValueChangeFinished = {
+                // launch some business logic update with the state you hold
+                // viewModel.updateSelectedSliderValue(sliderPosition)
+            },
+            trackHeight = 2.dp,
+            thumbRadius = 4.dp,
+            colors = MaterialSliderDefaults.materialColors(
+                thumbColor = SliderBrushColor(MaterialTheme.colorScheme.onPrimary),
+                activeTrackColor = SliderBrushColor(
+                    MaterialTheme.colorScheme.primaryContainer
+                ),
+                inactiveTrackColor = SliderBrushColor(
+                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+                ),
+            ),
+        ) // end of Slider
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -505,7 +486,7 @@ fun PlayerScreenContent(
         d(TAG) { "artist=$artist  track=$track  duration=${uiState.getSongDuration()}" }
         d(TAG) { "comment=${uiState.songInfo?.commentData}" }
     }
-    var posState = remember { mutableStateOf(60f) }
+    var positionState = remember { mutableFloatStateOf(60_000f) }
 
     Column(
         // contentPadding = PaddingValues(16.dp),
@@ -553,7 +534,7 @@ fun PlayerScreenContent(
             },
         )
         SeekbarItem(
-            posState = posState,
+            positionState = positionState,
             duration = uiState.getSongDuration().toFloat(),
             quality = uiState.getSongQuality(),
             onQualityClick = {
@@ -601,8 +582,8 @@ fun PlayerScreenContent(
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Daylight")
+@Preview(name = "Night", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewPlayerScreen() {
     previewInitLog()
@@ -615,7 +596,11 @@ fun PreviewPlayerScreen() {
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     d("PreviewPlayerScreen") { "---> data: ${uiState.songInfo}" }
-    AppTheme {
+    ImmersiveTheme(
+        systemBarColor = Color.Transparent,
+        dynamicColor = false,
+        lightSystemBar = true,
+    ) {
         PlayerScreen(
             viewModel = viewModel,
             artist = "鄧麗君",

@@ -88,7 +88,8 @@ fun PullRefreshIndicator(
     ) {
         Crossfade(
             targetState = refreshing,
-            animationSpec = tween(durationMillis = CrossfadeDurationMs)
+            animationSpec = tween(durationMillis = CrossfadeDurationMs),
+            label = "PullRefreshIndicator-Crossfade",
         ) { refreshing ->
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -127,7 +128,11 @@ private fun CircularArrowIndicator(
         }
     }
 
-    val alphaState = animateFloatAsState(targetValue = targetAlpha, animationSpec = AlphaTween)
+    val alphaState = animateFloatAsState(
+        targetValue = targetAlpha,
+        animationSpec = AlphaTween,
+        label = "CircularArrowIndicator-alphaState",
+    )
 
     // Empty semantics for tests
     Canvas(modifier.semantics {}) {

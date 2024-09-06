@@ -2,4 +2,6 @@
 <resources>
     <string name="cmn_listeners">%1$d人在听</string>
     <string name="cmn_listeners_listening">人正在收听</string>
+
+    <string name="cmn_load_failed">数据加载失败</string>
 </resources>

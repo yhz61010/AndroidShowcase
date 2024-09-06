@@ -117,7 +117,10 @@ fun DiscoveryScreen(
         val apiException = it as ApiException
         val code = apiException.code
         val message = apiException.message
-        ctx.toast("$code: $message", error = true, longDuration = true)
+        ctx.toast(
+            "${ctx.getString(com.leovp.module.common.R.string.cmn_load_failed)}\n$code: $message",
+            error = true, longDuration = true
+        )
     }
 
     Box(
@@ -127,44 +130,43 @@ fun DiscoveryScreen(
             .pullRefresh(pullRefreshState),
         contentAlignment = Alignment.TopCenter,
     ) {
-        if (!uiState.loading) {
-            LazyColumn(
-                // contentPadding = PaddingValues(horizontal = 0.dp, vertical = 6.dp),
-                modifier = modifier.fillMaxSize(),
-                state = listState,
-            ) {
-                if (carouselRecommends.isNotEmpty()) {
-                    item {
-                        CarouselContent(carouselRecommends) { clickedItem ->
-                            ctx.toast("Carousel recommend clickedItem: $clickedItem")
-                        }
+        LazyColumn(
+            // contentPadding = PaddingValues(horizontal = 0.dp, vertical = 6.dp),
+            modifier = modifier.fillMaxSize(),
+            state = listState,
+        ) {
+            if (carouselRecommends.isNotEmpty()) {
+                item {
+                    CarouselContent(carouselRecommends) { clickedItem ->
+                        ctx.toast("Carousel recommend clickedItem: $clickedItem")
                     }
                 }
-                if (everydayRecommends.isNotEmpty()) {
-                    item {
-                        EverydayRecommendsHeader()
-                        EverydayRecommendsContent(everydayRecommends) { clickedItem ->
-                            ctx.toast("Everyday recommend clickedItem: $clickedItem")
-                        }
+            }
+            if (everydayRecommends.isNotEmpty()) {
+                item {
+                    EverydayRecommendsHeader()
+                    EverydayRecommendsContent(everydayRecommends) { clickedItem ->
+                        ctx.toast("Everyday recommend clickedItem: $clickedItem")
                     }
                 }
-                if (personalRecommends.isNotEmpty()) {
-                    item {
-                        PersonalRecommendsHeader()
-                    }
-                    items(
-                        items = personalRecommends,
-                        key = { it.id }
-                    ) { data ->
-                        PersonalRecommendsItem(data, onPersonalItemClick)
-                    }
+            }
+            if (personalRecommends.isNotEmpty()) {
+                item {
+                    PersonalRecommendsHeader()
                 }
-            } // end LazyColumn
-        } // end if
+                items(
+                    items = personalRecommends,
+                    key = { it.id }
+                ) { data ->
+                    PersonalRecommendsItem(data, onPersonalItemClick)
+                }
+            }
+        } // end LazyColumn
 
         PullRefreshIndicator(
             refreshing = uiState.loading,
             state = pullRefreshState,
+            contentColor = MaterialTheme.colorScheme.primary,
             // modifier = Modifier.align(Alignment.TopCenter)
         )
     } // end Box
