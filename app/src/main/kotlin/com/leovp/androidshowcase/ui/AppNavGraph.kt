@@ -1,10 +1,16 @@
 package com.leovp.androidshowcase.ui
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -39,13 +45,25 @@ fun NavGraphBuilder.addAppMainGraph(
     modifier: Modifier = Modifier,
 ) {
     d(TAG) { "=> Enter addAppMainGraph <=" }
-    composable(route = Screen.Splash.route) {
+    composable(
+        route = Screen.Splash.route,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() },
+        popEnterTransition = { fadeIn() },
+        popExitTransition = { fadeOut() },
+    ) {
         SplashTheme {
             // AnimatedSplashScreen(navController = navController)
             SplashScreen(onTimeout = { navigationActions.navigate(Screen.Main.route) })
         }
     }
-    composable(route = Screen.Main.route) {
+    composable(
+        route = Screen.Main.route,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() },
+        popEnterTransition = { fadeIn() },
+        popExitTransition = { fadeOut() },
+    ) {
         ImmersiveTheme(
             systemBarColor = Color.Transparent, dynamicColor = false, lightSystemBar = true
         ) {
@@ -127,12 +145,19 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
         }
     }
 
+    val slideStart = AnimatedContentTransitionScope.SlideDirection.Up
+    val slideEnd = AnimatedContentTransitionScope.SlideDirection.Down
+    val tween = tween<IntOffset>(durationMillis = 300, easing = LinearOutSlowInEasing)
     composable(
         route = Screen.PlayerScreen.route,
         arguments = listOf(
             navArgument("artist") { type = NavType.StringType },
             navArgument("track") { type = NavType.StringType },
-        )
+        ),
+        enterTransition = { slideIntoContainer(slideStart, tween) },
+        exitTransition = { fadeOut() },
+        popEnterTransition = { fadeIn() },
+        popExitTransition = { slideOutOfContainer(slideEnd, tween) },
     ) {
         val ctx = LocalContext.current
         val artist = it.arguments?.getString("artist")
