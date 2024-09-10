@@ -50,15 +50,15 @@ ksp = "2.0.0-1.0.21"
 #=================================
 #===== Android dependencies ======
 #=================================
-compose-bom = "2024.08.00"
-compose-activity = "1.9.1"
-compose-navigation = "2.7.7"
+compose-bom = "2024.09.00"
+compose-activity = "1.9.2"
+compose-navigation = "2.8.0"
 #compose-constraintlayout= "1.0.1"
 
 hilt = "2.51.1"
 hilt-navigation-compose = "1.2.0"
 core-ktx = "1.13.1"
-lifecycle = "2.8.4" # https://stackoverflow.com/a/78490417/6091500
+lifecycle = "2.8.5" # https://stackoverflow.com/a/78490417/6091500
 multidex = "2.0.1"
 coroutines = "1.8.1"
 annotation = "1.8.2"
@@ -73,6 +73,7 @@ net = "3.6.4"
 coil = "2.6.0"
 square-okhttp = "4.12.0"
 serialization-json = "1.6.3"
+colorful-slider = "1.2.2"
 #lottie-compose = "6.1.0"
 
 #=======================
@@ -178,6 +179,7 @@ net = { module = "com.github.liangjingkanji:Net", version.ref = "net" }
 coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 square-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "square-okhttp" }
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json" }
+colorful-slider = { module = "com.github.SmartToolFactory:Compose-Colorful-Sliders", version.ref = "colorful-slider" }
 
 #=======================
 #===== Helper =====

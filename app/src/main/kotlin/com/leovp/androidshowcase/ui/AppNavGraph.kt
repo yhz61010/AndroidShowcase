@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.presentation.MainScreen
 import com.leovp.androidshowcase.presentation.MainViewModel
+import com.leovp.androidshowcase.presentation.SCREEN_TRANSITION_DURATION
 import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
@@ -147,7 +148,10 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
 
     val slideStart = AnimatedContentTransitionScope.SlideDirection.Up
     val slideEnd = AnimatedContentTransitionScope.SlideDirection.Down
-    val tween = tween<IntOffset>(durationMillis = 300, easing = LinearOutSlowInEasing)
+    val tween = tween<IntOffset>(
+        durationMillis = SCREEN_TRANSITION_DURATION,
+        easing = LinearOutSlowInEasing,
+    )
     composable(
         route = Screen.PlayerScreen.route,
         arguments = listOf(

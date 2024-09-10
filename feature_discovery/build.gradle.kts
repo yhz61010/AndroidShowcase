@@ -42,4 +42,6 @@ dependencies {
     // By using `projects`, you need to enable `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`
     // in `settings.gradle.kts` where in your root folder.
     api(projects.featureBase)
+
+    implementation(libs.colorful.slider)
 }

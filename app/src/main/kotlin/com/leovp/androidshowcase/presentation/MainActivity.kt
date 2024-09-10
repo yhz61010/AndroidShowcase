@@ -44,6 +44,8 @@ typealias EnterTransitionFunc =
 typealias ExitTransitionFunc =
         AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition
 
+const val SCREEN_TRANSITION_DURATION = 300
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -82,7 +84,10 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
      */
     // val slideStart = AnimatedContentTransitionScope.SlideDirection.Start
     // val slideEnd = AnimatedContentTransitionScope.SlideDirection.End
-    val tween = tween<IntOffset>(durationMillis = 300, easing = LinearOutSlowInEasing)
+    val tween = tween<IntOffset>(
+        durationMillis = SCREEN_TRANSITION_DURATION,
+        easing = LinearOutSlowInEasing,
+    )
     val enterTransition: EnterTransitionFunc = {
         // slideIntoContainer(slideStart, tween)
         slideInHorizontally(animationSpec = tween, initialOffsetX = { it })

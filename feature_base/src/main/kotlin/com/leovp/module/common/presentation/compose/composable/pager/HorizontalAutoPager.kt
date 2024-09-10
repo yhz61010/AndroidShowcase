@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +31,7 @@ import kotlinx.coroutines.yield
  * Date: 2023/9/19 14:32
  */
 
-private const val TAG = "HAP"
+// private const val TAG = "HAP"
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -74,7 +75,7 @@ fun HorizontalAutoPager(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
             pageSpacing = 16.dp,
             modifier = Modifier.fillMaxWidth(),
-            beyondBoundsPageCount = 1,
+            beyondViewportPageCount = PagerDefaults.BeyondViewportPageCount,
             key = { index -> pageMapper(index) },
         ) { index ->
             // Calculate the page from the given index
