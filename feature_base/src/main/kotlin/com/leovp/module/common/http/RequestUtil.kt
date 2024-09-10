@@ -4,9 +4,7 @@ import android.content.Context
 import com.drake.net.NetConfig
 import com.drake.net.interceptor.RetryInterceptor
 import com.drake.net.okhttp.setConverter
-import com.leovp.module.common.GlobalConst
 import com.leovp.module.common.http.converters.SerializationConverter
-import com.leovp.module.common.http.interceptors.AuthenticationInterceptor
 import com.leovp.module.common.http.interceptors.HeaderInterceptor
 import com.leovp.module.common.http.interceptors.HttpLoggingInterceptor
 import com.leovp.module.common.http.interceptors.UserAgentInterceptor
@@ -23,10 +21,10 @@ object RequestUtil {
         headerMap: Map<String, String>? = null,
     ) {
         NetConfig.initialize(baseUrl, context) {
-            connectTimeout(10, TimeUnit.SECONDS)
-            readTimeout(10, TimeUnit.SECONDS)
-            writeTimeout(10, TimeUnit.SECONDS)
-            addInterceptor(AuthenticationInterceptor(GlobalConst.API_TOKEN))
+            connectTimeout(20, TimeUnit.SECONDS)
+            readTimeout(20, TimeUnit.SECONDS)
+            writeTimeout(20, TimeUnit.SECONDS)
+            // addInterceptor(AuthenticationInterceptor(GlobalConst.API_TOKEN))
             addInterceptor(UserAgentInterceptor())
             addInterceptor(HeaderInterceptor(headerMap))
             addInterceptor(HttpLoggingInterceptor().apply {

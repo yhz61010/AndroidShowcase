@@ -41,7 +41,7 @@ android {
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
         buildConfigFieldFromGradleProperty("apiBaseUrl")
-        buildConfigFieldFromGradleProperty("apiToken")
+        // buildConfigFieldFromGradleProperty("apiToken")
 
         buildConfigField("String", "VERSION_NAME", "\"${libs.versions.versionName.get()}\"")
     }

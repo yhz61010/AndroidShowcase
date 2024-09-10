@@ -5,7 +5,7 @@ package com.leovp.module.common
 import com.drake.net.exception.HttpResponseException
 import com.drake.net.exception.RequestParamsException
 import com.leovp.module.common.exception.ApiException
-import com.leovp.module.common.http.model.ApiErrorResult
+import com.leovp.module.common.http.model.ApiResponseResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -111,9 +111,9 @@ suspend inline fun <reified R> result(
         var exception: Throwable = err
 
         // err can be one of the following exception:
-        // RequestParamsException
-        // ServerResponseException
-        // ConvertException
+        // - RequestParamsException
+        // - ServerResponseException
+        // - ConvertException
         // All above exceptions are inherited from HttpResponseException.
 
         when (err) {
@@ -121,7 +121,7 @@ suspend inline fun <reified R> result(
                 err.response.body?.string()?.let { bodyString ->
                     runCatching {
                         val errorData =
-                            Result.jsonDecoder.decodeFromString<ApiErrorResult>(bodyString)
+                            Result.jsonDecoder.decodeFromString<ApiResponseResult>(bodyString)
                         code = errorData.code
                         message = errorData.message
                     }.onFailure {

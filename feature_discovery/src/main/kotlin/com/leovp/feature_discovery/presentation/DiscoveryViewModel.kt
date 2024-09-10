@@ -3,9 +3,9 @@ package com.leovp.feature_discovery.presentation
 import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leovp.feature_discovery.domain.model.CarouselItem
-import com.leovp.feature_discovery.domain.model.EverydayItem
-import com.leovp.feature_discovery.domain.model.MusicItem
+import com.leovp.feature_discovery.domain.model.PlaylistModel
+import com.leovp.feature_discovery.domain.model.PrivateContentModel
+import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.usecase.GetDiscoveryListUseCase
 import com.leovp.module.common.exceptionOrNull
 import com.leovp.module.common.getOrDefault
@@ -56,24 +56,24 @@ class DiscoveryViewModel @Inject constructor(
         _uiState.update { it.copy(loading = true) }
 
         job = viewModelScope.launch {
-            val carouselDeferred = async { useCase.getCarouselMusic() }
-            val everydayDeferred = async { useCase.getEverydayMusic() }
-            val personalDeferred = async { useCase.getPersonalMusic() }
+            val privateContentDeferred = async { useCase.getPrivateContent() }
+            val recommendPlaylistDeferred = async { useCase.getRecommendPlaylist() }
+            val topSongsDeferred = async { useCase.getTopSongs() }
 
-            val carouselRecommendsResult = carouselDeferred.await()
-            val everydayRecommendsResult = everydayDeferred.await()
-            val personalRecommendsResult = personalDeferred.await()
+            val privateContentResult = privateContentDeferred.await()
+            val recommendPlaylistResult = recommendPlaylistDeferred.await()
+            val topSongsResult = topSongsDeferred.await()
 
-            val ex = carouselRecommendsResult.exceptionOrNull()
-                ?: everydayRecommendsResult.exceptionOrNull()
-                ?: personalRecommendsResult.exceptionOrNull()
+            val ex = privateContentResult.exceptionOrNull()
+                ?: recommendPlaylistResult.exceptionOrNull()
+                ?: topSongsResult.exceptionOrNull()
 
             _uiState.update {
                 it.copy(
                     loading = false,
-                    carouselRecommends = carouselRecommendsResult.getOrDefault(emptyList()),
-                    everydayRecommends = everydayRecommendsResult.getOrDefault(emptyList()),
-                    personalRecommends = personalRecommendsResult.getOrDefault(emptyList()),
+                    privateContent = privateContentResult.getOrDefault(emptyList()),
+                    recommendPlaylist = recommendPlaylistResult.getOrDefault(emptyList()),
+                    topSongs = topSongsResult.getOrDefault(emptyList()),
                     exception = ex
                 )
             }
@@ -86,9 +86,9 @@ class DiscoveryViewModel @Inject constructor(
  */
 @Keep
 data class DiscoveryUiState(
-    val carouselRecommends: List<CarouselItem> = emptyList(),
-    val everydayRecommends: List<EverydayItem> = emptyList(),
-    val personalRecommends: List<MusicItem> = emptyList(),
+    val privateContent: List<PrivateContentModel> = emptyList(),
+    val recommendPlaylist: List<PlaylistModel> = emptyList(),
+    val topSongs: List<TopSongModel> = emptyList(),
     val loading: Boolean = false,
     val exception: Throwable? = null
 )

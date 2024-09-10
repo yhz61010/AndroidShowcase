@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dis_discovery_tab_chinese_curated">华语精选</string>
-    <string name="dis_discovery_tab_everyday_recommends">每日推荐</string>
+    <string name="dis_discovery_tab_recommends_playlist">甄选歌单</string>
+    <string name="dis_discovery_tab_new_songs">新歌新碟</string>
 
     <string name="dis_search_screen_title">音乐搜索</string>
 

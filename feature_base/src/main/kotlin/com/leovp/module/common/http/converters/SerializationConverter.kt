@@ -5,11 +5,8 @@ import com.drake.net.exception.ConvertException
 import com.drake.net.exception.RequestParamsException
 import com.drake.net.exception.ServerResponseException
 import com.drake.net.request.kType
-import com.leovp.kotlin.exts.multiCatch
-import com.leovp.module.common.exception.ApiException
-import com.leovp.module.common.http.model.ApiErrorResult
+import com.leovp.module.common.log.e
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import okhttp3.Response
@@ -36,21 +33,24 @@ class SerializationConverter : NetConverter {
             return NetConverter.onConvert<R>(succeed, response)
         } catch (e: ConvertException) {
             val code = response.code
+            if (e.cause != null) {
+                e("onConvert", throwable = e.cause) { "onConvert exception. Code: $code" }
+            }
             when {
                 code in 200..299 -> {
                     val bodyString = response.body?.string() ?: return null
 
-                    multiCatch(
-                        runBlock = {
-                            // Business error.
-                            val errorRes: ApiErrorResult = jsonDecoder.decodeFromString(bodyString)
-                            throw ApiException(errorRes.code, errorRes.message, e)
-                        },
-                        exceptions = arrayOf(
-                            SerializationException::class,
-                            IllegalArgumentException::class
-                        )
-                    )
+                    // multiCatch(
+                    //     runBlock = {
+                    //         // Business error.
+                    //         val errorRes: ApiResponseResult = jsonDecoder.decodeFromString(bodyString)
+                    //         throw ApiException(errorRes.code, errorRes.message, e)
+                    //     },
+                    //     exceptions = arrayOf(
+                    //         SerializationException::class,
+                    //         IllegalArgumentException::class
+                    //     )
+                    // )
 
                     val kType = response.request.kType ?: throw ConvertException(
                         response, "Request does not contain KType"
@@ -58,10 +58,10 @@ class SerializationConverter : NetConverter {
                     return bodyString.parseBody<R>(kType)
                 }
 
-                code in 400..499 -> throw RequestParamsException(response, code.toString())
+                code in 400..499 -> throw RequestParamsException(response, code.toString(), e)
 
-                code >= 500 -> throw ServerResponseException(response, code.toString())
-                else -> throw ConvertException(response)
+                code >= 500 -> throw ServerResponseException(response, code.toString(), e)
+                else -> throw ConvertException(response = response, cause = e)
             }
         }
     }

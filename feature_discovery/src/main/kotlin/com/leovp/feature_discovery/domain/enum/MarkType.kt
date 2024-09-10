@@ -4,10 +4,14 @@ package com.leovp.feature_discovery.domain.enum
  * Author: Michael Leo
  * Date: 2023/7/24 15:42
  */
-enum class MarkType {
-    Hot,
-    Vip,
-    Special
+enum class MarkType(val text: String) {
+    None("None"),
+    Hot("Hot"),
+    Vip("VIP"),
+    Special("Special"),
+    HiRes("Hi-Res"),
+    SQ("SQ"),
+    Dolby("Dolby"),
 }
 
 // 超72%人播放>

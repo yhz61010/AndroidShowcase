@@ -3,13 +3,15 @@ package com.leovp.feature_discovery.presentation
 import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leovp.feature_discovery.domain.model.SongItem
+import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.usecase.PlayerUseCase
+import com.leovp.module.common.Result
 import com.leovp.module.common.exceptionOrNull
 import com.leovp.module.common.getOrNull
 import com.leovp.module.common.log.d
 import com.leovp.module.common.log.i
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,35 +39,68 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
     // UI state exposed to the UI
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
+    private val _playPosition = MutableStateFlow(0f)
+    val playPosition: StateFlow<Float> = _playPosition.asStateFlow()
+
     var loading = true
         private set
 
     private var job: Job? = null
 
-    fun getData(artist: String, track: String) {
-        i(TAG) { "Player -> getData()" }
+    fun getData(ids: Array<Long>) {
+        i(TAG) { "Player -> getData()  ids=$ids" }
         loading = true
         if (job != null) {
             job?.cancel()
             job = null
         }
 
+        val firstSongId = ids[0]
         job = viewModelScope.launch {
-            val songInfoDeferred = async { useCase.getSongInfo(artist = artist, track = track) }
+            val songInfoDeferred = async { useCase.getSongInfo(*ids.toLongArray()) }
+
+            var songCommentsDeferred: Deferred<Result<SongModel.CommentsModel>>? = null
+            if (ids.isNotEmpty()) {
+                songCommentsDeferred = async {
+                    useCase.getMusicComment(
+                        id = firstSongId, limit = 20, offset = 0
+                    )
+                }
+            }
+
+            var songRedCountDeferred: Deferred<Result<SongModel.RedCountModel>>? = null
+            if (ids.isNotEmpty()) {
+                songRedCountDeferred = async {
+                    useCase.getSongRedCount(firstSongId)
+                }
+            }
 
             val songInfoResult = songInfoDeferred.await()
+            val songCommentsResult = songCommentsDeferred?.await()
+            val songRedCountResult = songRedCountDeferred?.await()
+
+            val firstSong: SongModel? = songInfoResult.getOrNull()?.firstOrNull()
+            firstSong?.commentsModel = songCommentsResult?.getOrNull()
+            firstSong?.redCountModel = songRedCountResult?.getOrNull()
 
             val ex = songInfoResult.exceptionOrNull()
+                ?: songCommentsResult?.exceptionOrNull()
+                ?: songRedCountResult?.exceptionOrNull()
+
+            d(TAG, throwable = ex) { "Exception while getData()" }
 
             loading = false
             _uiState.update {
                 it.copy(
-                    songInfo = songInfoResult.getOrNull(),
-                    exception = ex
+                    songInfo = firstSong, exception = ex
                 )
             }
             d(TAG) { "Player -> getData() done." }
         }
+    }
+
+    fun updatePlayPos(pos: Float) {
+        _playPosition.value = pos
     }
 
     fun onHotCommentClick() {
@@ -126,16 +161,17 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
  */
 @Keep
 data class PlayerUiState(
-    val songInfo: SongItem? = null,
+    val songInfo: SongModel? = null,
     val exception: Throwable? = null,
 ) {
     fun getSongName(def: String = ""): String = songInfo?.name ?: def
-    fun getSongArtist(def: String = ""): String = songInfo?.artist ?: def
+    fun getSongArtist(def: String = ""): String = songInfo?.artists?.firstOrNull()?.name ?: def
     fun getSongDuration(): Long = songInfo?.duration ?: 0
-    fun getSongQuality(): SongItem.Quality = songInfo?.quality ?: SongItem.Quality.STANDARD
+    fun getSongQuality(): SongModel.Quality = songInfo?.quality ?: SongModel.Quality.STANDARD
 
-    fun getSongFavoriteCount(): Long = songInfo?.favoriteCount ?: 0
-    fun getSongCommentCount(): Long = songInfo?.commentCount ?: 0
+    fun getSongRedCount(): Long = songInfo?.redCountModel?.count ?: 0
+    fun getSongRedCountStr(): String? = songInfo?.redCountModel?.countDesc
+    fun getSongCommentCount(): Long = songInfo?.commentsModel?.totalComments ?: 0
 
     fun getSongFullName(defArtist: String = "", defTrack: String = ""): String =
         "${getSongArtist(defArtist)}-${getSongName(defTrack)}"

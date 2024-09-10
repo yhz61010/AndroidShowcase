@@ -76,6 +76,6 @@ sealed class Screen(
     )
 
     data object PlayerScreen : Screen(
-        "player_screen/{artist}/{track}"
+        "player_screen/{ids}/{artist}/{track}"
     )
 }
