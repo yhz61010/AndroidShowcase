@@ -1,10 +1,10 @@
 [![Kotlin Version](https://img.shields.io/badge/Kotlin-2.0.0-blue)](https://kotlinlang.org)
-[![AGP](https://img.shields.io/badge/AGP-8.4.1-orange)](https://developer.android.com/studio/releases/gradle-plugin)
-[![Gradle](https://img.shields.io/badge/Gradle-8.7-green)](https://gradle.org)
+[![AGP](https://img.shields.io/badge/AGP-8.8.0--alpha01-orange)](https://developer.android.com/studio/releases/gradle-plugin)
+[![Gradle](https://img.shields.io/badge/Gradle-8.10.1-green)](https://gradle.org)
 
-[![Android Studio](https://img.shields.io/badge/Android%20Studio-Koala%20Feature%20Drop%20|%202024.1.2%20Canary%202-green)](https://developer.android.com/studio)
+[![Android Studio](https://img.shields.io/badge/Android_Studio-Ladybug_Feature_Drop_|_2024.2.2_Canary_1-green)](https://developer.android.com/studio)
 [![Build Java Version](https://img.shields.io/badge/JDK-17.0.6-green)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-[![Compatibility Java Version](https://img.shields.io/badge/Compatibility%20Java%20-17-green)](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
+[![Compatibility Java Version](https://img.shields.io/badge/Compatibility_Java-17-green)](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
 [![NDK](https://img.shields.io/badge/NDK-25.2.9519653-green)](https://developer.android.com/ndk/downloads)
 
 An Android kotlin showcase project by using Jetpack Compose UI.

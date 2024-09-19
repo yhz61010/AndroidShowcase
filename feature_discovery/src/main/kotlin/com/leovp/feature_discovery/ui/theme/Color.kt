@@ -22,3 +22,5 @@ val mark_vip_bg = Color.Transparent
 val mark_vip_bg2 = Color(0x33f3e6e9)
 
 val place_holder_bg_color = Color(0xffeeeeee)
+val place_holder2_bg_color = Color(0xdde7dcc2)
+val place_holder_err_bg_color = Color(0x70ff5500)

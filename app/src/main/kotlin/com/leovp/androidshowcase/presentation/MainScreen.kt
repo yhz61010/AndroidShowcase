@@ -59,6 +59,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
@@ -69,7 +70,7 @@ import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.androidshowcase.ui.DrawerDestinations
 import com.leovp.androidshowcase.ui.Screen
 import com.leovp.feature_community.presentation.CommunityScreen
-import com.leovp.feature_discovery.domain.model.MusicItem
+import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
 import com.leovp.feature_discovery.presentation.DiscoveryUiState
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
@@ -110,7 +111,7 @@ fun MainScreen(
     onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
     onSearchBarClick: () -> Unit,
     onDiscoveryRefresh: () -> Unit,
-    onPersonalItemClick: (data: MusicItem) -> Unit
+    onPersonalItemClick: (data: TopSongModel) -> Unit
 ) {
     d(TAG) { "=> Enter MainScreen <=" }
     val context = LocalContext.current
@@ -125,6 +126,8 @@ fun MainScreen(
         initialPageOffsetFraction = 0f,
         pageCount = { pagerScreenValues.size },
     )
+
+    val mainUiState = mainUiStateFlow.collectAsStateWithLifecycle().value
 
     val listState = rememberLazyListState()
     ModalNavigationDrawer(
@@ -144,7 +147,7 @@ fun MainScreen(
             Scaffold(modifier = modifier, topBar = {
                 HomeTopAppBar(
                     modifier = modifier,
-                    unread = mainUiStateFlow.value.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
+                    unread = mainUiState.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
                     pagerState = pagerState,
                     onNavigationClick = { coroutineScope.launch { sizeAwareDrawerState.open() } },
                     onActionClick = {
@@ -158,7 +161,7 @@ fun MainScreen(
                     )
                 }
             }, bottomBar = {
-                CustomBottomBar(pagerState, coroutineScope, mainUiStateFlow.value.unreadList)
+                CustomBottomBar(pagerState, coroutineScope, mainUiState.unreadList)
             }) { contentPadding ->
                 val newModifier = modifier.padding(contentPadding)
                 MainScreenContent(
@@ -283,7 +286,7 @@ fun MainScreenContent(
     pagerScreenValues: Array<AppBottomNavigationItems>,
     discoveryUiStateFlow: StateFlow<DiscoveryUiState>,
     onDiscoveryRefresh: () -> Unit,
-    onPersonalItemClick: (data: MusicItem) -> Unit
+    onPersonalItemClick: (data: TopSongModel) -> Unit
 ) {
     d(TAG) { "=> Enter MainScreenContent <=" }
     HorizontalPager(

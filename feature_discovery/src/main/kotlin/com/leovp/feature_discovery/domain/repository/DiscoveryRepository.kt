@@ -1,8 +1,9 @@
 package com.leovp.feature_discovery.domain.repository
 
-import com.leovp.feature_discovery.domain.model.CarouselItem
-import com.leovp.feature_discovery.domain.model.EverydayItem
-import com.leovp.feature_discovery.domain.model.MusicItem
+import com.leovp.feature_discovery.domain.model.HomePageBlockModel
+import com.leovp.feature_discovery.domain.model.PlaylistModel
+import com.leovp.feature_discovery.domain.model.PrivateContentModel
+import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.module.common.Result
 
 /**
@@ -11,9 +12,12 @@ import com.leovp.module.common.Result
  */
 
 interface DiscoveryRepository {
-    suspend fun getCarouselMusic(): Result<List<CarouselItem>>
 
-    suspend fun getEverydayMusic(): Result<List<EverydayItem>>
+    suspend fun getHomePageBlock(): Result<HomePageBlockModel>
 
-    suspend fun getPersonalMusic(): Result<List<MusicItem>>
+    suspend fun getPrivateContent(): Result<List<PrivateContentModel>>
+
+    suspend fun getRecommendPlaylist(): Result<List<PlaylistModel>>
+
+    suspend fun getTopSongs(type: Int): Result<List<TopSongModel>>
 }

@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -21,8 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.module.common.utils.floorMod
+import com.leovp.module.common.utils.previewInitLog
+import com.leovp.ui.theme.ImmersiveTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 
@@ -156,6 +162,38 @@ fun HorizontalAutoPager(
                     }
                 } // catch CancellationException
             } // end of LaunchedEffect
+        }
+    }
+}
+
+@Composable
+@Preview
+fun PreviewHorizontalAutoPager() {
+    previewInitLog()
+
+    ImmersiveTheme(
+        systemBarColor = Color.Transparent,
+        dynamicColor = false,
+        lightSystemBar = false,
+    ) {
+        HorizontalAutoPager(
+            modifier = Modifier.fillMaxWidth(),
+            pageCount = 5,
+            indicatorAlignment = Alignment.BottomStart,
+            indicatorContent = { index, pageTotalCount ->
+                DefaultPagerIndicator(
+                    currentPageIndex = index,
+                    pageCount = pageTotalCount,
+                )
+            },
+        ) { index ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp)
+            ) {
+                Text(text = "Image $index")
+            }
         }
     }
 }

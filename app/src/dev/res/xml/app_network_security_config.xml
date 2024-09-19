@@ -3,6 +3,14 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">ws.audioscrobbler.com</domain>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">50d.win</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">126.net</domain>
+    </domain-config>
+    <!-- 全局允许 HTTP -->
+    <base-config cleartextTrafficPermitted="true" />
     <debug-overrides>
         <trust-anchors>
             <!-- Trust user added CAs.

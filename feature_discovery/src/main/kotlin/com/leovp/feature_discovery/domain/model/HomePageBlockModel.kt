@@ -1,21 +1,19 @@
-package com.leovp.feature_discovery.data.datasource.api.model
+package com.leovp.feature_discovery.domain.model
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
  * Author: Michael Leo
- * Date: 2023/9/6 11:00
+ * Date: 2024/9/12 09:39
  */
 
 @Keep
 @Immutable
 @OptIn(InternalSerializationApi::class)
 @Serializable
-data class TrackListApiModel(
-    @SerialName("@attr") val attr: AttrApiModel,
-    val track: List<TrackApiModel>
+data class HomePageBlockModel(
+    val banners: List<BannerModel> = emptyList()
 )

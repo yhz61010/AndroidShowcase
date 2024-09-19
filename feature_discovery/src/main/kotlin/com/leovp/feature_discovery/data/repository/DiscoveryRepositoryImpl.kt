@@ -3,14 +3,17 @@ package com.leovp.feature_discovery.data.repository
 import com.drake.net.Get
 import com.leovp.feature_discovery.data.datasource.DiscoveryDataSource
 import com.leovp.feature_discovery.data.datasource.api.model.toDomainModel
-import com.leovp.feature_discovery.data.datasource.api.response.GetTopAlbumsResponse
-import com.leovp.feature_discovery.data.datasource.api.response.GetTopTracksResponse
-import com.leovp.feature_discovery.data.datasource.api.response.SearchAlbumResponse
-import com.leovp.feature_discovery.domain.model.CarouselItem
-import com.leovp.feature_discovery.domain.model.EverydayItem
-import com.leovp.feature_discovery.domain.model.MusicItem
+import com.leovp.feature_discovery.data.datasource.api.response.HomePageBlockResponse
+import com.leovp.feature_discovery.data.datasource.api.response.PrivateContentResponse
+import com.leovp.feature_discovery.data.datasource.api.response.RecommendPlaylistResponse
+import com.leovp.feature_discovery.data.datasource.api.response.TopSongResponse
+import com.leovp.feature_discovery.domain.model.HomePageBlockModel
+import com.leovp.feature_discovery.domain.model.PlaylistModel
+import com.leovp.feature_discovery.domain.model.PrivateContentModel
+import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.repository.DiscoveryRepository
 import com.leovp.module.common.GlobalConst
+import com.leovp.module.common.GlobalConst.PLAYLIST_SONG_SIZE
 import com.leovp.module.common.Result
 import com.leovp.module.common.result
 import kotlinx.coroutines.Dispatchers
@@ -24,33 +27,47 @@ class DiscoveryRepositoryImpl @Inject constructor(
     @Suppress("unused") private val dataSource: DiscoveryDataSource
 ) : DiscoveryRepository {
 
-    override suspend fun getCarouselMusic(): Result<List<CarouselItem>> = result(Dispatchers.IO) {
-        Get<GetTopAlbumsResponse>(GlobalConst.HTTP_GET_ARTIST_TOP_ALBUMS) {
-            param("artist", "Teresa Teng")
-            param("limit", 5)
-            param("page", 1) // start from 1
-        }.await().topAlbums.album.mapIndexed { index, album ->
-            album.toDomainModel(index)
+    /** 首页-发现 */
+    override suspend fun getHomePageBlock(): Result<HomePageBlockModel> =
+        result(Dispatchers.IO) {
+            Get<HomePageBlockResponse>(GlobalConst.HTTP_GET_HOMEPAGE_BLOCK_PAGE)
+                .await()
+                .result
+                .toDomainModel()
         }
-    }
 
-    override suspend fun getEverydayMusic(): Result<List<EverydayItem>> = result(Dispatchers.IO) {
-        Get<SearchAlbumResponse>(GlobalConst.HTTP_GET_SEARCH_ALBUM) {
-            param("album", "Teresa Teng")
-            param("limit", 10)
-            param("page", 1) // start from 1
-        }.await().results.albumMatches.album.mapIndexed { index, album ->
-            album.toDomainModel(index)
+    /** 获取独家放送 */
+    override suspend fun getPrivateContent(): Result<List<PrivateContentModel>> =
+        result(Dispatchers.IO) {
+            Get<PrivateContentResponse>(GlobalConst.HTTP_GET_PRIVATE_CONTENT)
+                .await()
+                .let { (typeName, result) ->
+                    result.map { it.toDomainModel(typeName) }
+                }
         }
-    }
 
-    override suspend fun getPersonalMusic(): Result<List<MusicItem>> = result(Dispatchers.IO) {
-        Get<GetTopTracksResponse>(GlobalConst.HTTP_GET_ARTIST_TOP_TRACKS) {
-            param("artist", "Teresa Teng")
-            param("limit", 10)
-            param("page", 1) // start from 1
-        }.await().toptracks.track.mapIndexed { index, track ->
-            track.toDomainModel(index)
+    /** 获取推荐歌单 */
+    override suspend fun getRecommendPlaylist(): Result<List<PlaylistModel>> =
+        result(Dispatchers.IO) {
+            Get<RecommendPlaylistResponse>(GlobalConst.HTTP_GET_PERSONALIZED) {
+                param("limit", PLAYLIST_SONG_SIZE)
+            }.await()
+                .result
+                .mapIndexed { _, respData ->
+                    respData.toDomainModel()
+                }
         }
-    }
+
+    /** 新歌速递 */
+    override suspend fun getTopSongs(type: Int): Result<List<TopSongModel>> =
+        result(Dispatchers.IO) {
+            Get<TopSongResponse>(GlobalConst.HTTP_GET_TOP_SONG) {
+                param("type", type)
+            }.await()
+                .result
+                .take(PLAYLIST_SONG_SIZE)
+                .mapIndexed { _, respData ->
+                    respData.toDomainModel()
+                }
+        }
 }

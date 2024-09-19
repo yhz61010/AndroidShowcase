@@ -2,31 +2,31 @@ package com.leovp.feature_discovery.data.datasource.api.model
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
-import com.leovp.feature_discovery.domain.model.ArtistModel
+import com.leovp.feature_discovery.domain.model.TopSongModel
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
  * Author: Michael Leo
- * Date: 2023/9/6 11:00
+ * Date: 2024/9/11 17:11
  */
 
 @Keep
 @Immutable
 @OptIn(InternalSerializationApi::class)
 @Serializable
-data class ArtistApiModel(
+data class TopSongApiModel(
     val id: Long,
     val name: String,
-    val picId: Long = 0,
-    val picUrl: String = "",
+    val artists: List<ArtistApiModel>,
+    val album: AlbumApiModel
 )
 
-fun ArtistApiModel.toDomainModel(): ArtistModel {
-    return ArtistModel(
+fun TopSongApiModel.toDomainModel(): TopSongModel {
+    return TopSongModel(
         id = this.id,
         name = this.name,
-        picId = this.picId,
-        picUrl = this.picUrl,
+        album = this.album.toDomainModel(),
+        artists = this.artists.map { it.toDomainModel() }
     )
 }

@@ -3,282 +3,160 @@
 package com.leovp.feature_discovery.testdata.local_datasource
 
 import com.leovp.feature_discovery.data.datasource.DiscoveryDataSource
-import com.leovp.feature_discovery.domain.enum.ImageSize
 import com.leovp.feature_discovery.domain.enum.MarkType
-import com.leovp.feature_discovery.domain.model.CarouselItem
-import com.leovp.feature_discovery.domain.model.EverydayItem
-import com.leovp.feature_discovery.domain.model.Image
-import com.leovp.feature_discovery.domain.model.MusicItem
-import com.leovp.module.common.utils.monthDateFormat
-import java.util.Date
+import com.leovp.feature_discovery.domain.model.AlbumModel
+import com.leovp.feature_discovery.domain.model.ArtistModel
+import com.leovp.feature_discovery.domain.model.BannerModel
+import com.leovp.feature_discovery.domain.model.HomePageBlockModel
+import com.leovp.feature_discovery.domain.model.PlaylistModel
+import com.leovp.feature_discovery.domain.model.PrivateContentModel
+import com.leovp.feature_discovery.domain.model.TopSongModel
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class LocalDiscoveryDataSource @Inject constructor() : DiscoveryDataSource {
-    override fun getCarouselMusicList() = listOf(
-        CarouselItem(
-            id = 1,
-            thumbnail = listOf(
-                Image(
-                    url = "https://images.unsplash.com/photo-1584679109597-c656b19974c9?auto=crop&fit=crop&w=540&h=210&q=80",
-                    size = ImageSize.EXTRA_LARGE
-                )
+    override fun getHomePageBlock() = HomePageBlockModel(
+        banners = listOf(
+            BannerModel(
+                bannerId = "1717750651205666",
+                pic = "http://p1.music.126.net/e8wtQuscq74yweCGuhM8TA==/109951169664474779.jpg",
+                url = "https://y.music.163.com/g/yida/470cb610d27249f09f9f6c3d595b9457",
+                titleColor = "blue",
+                typeTitle = "独家策划",
             ),
-        ),
-        CarouselItem(
-            id = 2,
-            thumbnail = listOf(
-                Image(
-                    url = "https://images.unsplash.com/photo-1502773860571-211a597d6e4b?auto=crop&fit=crop&w=540&h=210&q=80",
-                    size = ImageSize.EXTRA_LARGE
-                )
+            BannerModel(
+                bannerId = "1717750796593434",
+                pic = "http://p1.music.126.net/snMCiwfSKevsgQrl-PjwYQ==/109951169664482196.jpg",
+                url = "https://y.music.163.com/g/yida/6894c31af6f548ca9c852566f10bc4eb",
+                titleColor = "blue",
+                typeTitle = "独家策划",
             ),
-        ),
-        CarouselItem(
-            id = 3,
-            thumbnail = listOf(
-                Image(
-                    url = "https://images.unsplash.com/photo-1446057032654-9d8885db76c6?auto=crop&fit=crop&w=540&h=210&q=80",
-                    size = ImageSize.EXTRA_LARGE
-                )
+            BannerModel(
+                bannerId = "1717750712447791",
+                pic = "http://p1.music.126.net/oRND1RziUgkrYBuSFgz5yQ==/109951169664471894.jpg",
+                url = null,
+                titleColor = "red",
+                typeTitle = "歌单",
             ),
-        ),
-        CarouselItem(
-            id = 4,
-            thumbnail = listOf(
-                Image(
-                    url = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=crop&fit=crop&w=540&h=210&q=80",
-                    size = ImageSize.EXTRA_LARGE
-                )
-            ),
-        ),
-        CarouselItem(
-            id = 5,
-            thumbnail = listOf(
-                Image(
-                    url = "https://images.unsplash.com/photo-1618972676849-feed401eacc5?auto=crop&fit=crop&w=540&h=210&q=80",
-                    size = ImageSize.EXTRA_LARGE
-                )
-            ),
-        ),
-    )
-
-    override fun getEverydayMusicList() = listOf(
-        EverydayItem(
-            id = 1,
-            thumbnail = listOf(
-                Image(
-                    url = "https://qpic.y.qq.com/music_cover/I28ic19Iwp8AicOQlxrIkEIia7YhYpI2c0v9DUT9JOhE0BGiayopLlnwXw/300?n=1",
-                    size = ImageSize.EXTRA_LARGE
-                )
-            ),
-            type = monthDateFormat.format(Date()),
-            title = "每日推荐|从「是你」听起",
-            icon = null // calendar_month
-        ),
-        EverydayItem(
-            id = 2,
-            thumbnail = listOf(
-                Image(
-                    url = "https://qpic.y.qq.com/music_cover/iaVNVUXOg73ua71Z0dtuz7Z6ZVOdf97nUUevQmSIDyw4ZlJ6wrvAXWA/300?n=1",
-                    size = ImageSize.EXTRA_LARGE
-                )
-            ),
-            type = "私人漫游",
-            title = "从「簇拥烈日的花」开启无限漫游",
-            icon = null
-        ),
-        EverydayItem(
-            id = 3,
-            thumbnail = listOf(
-                Image(
-                    url = "https://qpic.y.qq.com/music_cover/DW3wgydKNSuLicEooicQhGYvxf8xNKJZaVJla3cvpZe8icaludOwS1tKg/300?n=1",
-                    size = ImageSize.EXTRA_LARGE
-                )
-            ),
-            type = "摇滚日推",
-            title = "带我走、情人、Episode 33",
-            icon = null
-        ),
-        EverydayItem(
-            id = 4,
-            thumbnail = listOf(
-                Image(
-                    url = "https://qpic.y.qq.com/music_cover/7OvyVEUhXlyQibJIaz19cNYoPhSEl6FdRsGeHxWMcVtr1qQknxib2AhA/300?n=1",
-                    size = ImageSize.EXTRA_LARGE
-                )
-            ),
-            type = "民谣日推",
-            title = "如果有来生、The Sound Of Silence、这一生关于你的风景",
-            icon = null
-        ),
-        EverydayItem(
-            id = 5,
-            thumbnail = listOf(
-                Image(
-                    url = "https://qpic.y.qq.com/music_cover/hibibCWiaO6RZzGGCYYicdoVnxCjBdG4kZGhYouhAnaiarRCYbeA2E1FibYQ/300?n=1",
-                    size = ImageSize.EXTRA_LARGE
-                )
-            ),
-            type = "二次元日推",
-            title = "ReOracle、Rolling star、summertime",
-            icon = null
-        ),
-        EverydayItem(
-            id = 6,
-            thumbnail = listOf(
-                Image(
-                    url = "https://qpic.y.qq.com/music_cover/icXjXNAaErryuWaGROaiandGY1TowGKgyHx141ajhrMApvsicibjQo8VejxqXI1AxZLr/300?n=1",
-                    size = ImageSize.EXTRA_LARGE
-                )
-            ),
-            type = "乡村日推",
-            title = "El condor pass、Take Me Home Country Roads、You Can Depend On Me",
-            icon = null
-        ),
-    )
-
-    override fun getPersonalMusicList() = listOf(
-        MusicItem(
-            id = 100,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/d2/7e/0c/d27e0c67-cac3-3b81-a3c3-484650c8bf9c/shangeliaozai.jpg/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "罗刹海市",
-            subTitle = "刀郎",
-            markText = "万人评论>",
-            showTrailIcon = false,
-            type = MarkType.Hot
-        ),
-        MusicItem(
-            id = 1,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Features/19/fa/5d/dj.ashmqwlx.jpg/232x232bf.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "The end of the world",
-            subTitle = "Skeeter Davis",
-            markText = "超72%人播放>",
-            showTrailIcon = true,
-            type = MarkType.Hot
-        ),
-        MusicItem(
-            id = 2,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/85/b5/d9/85b5d926-aa4b-a5ec-6ced-bbf6303d41ea/887396379664.tif/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "I Will Follow Him",
-            subTitle = "Skeeter Davis",
-            markText = "超43%人收藏>",
-            showTrailIcon = false,
-            type = MarkType.Hot
-        ),
-        MusicItem(
-            id = 3,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a5/c7/56/a5c75619-5a46-2a9b-fd82-593893abfd04/00724355696854.jpg/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "Scarborough Fair",
-            subTitle = "Sarah Brightman",
-            markText = "超清母带",
-            showTrailIcon = true,
-            type = MarkType.Special
-        ),
-        MusicItem(
-            id = 4,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/ed/9b/75/ed9b75fd-e5af-64aa-1452-4c5390a6991b/5099706321323.jpg/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "My Heart Will Go On (Love Theme from \"Titanic\")",
-            subTitle = "Céline Dion",
-            markText = "VIP",
-            showTrailIcon = true,
-            type = MarkType.Vip
-        ),
-        MusicItem(
-            id = 5,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/32/95/52/329552f5-a018-ff8f-5021-30375eefa14d/cover.jpg/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "追梦人",
-            subTitle = "凤飞飞",
-            markText = "昨日万人播放>",
-            showTrailIcon = false,
-            type = MarkType.Hot
-        ),
-        MusicItem(
-            id = 6,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/9d/b3/7c/9db37ca6-2a80-45d0-f03d-0f7f134f893e/cover.jpg/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "盗将行",
-            subTitle = "花粥/马雨阳",
-            markText = "十万评论>",
-            showTrailIcon = true,
-            type = MarkType.Hot
-        ),
-        MusicItem(
-            id = 7,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/fd/2c/fa/fd2cfa89-c6c4-e564-8e6e-7f03a5377744/886447854761.jpg/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "Because You Loved Me",
-            subTitle = "Céline Dion",
-            markText = "十万红心>",
-            showTrailIcon = true,
-            type = MarkType.Hot
-        ),
-        MusicItem(
-            id = 8,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/9e/a4/e7/9ea4e751-f374-4173-2aca-faea06440e0c/s06.pnpmefxw.jpg/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "Exile",
-            subTitle = "Enya",
-            markText = "沉浸声",
-            showTrailIcon = true,
-            type = MarkType.Special
-        ),
-        MusicItem(
-            id = 9,
-            thumbnail = listOf(
-                Image(
-                    url = "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/a5/c7/56/a5c75619-5a46-2a9b-fd82-593893abfd04/00724355696854.jpg/232x232bb.webp",
-                    size = ImageSize.EXTRA_LARGE,
-                )
-            ),
-            title = "Scarborough Fair",
-            subTitle = "Sarah Brightman",
-            markText = "小众佳作>",
-            showTrailIcon = true,
-            type = MarkType.Hot
         )
+    )
+
+    override fun getPrivateContent() = listOf(
+        PrivateContentModel(
+            id = 14514232,
+            name = "《超级面对面》第254期 keshi：我的音乐永远新鲜",
+            picUrl = "https://p2.music.126.net/ZfQoqzo0rTqe3sFKkDnGuw==/109951167211930348.jpg",
+        ).apply {
+            type = 5
+            typeName = "独家放送"
+        },
+        PrivateContentModel(
+            id = 14496631,
+            name = "《超级面对面》第252期 Alan Walker：和Walkers一起遨游宇宙",
+            picUrl = "https://p2.music.126.net/IVEDKgbd--myWBukXgreNg==/109951166983018052.jpg",
+        ).apply {
+            type = 5
+            typeName = "独家放送"
+        },
+        PrivateContentModel(
+            id = 14484135,
+            name = "《超级面对面》第250期 孙燕姿：在对的时间听对的歌",
+            picUrl = "https://p2.music.126.net/_q264UzyPqfepTgXfJcdig==/109951166780766424.jpg",
+        ).apply {
+            type = 5
+            typeName = "独家放送"
+        },
+    )
+
+    override fun getTopSong(type: Int) = listOf(
+        TopSongModel(
+            id = 2625746775,
+            name = "壁上观",
+            album = AlbumModel(
+                id = 247470291,
+                name = "壁上观",
+                picUrl = "http://p1.music.126.net/eZEjSm4b1iLIRpIeC9-dBA==/109951169950184961.jpg",
+            ),
+            artists = listOf(
+                ArtistModel(
+                    id = 7785,
+                    name = "龚琳娜",
+                    picId = 0,
+                    picUrl = "http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg",
+                )
+            ),
+        ).apply {
+            showTrailIcon = true
+            markType = MarkType.HiRes
+        },
+
+        TopSongModel(
+            id = 2625779441,
+            name = "爱是唯一的选择 (舒楠监制 官方正式版) 中文版",
+            album = AlbumModel(
+                id = 0,
+                name = "0",
+                picUrl = "http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg",
+            ),
+            artists = listOf(
+                ArtistModel(
+                    id = 12664439,
+                    name = "希林娜依高",
+                    picId = 0,
+                    picUrl = "http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg",
+                )
+            ),
+        ),
+
+        TopSongModel(
+            id = 2615100384,
+            name = "Summer Princess",
+            album = AlbumModel(
+                id = 244358006,
+                name = "Summer Princess",
+                picUrl = "http://p1.music.126.net/ncJ0EuaBAo14yk1N4gJayw==/109951169851873933.jpg",
+            ),
+            artists = listOf(
+                ArtistModel(
+                    id = 14270,
+                    name = "平井 大",
+                    picId = 0,
+                    picUrl = "http://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg",
+                )
+            ),
+        ),
+    )
+
+    override fun getRecommendPlaylist() = listOf(
+        PlaylistModel(
+            id = 123816281,
+            name = "「欧美Live」惊艳现场版，嗨到停不下来!",
+            picUrl = "https://p2.music.126.net/ZtQOTgvhqrcWYapiPj9NWQ==/19018252626210242.jpg",
+        ),
+
+        PlaylistModel(
+            id = 158010361,
+            name = "『1963-至今』日本经典动漫音乐大盘点",
+            picUrl = "https://p2.music.126.net/WPHAmuqQaaQGIcx199t5XQ==/3272146613241669.jpg",
+        ),
+
+        PlaylistModel(
+            id = 163150274,
+            name = "高能燃脂•假期健身跑步必备BGM",
+            picUrl = "https://p2.music.126.net/-4Ygb5Z9XfLOQFeldQlY2A==/1389782698058443.jpg",
+        ),
+
+        PlaylistModel(
+            id = 2476663154,
+            name = "经典粤语合集【无损音质】黑胶唱片会员专属",
+            picUrl = "https://p2.music.126.net/zAuVCW-cUvn29s9IxuQh-w==/109951167071306612.jpg",
+        ),
+
+        PlaylistModel(
+            id = 514947114,
+            name = "华语民谣 I 孤独的心诠释诗意和远方",
+            picUrl = "https://p2.music.126.net/UDpjFEHmXInxGd_xMAI12w==/109951162811986419.jpg",
+        ),
     )
 }

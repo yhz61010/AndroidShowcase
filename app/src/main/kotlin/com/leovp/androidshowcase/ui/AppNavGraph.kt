@@ -87,12 +87,12 @@ fun NavGraphBuilder.addAppMainGraph(
                     mainViewModel.refreshAll()
                 },
                 onPersonalItemClick = { data ->
-                    val artist = URLEncoder.encode(data.subTitle, "UTF-8")
-                    val track = URLEncoder.encode(data.title, "UTF-8")
+                    val artist = URLEncoder.encode(data.getDefaultArtistName(), "UTF-8")
+                    val track = URLEncoder.encode(data.name, "UTF-8")
                     i(TAG) { "Click [Personal Item] artist=$artist  track=$track" }
                     navigationActions.navigate(
                         Screen.PlayerScreen.routeName,
-                        "$artist/$track",
+                        "${data.id}/$artist/$track",
                     )
                 }
             )
@@ -155,6 +155,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
     composable(
         route = Screen.PlayerScreen.route,
         arguments = listOf(
+            navArgument("ids") { type = NavType.LongArrayType },
             navArgument("artist") { type = NavType.StringType },
             navArgument("track") { type = NavType.StringType },
         ),
@@ -168,15 +169,19 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
         val track = it.arguments?.getString("track")
         requireNotNull(artist) { "artist can not be null for Player Screen." }
         requireNotNull(track) { "track can not be null for Player Screen." }
-        d(TAG) { "route: ${it.destination.route}  artist=$artist  track=$track" }
+
+        val ids: Array<Long> = it.arguments?.getLongArray("ids")?.toTypedArray() ?: emptyArray<Long>()
+        require(ids.isNotEmpty()) { "The parameter ids can't be empty." }
+        d(TAG) { "route: ${it.destination.route}  ids=$ids  artist=$artist  track=$track" }
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
             dynamicColor = false,
-            lightSystemBar = true,
+            lightSystemBar = false,
         ) {
             val playerViewModel = hiltViewModel<PlayerViewModel>()
             PlayerScreen(
                 viewModel = playerViewModel,
+                ids = ids,
                 artist = artist,
                 track = track,
                 // widthSize = widthSizeClass,

@@ -1,8 +1,9 @@
 package com.leovp.feature_discovery.testdata.preview
 
-import com.leovp.feature_discovery.domain.model.CarouselItem
-import com.leovp.feature_discovery.domain.model.EverydayItem
-import com.leovp.feature_discovery.domain.model.MusicItem
+import com.leovp.feature_discovery.domain.model.HomePageBlockModel
+import com.leovp.feature_discovery.domain.model.PlaylistModel
+import com.leovp.feature_discovery.domain.model.PrivateContentModel
+import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.repository.DiscoveryRepository
 import com.leovp.feature_discovery.testdata.local_datasource.LocalDiscoveryDataSource
 import com.leovp.module.common.Result
@@ -16,15 +17,19 @@ class PreviewDiscoveryRepositoryImpl @Inject constructor(
     private val dataSource: LocalDiscoveryDataSource
 ) : DiscoveryRepository {
 
-    override suspend fun getCarouselMusic(): Result<List<CarouselItem>> {
-        return Result.Success(dataSource.getCarouselMusicList())
+    override suspend fun getHomePageBlock(): Result<HomePageBlockModel> {
+        return Result.Success(dataSource.getHomePageBlock())
     }
 
-    override suspend fun getEverydayMusic(): Result<List<EverydayItem>> {
-        return Result.Success(dataSource.getEverydayMusicList())
+    override suspend fun getPrivateContent(): Result<List<PrivateContentModel>> {
+        return Result.Success(dataSource.getPrivateContent())
     }
 
-    override suspend fun getPersonalMusic(): Result<List<MusicItem>> {
-        return Result.Success(dataSource.getPersonalMusicList())
+    override suspend fun getRecommendPlaylist(): Result<List<PlaylistModel>> {
+        return Result.Success(dataSource.getRecommendPlaylist())
+    }
+
+    override suspend fun getTopSongs(type: Int): Result<List<TopSongModel>> {
+        return Result.Success(dataSource.getTopSong(type))
     }
 }
