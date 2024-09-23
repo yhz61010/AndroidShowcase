@@ -31,4 +31,8 @@ class PlayerUseCase @Inject constructor(
     suspend fun getSongRedCount(id: Long): Result<SongModel.RedCountModel> {
         return repository.getSongRedCount(id)
     }
+
+    suspend fun getSongUrlV1(id: Long, level: SongModel.Quality): Result<List<SongModel.UrlModel>> {
+        return repository.getSongUrlV1(id, level)
+    }
 }

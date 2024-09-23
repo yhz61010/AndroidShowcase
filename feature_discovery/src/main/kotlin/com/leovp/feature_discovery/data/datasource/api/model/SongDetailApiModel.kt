@@ -52,6 +52,6 @@ fun SongDetailApiModel.toDomainModel(): SongModel {
         duration = this.dt,
         artists = this.artists.map { it.toDomainModel() },
         album = this.album.toDomainModel(),
-        quality = SongModel.Quality.STANDARD,
+        quality = SongModel.Quality.Standard,
     )
 }

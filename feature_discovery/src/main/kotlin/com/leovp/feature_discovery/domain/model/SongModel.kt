@@ -1,4 +1,5 @@
 @file:Suppress("unused")
+
 package com.leovp.feature_discovery.domain.model
 
 import androidx.annotation.Keep
@@ -24,6 +25,31 @@ data class SongModel(
 
     var commentsModel: CommentsModel? = null
 
+    var urlModel: UrlModel? = null
+
+    fun getUrlSuccess(): Boolean = urlModel?.success() == true
+    fun getUrlCode(): Int = urlModel?.code ?: -1
+    fun getUrl(): String? = urlModel?.url
+
+    @Keep
+    @Immutable
+    data class UrlModel(
+        val id: Long,
+        val br: Int,
+        val size: Long,
+        val md5: String?,
+        val type: String?,
+        val gain: Float,
+        val peak: Int?,
+        val level: String?,
+        val encodeType: String?,
+        val url: String?,
+        val time: Long,
+        val code: Int,
+    ) {
+        fun success(): Boolean = code == 200
+    }
+
     @Keep
     @Immutable
     data class Comment(
@@ -47,15 +73,16 @@ data class SongModel(
         val countDesc: String?
     )
 
-    enum class Quality {
-        STANDARD,
-        HIGHER,
-        EXHIGH,
-        LOSSLESS,
-        HIRES,
-        JYEFFECT,
-        SKY,
-        JYMASTER,
+    enum class Quality(val levelIdx: Int) {
+        Standard(0),
+        Higher(1),
+        Exhigh(2),
+        Lossless(3),
+        Hires(4),
+        Jyeffect(5),
+        Sky(6),
+        Dolby(7),
+        Jymaster(8),
     }
 }
 

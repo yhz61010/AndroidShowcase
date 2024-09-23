@@ -12,4 +12,6 @@ interface PlayerDataSource {
     fun getMusicComment(id: Long, limit: Int, offset: Int): SongModel.CommentsModel
 
     fun getSongRedCount(id: Long): SongModel.RedCountModel
+
+    fun getSongUrlV1(id: Long, level: SongModel.Quality): List<SongModel.UrlModel>
 }

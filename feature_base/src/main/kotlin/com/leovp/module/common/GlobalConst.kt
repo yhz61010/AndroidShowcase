@@ -79,5 +79,19 @@ object GlobalConst {
     // id
     /** 歌曲红心数量 */
     const val HTTP_GET_SONG_RED_COUNT = "/song/red/count"
+
+    // id
+    // level:
+    //      standard => 标准
+    //      higher   => 较高
+    //      exhigh   => 极高
+    //      lossless => 无损
+    //      hires    => Hi-Res
+    //      jyeffect => 高清环绕声
+    //      sky      => 沉浸环绕声
+    //      dolby    => 杜比全景声
+    //      jymaster => 超清母带
+    /** 获取音乐 url - 新版 */
+    const val HTTP_GET_SONG_URL_V1 = "/song/url/v1"
     // ===== Http request - End =====
 }

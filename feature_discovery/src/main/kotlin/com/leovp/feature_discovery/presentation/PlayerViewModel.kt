@@ -5,11 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.usecase.PlayerUseCase
+import com.leovp.json.toJsonString
 import com.leovp.module.common.Result
+import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.exceptionOrNull
 import com.leovp.module.common.getOrNull
 import com.leovp.module.common.log.d
 import com.leovp.module.common.log.i
+import com.leovp.module.common.log.w
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -58,6 +61,8 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
         val firstSongId = ids[0]
         job = viewModelScope.launch {
             val songInfoDeferred = async { useCase.getSongInfo(*ids.toLongArray()) }
+            val songUrlDeferred =
+                async { useCase.getSongUrlV1(firstSongId, SongModel.Quality.Standard) }
 
             var songCommentsDeferred: Deferred<Result<SongModel.CommentsModel>>? = null
             if (ids.isNotEmpty()) {
@@ -76,18 +81,32 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
             }
 
             val songInfoResult = songInfoDeferred.await()
+            val songUrlResult = songUrlDeferred.await()
             val songCommentsResult = songCommentsDeferred?.await()
             val songRedCountResult = songRedCountDeferred?.await()
 
             val firstSong: SongModel? = songInfoResult.getOrNull()?.firstOrNull()
-            firstSong?.commentsModel = songCommentsResult?.getOrNull()
-            firstSong?.redCountModel = songRedCountResult?.getOrNull()
+            var ex = songInfoResult.exceptionOrNull()
+            if (firstSong != null) {
+                firstSong.urlModel = songUrlResult.getOrNull()?.firstOrNull()
+                firstSong.commentsModel = songCommentsResult?.getOrNull()
+                firstSong.redCountModel = songRedCountResult?.getOrNull()
 
-            val ex = songInfoResult.exceptionOrNull()
-                ?: songCommentsResult?.exceptionOrNull()
-                ?: songRedCountResult?.exceptionOrNull()
+                d(TAG) { "---> UrlModel: ${firstSong.urlModel?.toJsonString()}" }
 
-            d(TAG, throwable = ex) { "Exception while getData()" }
+                if (firstSong.getUrlSuccess() != true) {
+                    w(TAG) { "Failed to get song url.  code=${firstSong.getUrlCode()}  url=${firstSong.getUrl()}" }
+                    ex = ApiException(firstSong.getUrlCode(), "Failed to get song url.")
+                }
+            }
+
+            ex = ex ?: songUrlResult.exceptionOrNull()
+                    ?: songCommentsResult?.exceptionOrNull()
+                    ?: songRedCountResult?.exceptionOrNull()
+
+            if (ex != null) {
+                d(TAG, throwable = ex) { "Exception while getData()" }
+            }
 
             loading = false
             _uiState.update {
@@ -167,7 +186,7 @@ data class PlayerUiState(
     fun getSongName(def: String = ""): String = songInfo?.name ?: def
     fun getSongArtist(def: String = ""): String = songInfo?.artists?.firstOrNull()?.name ?: def
     fun getSongDuration(): Long = songInfo?.duration ?: 0
-    fun getSongQuality(): SongModel.Quality = songInfo?.quality ?: SongModel.Quality.STANDARD
+    fun getSongQuality(): SongModel.Quality = songInfo?.quality ?: SongModel.Quality.Standard
 
     fun getSongRedCount(): Long = songInfo?.redCountModel?.count ?: 0
     fun getSongRedCountStr(): String? = songInfo?.redCountModel?.countDesc
