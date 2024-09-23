@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.LibraryDefaultConfig
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import java.util.Locale
 
 apply(from = "../jacoco.gradle.kts")
@@ -68,7 +69,9 @@ android {
 }
 
 composeCompiler {
-    enableStrongSkippingMode = true
+    // deprecated
+    // enableStrongSkippingMode = true
+    featureFlags.addAll(ComposeFeatureFlag.StrongSkipping, ComposeFeatureFlag.OptimizeNonSkippingGroups)
     includeSourceInformation = true
 }
 

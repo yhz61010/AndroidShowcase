@@ -14,4 +14,6 @@ interface PlayerDataSource {
     fun getSongRedCount(id: Long): SongModel.RedCountModel
 
     fun getSongUrlV1(id: Long, level: SongModel.Quality): List<SongModel.UrlModel>
+
+    fun checkMusic(id: Long, br: Int): SongModel.MusicAvailableModel
 }

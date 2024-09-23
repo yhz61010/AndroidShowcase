@@ -4,6 +4,7 @@ import com.drake.net.Get
 import com.leovp.feature_discovery.data.datasource.PlayerDataSource
 import com.leovp.feature_discovery.data.datasource.api.model.toDomainModel
 import com.leovp.feature_discovery.data.datasource.api.response.CommentResponse
+import com.leovp.feature_discovery.data.datasource.api.response.MusicAvailableResponse
 import com.leovp.feature_discovery.data.datasource.api.response.SongDetailResponse
 import com.leovp.feature_discovery.data.datasource.api.response.SongRedCountResponse
 import com.leovp.feature_discovery.data.datasource.api.response.SongUrlResponse
@@ -66,5 +67,18 @@ class PlayerRepositoryImpl @Inject constructor(
                 param("id", id)
                 param("level", level.name.lowercase())
             }.await().data.map { it.toDomainModel() }
+        }
+
+    override suspend fun checkMusic(id: Long, br: Int): Result<SongModel.MusicAvailableModel> =
+        result(Dispatchers.IO) {
+            Get<MusicAvailableResponse>(GlobalConst.HTTP_GET_CHECK_MUSIC) {
+                param("id", id)
+                param("br", br)
+            }.await().let {
+                SongModel.MusicAvailableModel(
+                    success = it.success,
+                    message = it.message
+                )
+            }
         }
 }

@@ -29,6 +29,7 @@ class LocalPlayerDataSource @Inject constructor() : PlayerDataSource {
                     picUrl = "https://lastfm.freetls.fastly.net/i/u/300x300/fa98cc920f8fc322c5efb2a8986164fe.png",
                 ),
                 quality = SongModel.Quality.Jymaster,
+                fee = 8,
                 markText = "VIP",
             )
         )
@@ -70,7 +71,19 @@ class LocalPlayerDataSource @Inject constructor() : PlayerDataSource {
                 encodeType = "mp3",
                 time = 282696,
                 code = 200,
+                fee = 8,
+                payed = 0,
             )
+        )
+    }
+
+    override fun checkMusic(
+        id: Long,
+        br: Int
+    ): SongModel.MusicAvailableModel {
+        return SongModel.MusicAvailableModel(
+            success = false,
+            message = "亲爱的,暂无版权"
         )
     }
 }

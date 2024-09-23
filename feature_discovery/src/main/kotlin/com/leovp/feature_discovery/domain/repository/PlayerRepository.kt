@@ -15,4 +15,6 @@ interface PlayerRepository {
     suspend fun getSongRedCount(id: Long): Result<SongModel.RedCountModel>
 
     suspend fun getSongUrlV1(id: Long, level: SongModel.Quality): Result<List<SongModel.UrlModel>>
+
+    suspend fun checkMusic(id: Long, br: Int): Result<SongModel.MusicAvailableModel>
 }

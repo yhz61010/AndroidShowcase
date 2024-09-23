@@ -6,6 +6,7 @@ import androidx.compose.runtime.Immutable
 import com.leovp.feature_discovery.domain.model.SongModel
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlin.Int
 
 /**
  * Author: Michael Leo
@@ -30,6 +31,8 @@ data class SongUrlApiModel(
     val time: Long,
     val musicId: Long?,
     val code: Int,
+    val fee: Int,
+    val payed: Int,
 )
 
 fun SongUrlApiModel.toDomainModel(): SongModel.UrlModel {
@@ -46,5 +49,7 @@ fun SongUrlApiModel.toDomainModel(): SongModel.UrlModel {
         url = url,
         time = time,
         code = code,
+        fee = fee,
+        payed = payed,
     )
 }

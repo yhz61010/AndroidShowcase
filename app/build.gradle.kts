@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import java.io.ByteArrayOutputStream
 import java.util.Properties
 
@@ -185,7 +186,9 @@ android {
 // }
 
 composeCompiler {
-    enableStrongSkippingMode = true
+    // deprecated
+    // enableStrongSkippingMode = true
+    featureFlags.addAll(ComposeFeatureFlag.StrongSkipping, ComposeFeatureFlag.OptimizeNonSkippingGroups)
     includeSourceInformation = true
 }
 

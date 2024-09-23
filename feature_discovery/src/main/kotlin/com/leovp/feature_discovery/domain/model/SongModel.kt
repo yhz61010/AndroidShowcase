@@ -18,6 +18,7 @@ data class SongModel(
     val artists: List<ArtistModel>,
     val album: AlbumModel,
     val quality: Quality,
+    val fee: Int,
 
     val markText: String? = null,
 ) {
@@ -30,6 +31,10 @@ data class SongModel(
     fun getUrlSuccess(): Boolean = urlModel?.success() == true
     fun getUrlCode(): Int = urlModel?.code ?: -1
     fun getUrl(): String? = urlModel?.url
+
+    @Keep
+    @Immutable
+    data class MusicAvailableModel(val success: Boolean, val message: String? = null)
 
     @Keep
     @Immutable
@@ -46,6 +51,8 @@ data class SongModel(
         val url: String?,
         val time: Long,
         val code: Int,
+        val fee: Int,
+        val payed: Int,
     ) {
         fun success(): Boolean = code == 200
     }

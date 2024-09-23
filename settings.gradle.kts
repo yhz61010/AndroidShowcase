@@ -13,17 +13,17 @@ pluginManagement {
      * look for its dependencies.
      */
     repositories {
-        // 阿里云的 Gradle 插件镜像
-        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
-        // 腾讯云的 Gradle 插件镜像
-        maven { url = uri("https://mirrors.cloud.tencent.com/nexus/repository/gradle-plugins/") }
-        // Google 官方插件镜像（通过阿里云镜像）
-        maven { url = uri("https://maven.aliyun.com/repository/google") }
-
         // 如果有需要，可以保留 Gradle 默认的插件门户
         gradlePluginPortal()
         google()
         mavenCentral()
+
+        // Google 官方插件镜像（通过阿里云镜像）
+        maven { url = uri("https://maven.aliyun.com/repository/google") }
+        // 阿里云的 Gradle 插件镜像
+        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
+        // 腾讯云的 Gradle 插件镜像
+        maven { url = uri("https://mirrors.cloud.tencent.com/nexus/repository/gradle-plugins/") }
     }
 }
 
