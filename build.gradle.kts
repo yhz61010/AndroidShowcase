@@ -1,7 +1,6 @@
 import com.android.build.gradle.BaseExtension
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import java.util.Locale
 
@@ -14,11 +13,14 @@ val customGroup = "com.leovp"
 /**
  * You can use it in subproject like this:
  * ```kotlin
- * val jdkVersion: JavaVersion by rootProject.extra
+ * val javaVersion: JavaVersion by rootProject.extra
  * ```
  */
-val jdkVersion: JavaVersion by extra { JavaVersion.VERSION_17 }
-val kotlinApiVersion by extra { org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9 }
+val javaVersion: JavaVersion by extra { JavaVersion.toVersion(libs.versions.javaVersion.get().toInt()) }
+val kotlinApiVersion by extra { org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlinApiVersion.get()) }
+val jvmTarget: String by extra { libs.versions.jvm.get() }
+// val javaVersion: JavaVersion by extra { JavaVersion.VERSION_17 }
+// val kotlinApiVersion by extra { org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1 }
 
 /**
  * resourcePrefix 的校验规则：
@@ -188,18 +190,24 @@ tasks.register<Delete>("clean") {
  * ```
  */
 fun Project.configureCompileVersion() {
-    tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = jdkVersion.toString()
-        targetCompatibility = jdkVersion.toString()
-    }
+    // tasks.withType<JavaCompile>().configureEach {
+    //     sourceCompatibility = javaVersion.toString()
+    //     targetCompatibility = javaVersion.toString()
+    // }
 
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(jdkVersion.toString()))
-            apiVersion.set(kotlinApiVersion)
-            languageVersion.set(kotlinApiVersion)
-        }
-    }
+    // tasks.withType<KotlinJvmCompile>().configureEach {
+    //     compilerOptions {
+    //         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(jdkVersion.toString())
+    //         apiVersion = kotlinApiVersion
+    //         languageVersion = kotlinApiVersion
+    //     }
+    // }
+
+    // tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+    //     compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(jvmTarget))
+    //     compilerOptions.apiVersion.set(kotlinApiVersion)
+    //     compilerOptions.languageVersion.set(kotlinApiVersion)
+    // }
 }
 
 // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
@@ -234,8 +242,8 @@ fun Project.configureBase(): BaseExtension {
         }
         compileOptions {
             // setDefaultJavaVersion(jdkVersion)
-            sourceCompatibility = jdkVersion
-            targetCompatibility = jdkVersion
+            sourceCompatibility = javaVersion
+            targetCompatibility = javaVersion
         }
         buildTypes {
             getByName("release") {
@@ -339,7 +347,7 @@ fun Project.configureLibrary(): BaseExtension = configureBase().apply {
 
 // Target version of the generated JVM bytecode. It is used for type resolution.
 tasks.withType<Detekt>().configureEach {
-    jvmTarget = jdkVersion.toString()
+    jvmTarget = javaVersion.toString()
 
     reports {
         // observe findings in your browser with structure and code snippets

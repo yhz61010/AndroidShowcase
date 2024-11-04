@@ -1,7 +1,6 @@
 import org.gradle.kotlin.dsl.android
 import org.gradle.kotlin.dsl.composeCompiler
 import org.gradle.kotlin.dsl.projects
-import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 
 apply(from = "../jacoco.gradle.kts")
 
@@ -35,7 +34,7 @@ android {
 composeCompiler {
     // deprecated
     // enableStrongSkippingMode = true
-    featureFlags.addAll(ComposeFeatureFlag.StrongSkipping, ComposeFeatureFlag.OptimizeNonSkippingGroups)
+    // featureFlags.addAll(ComposeFeatureFlag.StrongSkipping, ComposeFeatureFlag.OptimizeNonSkippingGroups)
     includeSourceInformation = true
 }
 

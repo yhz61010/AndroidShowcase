@@ -22,7 +22,7 @@ import javax.inject.Inject
  */
 
 class PlayerRepositoryImpl @Inject constructor(
-    private val dataSource: PlayerDataSource
+    @Suppress("unused") private val dataSource: PlayerDataSource
 ) : PlayerRepository {
     override suspend fun getSongInfo(vararg ids: Long): Result<List<SongModel>> =
         result(Dispatchers.IO) {

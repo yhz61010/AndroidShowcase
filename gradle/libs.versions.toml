@@ -21,11 +21,11 @@
 #===== Project =====
 #===================
 # @keep
-compile-sdk = "34"
+compile-sdk = "35"
 # @keep
 min-sdk = "26"
 # @keep
-target-sdk = "34"
+target-sdk = "35"
 # @keep
 # ndk-sdk = "25.2.9519653"
 
@@ -43,6 +43,11 @@ leo-version = "5.12.40"
 agp = "8.8.0-alpha09"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.26"
+
+javaVersion = "17"
+jvm = "17"
+kotlinApiVersion = "2.0"
+
 # Compose Compiler & Kotlin versions
 # https://androidx.dev/storage/compose-compiler/repository
 # https://developer.android.com/jetpack/androidx/releases/compose-kotlin?hl=zh-cn
@@ -50,15 +55,15 @@ ksp = "2.0.21-1.0.26"
 #=================================
 #===== Android dependencies ======
 #=================================
-compose-bom = "2024.10.00"
+compose-bom = "2024.10.01"
 compose-activity = "1.9.3"
 compose-navigation = "2.8.3"
 #compose-constraintlayout= "1.0.1"
 
 hilt = "2.52"
 hilt-navigation-compose = "1.2.0"
-core-ktx = "1.13.1"
-lifecycle = "2.8.6" # https://stackoverflow.com/a/78490417/6091500
+core-ktx = "1.15.0"
+lifecycle = "2.8.7" # https://stackoverflow.com/a/78490417/6091500
 multidex = "2.0.1"
 coroutines = "1.9.0"
 #annotation = "1.9.0"
@@ -91,7 +96,7 @@ sonarqube = "5.1.0.4882" # 4.2.0.3129
 #================
 #===== Test =====
 #================
-compose-runtime-tracing = "1.7.4"
+compose-runtime-tracing = "1.7.5"
 #tracing-perfetto = "1.0.0"
 jupiter = "5.11.3" # JUnit 5
 #androidx-test = "1.6.1"

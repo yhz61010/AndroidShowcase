@@ -9,11 +9,11 @@ import com.leovp.json.toJsonString
 import com.leovp.module.common.Result
 import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.exceptionOrNull
+import com.leovp.module.common.fold
 import com.leovp.module.common.getOrNull
 import com.leovp.module.common.log.d
 import com.leovp.module.common.log.i
 import com.leovp.module.common.log.w
-import com.leovp.module.common.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -61,69 +61,65 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
 
         val firstSongId = ids[0]
         job = viewModelScope.launch {
-            var firstSong: SongModel? = null
+            var ex: ApiException? = null
 
-            val songAvailableDeferred = async { useCase.checkMusic(firstSongId, 999000) }
-            val songAvailableResult = songAvailableDeferred.await()
-            var ex = songAvailableResult.exceptionOrNull()
-            songAvailableResult.onSuccess { songAvailable ->
-                if (songAvailable.success) {
-                    val songInfoDeferred = async { useCase.getSongInfo(*ids.toLongArray()) }
-                    val songUrlDeferred =
-                        async { useCase.getSongUrlV1(firstSongId, SongModel.Quality.Standard) }
-
-                    var songCommentsDeferred: Deferred<Result<SongModel.CommentsModel>>? = null
-                    if (ids.isNotEmpty()) {
-                        songCommentsDeferred = async {
-                            useCase.getMusicComment(
-                                id = firstSongId, limit = 20, offset = 0
-                            )
-                        }
-                    }
-
-                    var songRedCountDeferred: Deferred<Result<SongModel.RedCountModel>>? = null
-                    if (ids.isNotEmpty()) {
-                        songRedCountDeferred = async {
-                            useCase.getSongRedCount(firstSongId)
-                        }
-                    }
-
-                    val songInfoResult = songInfoDeferred.await()
-                    val songUrlResult = songUrlDeferred.await()
-                    val songCommentsResult = songCommentsDeferred?.await()
-                    val songRedCountResult = songRedCountDeferred?.await()
-
-                    firstSong = songInfoResult.getOrNull()?.firstOrNull()
-                    if (firstSong != null) {
-                        val firstSongRef = firstSong
-                        requireNotNull(firstSongRef) { "firstSongRef is null" }
-                        firstSongRef.urlModel = songUrlResult.getOrNull()?.firstOrNull()
-                        firstSongRef.commentsModel = songCommentsResult?.getOrNull()
-                        firstSongRef.redCountModel = songRedCountResult?.getOrNull()
-
-                        d(TAG) { "---> UrlModel: ${firstSongRef.urlModel?.toJsonString()}" }
-
-                        if (firstSongRef.getUrlSuccess() != true) {
-                            w(TAG) { "Failed to get song url.  code=${firstSongRef.getUrlCode()}  url=${firstSongRef.getUrl()}" }
-                            ex = ApiException(
-                                code = firstSongRef.getUrlCode(),
-                                message = "Failed to get song url."
-                            )
-                        }
-                    }
-
-                    ex = ex ?: songInfoResult.exceptionOrNull()
-                            ?: songUrlResult.exceptionOrNull()
-                            ?: songCommentsResult?.exceptionOrNull()
-                            ?: songRedCountResult?.exceptionOrNull()
-                } else {
-                    w(TAG) { "Song check error.  msg=${songAvailable.message}" }
-                    ex = ApiException(
-                        code = -1,
-                        message = songAvailable.message
+            var songCommentsDeferred: Deferred<Result<SongModel.CommentsModel>>? = null
+            if (ids.isNotEmpty()) {
+                songCommentsDeferred = async {
+                    useCase.getMusicComment(
+                        id = firstSongId, limit = 20, offset = 0
                     )
                 }
             }
+
+            var songRedCountDeferred: Deferred<Result<SongModel.RedCountModel>>? = null
+            if (ids.isNotEmpty()) {
+                songRedCountDeferred = async {
+                    useCase.getSongRedCount(firstSongId)
+                }
+            }
+
+            val songInfoDeferred = async { useCase.getSongInfo(*ids.toLongArray()) }
+            val songAvailableDeferred = async { useCase.checkMusic(firstSongId, 999000) }
+
+            val songInfoResult = songInfoDeferred.await()
+            val songCommentsResult = songCommentsDeferred?.await()
+            val songRedCountResult = songRedCountDeferred?.await()
+            val songAvailableResult = songAvailableDeferred.await()
+
+            var firstSong: SongModel? =
+                songInfoResult.getOrNull()?.firstOrNull()?.also { firstSongRef ->
+                    firstSongRef.commentsModel = songCommentsResult?.getOrNull()
+                    firstSongRef.redCountModel = songRedCountResult?.getOrNull()
+                }
+
+            songAvailableResult.fold(
+                onSuccess = { songAvailModel ->
+                    if (songAvailModel.success) {
+                        val songUrlDeferred =
+                            async { useCase.getSongUrlV1(firstSongId, SongModel.Quality.Standard) }
+                        val songUrlResult = songUrlDeferred.await()
+                        firstSong?.urlModel = songUrlResult.getOrNull()?.firstOrNull()
+
+                        d(TAG) { "---> UrlModel: ${firstSong?.toJsonString()}" }
+                        if (firstSong?.getUrlSuccess() != true) {
+                            w(TAG) { "Failed to get song url.  code=${firstSong?.getUrlCode()}  url=${firstSong?.getUrl()}" }
+                            ex = ApiException(code = -1, message = "Failed to get song url.")
+                        }
+                    } else {
+                        ex = ApiException(code = -2, message = songAvailModel.message)
+                        w(TAG, ex) { "Song check business error.  msg=${ex?.message}" }
+                    }
+                },
+                onFailure = { e ->
+                    w(TAG, e) { "Song check error.  msg=${e.message}" }
+                    ex = e
+                }
+            )
+
+            ex = ex ?: songInfoResult.exceptionOrNull()
+                    ?: songCommentsResult?.exceptionOrNull()
+                    ?: songRedCountResult?.exceptionOrNull()
 
             if (ex != null) {
                 d(TAG, throwable = ex) { "Exception while getData()" }
@@ -131,9 +127,7 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
 
             loading = false
             _uiState.update {
-                it.copy(
-                    songInfo = firstSong, exception = ex
-                )
+                it.copy(songInfo = firstSong, exception = ex)
             }
             d(TAG) { "Player -> getData() done." }
         }
