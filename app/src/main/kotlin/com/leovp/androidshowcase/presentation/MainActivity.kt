@@ -3,6 +3,7 @@ package com.leovp.androidshowcase.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -16,7 +17,6 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -57,8 +57,10 @@ class MainActivity : ComponentActivity() {
 
         RequestUtil.initNetEngine(baseUrl = GlobalConst.API_BASE_URL)
 
+        // Using this method below instead of setDecorFitsSystemWindows.
+        enableEdgeToEdge()
         // This app draws behind the system bars, so we want to handle fitting system windows
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        // WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
