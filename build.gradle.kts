@@ -16,11 +16,18 @@ val customGroup = "com.leovp"
  * val javaVersion: JavaVersion by rootProject.extra
  * ```
  */
-val javaVersion: JavaVersion by extra { JavaVersion.toVersion(libs.versions.javaVersion.get().toInt()) }
-val kotlinApiVersion by extra { org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlinApiVersion.get()) }
-val jvmTarget: String by extra { libs.versions.jvm.get() }
-// val javaVersion: JavaVersion by extra { JavaVersion.VERSION_17 }
-// val kotlinApiVersion by extra { org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1 }
+val javaVersion: JavaVersion by extra {
+    // JavaVersion.VERSION_17
+    // We should use integer value for toVersion() in this case.
+    JavaVersion.toVersion(libs.versions.javaVersion.get().toInt())
+}
+val jvmTargetVersion by extra {
+    org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(libs.versions.jvmVersion.get())
+}
+val kotlinVersion by extra {
+    // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1
+    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlinVersion.get())
+}
 
 /**
  * resourcePrefix 的校验规则：
@@ -64,9 +71,9 @@ plugins {
     // alias(libs.plugins.vcu)
     jacoco
 
+    alias(libs.plugins.ksp) apply false
     // If you use kotlin(), you can change dash(-) with dot(.)
     // or you can still use dash like id("kotlin-parcelize")
-    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.parcelize) apply false // id("kotlin-parcelize")
     // https://stackoverflow.com/a/72508037/1685062
     // alias(libs.plugins.navigation) apply false
@@ -147,11 +154,12 @@ allprojects {
     //     enableStrongSkippingMode = true
     //     includeSourceInformation = true
     // }
-    // configureCompilerOptions()
 
-    afterEvaluate {
-        configureCompileVersion()
-    }
+    configureCompileTasks()
+
+    // afterEvaluate {
+    //     configureCompileTasks()
+    // }
 
     // configurations.all {
     //     resolutionStrategy.eachDependency {
@@ -189,25 +197,27 @@ tasks.register<Delete>("clean") {
  * task (current target is 11) jvm target compatibility should be set to the same Java version.
  * ```
  */
-fun Project.configureCompileVersion() {
-    // tasks.withType<JavaCompile>().configureEach {
-    //     sourceCompatibility = javaVersion.toString()
-    //     targetCompatibility = javaVersion.toString()
-    // }
+fun Project.configureCompileTasks() {
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = javaVersion.toString()
+        targetCompatibility = javaVersion.toString()
+        // Enable warning for deprecated APIs
+        options.compilerArgs.add("-Xlint:deprecation")
+    }
 
-    // tasks.withType<KotlinJvmCompile>().configureEach {
-    //     compilerOptions {
-    //         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(jdkVersion.toString())
-    //         apiVersion = kotlinApiVersion
-    //         languageVersion = kotlinApiVersion
-    //     }
-    // }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(jvmTargetVersion)
+            apiVersion.set(kotlinVersion)
+            languageVersion.set(kotlinVersion)
 
-    // tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
-    //     compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(jvmTarget))
-    //     compilerOptions.apiVersion.set(kotlinApiVersion)
-    //     compilerOptions.languageVersion.set(kotlinApiVersion)
-    // }
+            // Enable support for experimental features
+            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+        }
+        // compilerOptions.jvmTarget.set(jvmTargetVersion)
+        // compilerOptions.apiVersion.set(kotlinVersion)
+        // compilerOptions.languageVersion.set(kotlinVersion)
+    }
 }
 
 // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
@@ -347,7 +357,7 @@ fun Project.configureLibrary(): BaseExtension = configureBase().apply {
 
 // Target version of the generated JVM bytecode. It is used for type resolution.
 tasks.withType<Detekt>().configureEach {
-    jvmTarget = javaVersion.toString()
+    jvmTarget = jvmTargetVersion.target
 
     reports {
         // observe findings in your browser with structure and code snippets
