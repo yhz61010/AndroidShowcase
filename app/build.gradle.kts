@@ -7,6 +7,7 @@ apply(from = "../jacoco.gradle.kts")
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     // Apply the `compose.compiler` plugin to every module that uses Jetpack Compose.
     alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.hilt)
@@ -18,6 +19,10 @@ plugins {
 
     alias(libs.plugins.sonarqube)
     jacoco
+}
+
+val kotlinApi19 by extra {
+    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.api19.get())
 }
 
 android {
@@ -173,6 +178,14 @@ android {
 //                        ("-unaligned".takeIf { !output.zipAlign.enabled } ?: "") +
                             ".apk"
             }
+    }
+}
+
+// This configuration will override the global setting which is configured in root build.gradle.kts.
+// https://kotlinlang.org/docs/gradle-compiler-options.html#target-the-jvm
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        apiVersion.set(kotlinApi19)
     }
 }
 

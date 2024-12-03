@@ -24,9 +24,13 @@ val javaVersion: JavaVersion by extra {
 val jvmTargetVersion by extra {
     org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(libs.versions.jvmVersion.get())
 }
-val kotlinVersion by extra {
-    // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1
-    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlinVersion.get())
+val kotlinApiVersion by extra {
+    // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
+    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.api.get())
+}
+val kotlinLanguageVersion by extra {
+    // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
+    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.language.get())
 }
 
 /**
@@ -130,6 +134,7 @@ allprojects {
     ktlint {
         verbose.set(true)
         android.set(true)
+        ignoreFailures.set(false)
 
         // Uncomment below line and run .\gradlew ktlintCheck to see check ktlint experimental rules
         // enableExperimentalRules.set(true)
@@ -208,11 +213,12 @@ fun Project.configureCompileTasks() {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(jvmTargetVersion)
-            apiVersion.set(kotlinVersion)
-            languageVersion.set(kotlinVersion)
+            languageVersion.set(kotlinLanguageVersion)
+            apiVersion.set(kotlinApiVersion)
 
             // Enable support for experimental features
-            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+            // freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+            optIn.add("kotlin.RequiresOptIn")
         }
         // compilerOptions.jvmTarget.set(jvmTargetVersion)
         // compilerOptions.apiVersion.set(kotlinVersion)

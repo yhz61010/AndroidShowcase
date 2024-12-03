@@ -15,6 +15,10 @@ plugins {
     jacoco
 }
 
+val kotlinApi19 by extra {
+    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.api19.get())
+}
+
 android {
     namespace = "com.leovp.feature_discovery"
 
@@ -24,6 +28,14 @@ android {
     buildFeatures {
         // Add this line as needed
         // buildConfig = true
+    }
+}
+
+// This configuration will override the global setting which is configured in root build.gradle.kts.
+// https://kotlinlang.org/docs/gradle-compiler-options.html#target-the-jvm
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        apiVersion.set(kotlinApi19)
     }
 }
 

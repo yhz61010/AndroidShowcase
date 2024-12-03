@@ -30,23 +30,25 @@ target-sdk = "35"
 # ndk-sdk = "25.2.9519653"
 
 # @keep
-versionName = "1.0.3"
+versionName = "1.0.4"
 # @keep
-versionCode = "103"
+versionCode = "104"
 
 # @keep
-leo-version = "5.12.40"
+leo-version = "5.12.47"
 
 #===================
 #===== Compile =====
 #===================
-agp = "8.8.0-alpha09"
-kotlin = "2.1.0-RC"
-ksp = "2.1.0-RC-1.0.27"
+agp = "8.9.0-alpha03"
+kotlin = "2.1.0"
+ksp = "2.1.0-1.0.29"
+kotlin-language = "2.1"
+kotlin-api = "2.1"
+kotlin-api19 = "1.9"
 
 javaVersion = "17"
 jvmVersion = "17"
-kotlinVersion = "1.9"
 
 # Compose Compiler & Kotlin versions
 # https://androidx.dev/storage/compose-compiler/repository
@@ -55,9 +57,9 @@ kotlinVersion = "1.9"
 #=================================
 #===== Android dependencies ======
 #=================================
-compose-bom = "2024.10.01"
+compose-bom = "2024.11.00"
 compose-activity = "1.9.3"
-compose-navigation = "2.8.3"
+compose-navigation = "2.8.4"
 #compose-constraintlayout= "1.0.1"
 
 hilt = "2.52"
@@ -82,16 +84,16 @@ colorful-slider = "1.2.2"
 #lottie-compose = "6.1.0"
 
 #=======================
-#===== Helper =====
+#======= Helper ========
 #=======================
 detekt = "1.23.7"
 #dokka = "1.7.10"
 ktlint = "0.51.0-FINAL"
-ktlint-gradle = "12.1.1"
+ktlint-gradle = "12.1.2"
 benmanes = "0.51.0"
 jacoco = "0.8.9"
 # Ensure the SonarQube is compatible with the server version.
-sonarqube = "5.1.0.4882" # 4.2.0.3129
+sonarqube = "6.0.0.5145" # 4.2.0.3129
 
 #================
 #===== Test =====
@@ -125,7 +127,7 @@ mannodermaus-junit5 = "1.6.0"
 #===== Android =====
 #===================
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
@@ -294,15 +296,17 @@ android-test = [
 #===================#===================#===================#===================
 
 [plugins]
+# Equivalent agp - com.android.tools.build:gradle
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
+# Equivalent kgp - org.jetbrains.kotlin:kotlin-gradle-plugin
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 # https://developer.android.com/develop/ui/compose/compiler?hl=zh-cn
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
