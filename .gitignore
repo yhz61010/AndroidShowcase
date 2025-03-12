@@ -20,3 +20,6 @@ local.properties
 /app/dev/
 /app/prod/
 /.kotlin/
+/.idea/shelf/
+/.idea/AndroidProjectSystem.xml
+/.idea/misc.xml
