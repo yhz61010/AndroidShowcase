@@ -47,7 +47,7 @@ android {
         ndk {
             // abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
             @android.annotation.SuppressLint("ChromeOsAbiSupport")
-            abiFilters += setOf("arm64-v8a")
+            abiFilters += setOf("armeabi-v7a")
         }
 
         // https://github.com/mannodermaus/android-junit5
