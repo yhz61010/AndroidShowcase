@@ -15,9 +15,13 @@ plugins {
     jacoco
 }
 
-val kotlinApi19 by extra {
-    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.api19.get())
-}
+// val jvmTargetVersion by extra {
+//     org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(libs.versions.jvmVersion.get())
+// }
+
+// val kotlinApi by extra {
+//     org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.api.get())
+// }
 
 android {
     namespace = "com.leovp.feature_discovery"
@@ -33,11 +37,12 @@ android {
 
 // This configuration will override the global setting which is configured in root build.gradle.kts.
 // https://kotlinlang.org/docs/gradle-compiler-options.html#target-the-jvm
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
-    compilerOptions {
-        apiVersion.set(kotlinApi19)
-    }
-}
+// tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+//     compilerOptions {
+//         // apiVersion.set(kotlinApi)
+//         jvmTarget.set(jvmTargetVersion)
+//     }
+// }
 
 composeCompiler {
     // deprecated

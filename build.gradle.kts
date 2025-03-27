@@ -213,8 +213,8 @@ fun Project.configureCompileTasks() {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(jvmTargetVersion)
-            languageVersion.set(kotlinLanguageVersion)
-            apiVersion.set(kotlinApiVersion)
+            // languageVersion.set(kotlinLanguageVersion)
+            // apiVersion.set(kotlinApiVersion)
 
             // Enable support for experimental features
             // freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")

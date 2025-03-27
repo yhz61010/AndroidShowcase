@@ -40,12 +40,11 @@ leo-version = "5.12.49"
 #===================
 #===== Compile =====
 #===================
-agp = "8.9.0"
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.29"
+agp = "8.9.1"
+kotlin = "2.1.10"
+ksp = "2.1.10-1.0.31"
 kotlin-language = "2.1"
 kotlin-api = "2.1"
-kotlin-api19 = "1.9"
 
 javaVersion = "17"
 jvmVersion = "17"
@@ -57,17 +56,17 @@ jvmVersion = "17"
 #=================================
 #===== Android dependencies ======
 #=================================
-compose-bom = "2024.11.00"
-compose-activity = "1.9.3"
-compose-navigation = "2.8.4"
+compose-bom = "2025.03.00"
+compose-activity = "1.10.1"
+compose-navigation = "2.8.9"
 #compose-constraintlayout= "1.0.1"
 
-hilt = "2.52"
+hilt = "2.56"
 hilt-navigation-compose = "1.2.0"
 core-ktx = "1.15.0"
 lifecycle = "2.8.7" # https://stackoverflow.com/a/78490417/6091500
 multidex = "2.0.1"
-coroutines = "1.9.0"
+coroutines = "1.10.1"
 #annotation = "1.9.0"
 
 #=======================
@@ -76,31 +75,31 @@ coroutines = "1.9.0"
 mars-xlog = "1.2.6"
 karn-notify = "1.4.0"
 #xx-permissions = "18.63"
-net = "3.6.4"
+net = "3.7.0"
 coil = "2.7.0"
 square-okhttp = "4.12.0"
-serialization-json = "1.7.3"
+serialization-json = "1.8.0"
 colorful-slider = "1.2.2"
 #lottie-compose = "6.1.0"
 
 #=======================
 #======= Helper ========
 #=======================
-detekt = "1.23.7"
+detekt = "1.23.8"
 #dokka = "1.7.10"
 ktlint = "0.51.0-FINAL"
 ktlint-gradle = "12.1.2"
 benmanes = "0.51.0"
 jacoco = "0.8.9"
 # Ensure the SonarQube is compatible with the server version.
-sonarqube = "6.0.0.5145" # 4.2.0.3129
+sonarqube = "6.0.1.5171" # 4.2.0.3129
 
 #================
 #===== Test =====
 #================
-compose-runtime-tracing = "1.7.5"
+compose-runtime-tracing = "1.7.8"
 #tracing-perfetto = "1.0.0"
-jupiter = "5.11.3" # JUnit 5
+jupiter = "5.12.1" # JUnit 5
 #androidx-test = "1.6.1"
 androidx-test-ext = "1.2.1"
 #androidx-test-runner = "1.6.2"
@@ -112,8 +111,8 @@ espresso-core = "3.6.1"
 #arch = "2.2.0"
 #powermock-version = "2.0.9"
 #robolectric-version = "4.12.2"
-mannodermaus-android-junit5 = "1.11.2.0"
-mannodermaus-junit5 = "1.6.0"
+mannodermaus-android-junit5 = "1.12.0.0"
+mannodermaus-junit5 = "1.7.0"
 #junit = "4.13.2"
 #appcompat = "1.7.0"
 #material = "1.12.0"
