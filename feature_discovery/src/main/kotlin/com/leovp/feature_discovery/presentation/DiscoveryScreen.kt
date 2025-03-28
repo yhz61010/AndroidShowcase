@@ -27,10 +27,12 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
@@ -78,9 +80,6 @@ import com.leovp.module.common.log.d
 import com.leovp.module.common.log.i
 import com.leovp.module.common.presentation.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.module.common.presentation.compose.composable.pager.HorizontalAutoPager
-import com.leovp.module.common.presentation.compose.composable.pullrefresh.PullRefreshIndicator
-import com.leovp.module.common.presentation.compose.composable.pullrefresh.pullRefresh
-import com.leovp.module.common.presentation.compose.composable.pullrefresh.rememberPullRefreshState
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
 import com.leovp.module.common.utils.previewInitLog
 import kotlinx.coroutines.flow.StateFlow
@@ -92,6 +91,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 private const val TAG = "Discovery"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoveryScreen(
     listState: LazyListState,
@@ -113,10 +113,6 @@ fun DiscoveryScreen(
         }
     }
     val ctx = LocalContext.current
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.loading,
-        onRefresh = onRefresh,
-    )
 
     uiState.exception?.let {
         val apiException = it as ApiException
@@ -129,11 +125,12 @@ fun DiscoveryScreen(
         )
     }
 
-    Box(
+    PullToRefreshBox(
+        isRefreshing = uiState.loading,
+        onRefresh = onRefresh,
         modifier = Modifier
             .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 6.dp)
-            .fillMaxSize()
-            .pullRefresh(pullRefreshState),
+            .fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
         LazyColumn(
@@ -168,14 +165,7 @@ fun DiscoveryScreen(
                 }
             }
         } // end LazyColumn
-
-        PullRefreshIndicator(
-            refreshing = uiState.loading,
-            state = pullRefreshState,
-            contentColor = MaterialTheme.colorScheme.primary,
-            // modifier = Modifier.align(Alignment.TopCenter)
-        )
-    } // end Box
+    } // end PullToRefreshBox
 }
 
 @Composable
@@ -255,9 +245,10 @@ fun RecommendsPlaylistContent(
             key = { it.id },
         ) { playlist ->
             Column {
-                Card(modifier = Modifier
-                    .clickable { onItemClick(playlist) }
-                    .size(cardWidth),
+                Card(
+                    modifier = Modifier
+                        .clickable { onItemClick(playlist) }
+                        .size(cardWidth),
                      shape = MaterialTheme.shapes.large) {
                     Box {
                         AsyncImage(
@@ -347,7 +338,9 @@ fun CarouselItem(currentItem: PrivateContentModel, onItemClick: (PrivateContentM
                 contentDescription = null,
                 placeholder = ColorPainter(place_holder_bg_color),
                 contentScale = ContentScale.FillHeight,
-                modifier = Modifier.fillMaxWidth().height(140.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp),
             )
             if (currentItem.typeName.isNotEmpty()) {
                 Box(
