@@ -13,6 +13,7 @@
         <item>hires</item>
         <item>jyeffect</item>
         <item>sky</item>
+        <item>dolby</item>
         <item>jymaster</item>
     </string-array>
 
@@ -24,6 +25,7 @@
         <item>Hi-Res</item>
         <item>高清环绕声</item>
         <item>沉浸环绕声</item>
+        <item>杜比全景声</item>
         <item>超清母带</item>
     </string-array>
 </resources>

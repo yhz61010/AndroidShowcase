@@ -3,6 +3,7 @@
 package com.leovp.module.common.log
 
 import com.leovp.log.LogContext
+import com.leovp.log.base.LogOutType
 import com.leovp.module.common.GlobalConst
 
 /**
@@ -14,7 +15,7 @@ inline fun d(
     tag: String = "",
     throwable: Throwable? = null,
     fullOutput: Boolean = false,
-    outputType: Int = -1,
+    outputType: LogOutType = LogOutType.COMMON,
     generateMsg: () -> Any?
 ) {
     @Suppress("SENSELESS_COMPARISON")
@@ -36,7 +37,7 @@ inline fun i(
     tag: String = "",
     throwable: Throwable? = null,
     fullOutput: Boolean = false,
-    outputType: Int = -1,
+    outputType: LogOutType = LogOutType.COMMON,
     generateMsg: () -> String?
 ) {
     LogContext.log.i(
@@ -52,7 +53,7 @@ inline fun w(
     tag: String = "",
     throwable: Throwable? = null,
     fullOutput: Boolean = false,
-    outputType: Int = -1,
+    outputType: LogOutType = LogOutType.COMMON,
     generateMsg: () -> String?
 ) {
     LogContext.log.w(
@@ -68,7 +69,7 @@ inline fun e(
     tag: String = "",
     throwable: Throwable? = null,
     fullOutput: Boolean = false,
-    outputType: Int = -1,
+    outputType: LogOutType = LogOutType.COMMON,
     generateMsg: () -> String?
 ) {
     LogContext.log.e(

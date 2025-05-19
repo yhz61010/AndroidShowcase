@@ -28,4 +28,18 @@ class PreviewPlayerRepositoryImpl @Inject constructor(
     override suspend fun getSongRedCount(id: Long): Result<SongModel.RedCountModel> {
         return Result.Success(dataSource.getSongRedCount(id))
     }
+
+    override suspend fun getSongUrlV1(
+        id: Long,
+        level: SongModel.Quality
+    ): Result<List<SongModel.UrlModel>> {
+        return Result.Success(dataSource.getSongUrlV1(id, level))
+    }
+
+    override suspend fun checkMusic(
+        id: Long,
+        br: Int
+    ): Result<SongModel.MusicAvailableModel> {
+        return Result.Success(dataSource.checkMusic(id, br))
+    }
 }

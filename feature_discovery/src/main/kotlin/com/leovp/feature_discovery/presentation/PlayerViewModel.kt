@@ -5,11 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.usecase.PlayerUseCase
+import com.leovp.json.toJsonString
 import com.leovp.module.common.Result
+import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.exceptionOrNull
+import com.leovp.module.common.fold
 import com.leovp.module.common.getOrNull
 import com.leovp.module.common.log.d
 import com.leovp.module.common.log.i
+import com.leovp.module.common.log.w
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -57,7 +61,7 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
 
         val firstSongId = ids[0]
         job = viewModelScope.launch {
-            val songInfoDeferred = async { useCase.getSongInfo(*ids.toLongArray()) }
+            var ex: ApiException? = null
 
             var songCommentsDeferred: Deferred<Result<SongModel.CommentsModel>>? = null
             if (ids.isNotEmpty()) {
@@ -75,25 +79,55 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
                 }
             }
 
+            val songInfoDeferred = async { useCase.getSongInfo(*ids.toLongArray()) }
+            val songAvailableDeferred = async { useCase.checkMusic(firstSongId, 999000) }
+
             val songInfoResult = songInfoDeferred.await()
             val songCommentsResult = songCommentsDeferred?.await()
             val songRedCountResult = songRedCountDeferred?.await()
+            val songAvailableResult = songAvailableDeferred.await()
 
-            val firstSong: SongModel? = songInfoResult.getOrNull()?.firstOrNull()
-            firstSong?.commentsModel = songCommentsResult?.getOrNull()
-            firstSong?.redCountModel = songRedCountResult?.getOrNull()
+            var firstSong: SongModel? =
+                songInfoResult.getOrNull()?.firstOrNull()?.also { firstSongRef ->
+                    firstSongRef.commentsModel = songCommentsResult?.getOrNull()
+                    firstSongRef.redCountModel = songRedCountResult?.getOrNull()
+                }
 
-            val ex = songInfoResult.exceptionOrNull()
-                ?: songCommentsResult?.exceptionOrNull()
-                ?: songRedCountResult?.exceptionOrNull()
+            songAvailableResult.fold(
+                onSuccess = { songAvailModel ->
+                    if (songAvailModel.success) {
+                        val songUrlDeferred =
+                            async { useCase.getSongUrlV1(firstSongId, SongModel.Quality.Standard) }
+                        val songUrlResult = songUrlDeferred.await()
+                        firstSong?.urlModel = songUrlResult.getOrNull()?.firstOrNull()
 
-            d(TAG, throwable = ex) { "Exception while getData()" }
+                        d(TAG) { "---> UrlModel: ${firstSong?.toJsonString()}" }
+                        if (firstSong?.getUrlSuccess() != true) {
+                            w(TAG) { "Failed to get song url.  code=${firstSong?.getUrlCode()}  url=${firstSong?.getUrl()}" }
+                            ex = ApiException(code = -1, message = "Failed to get song url.")
+                        }
+                    } else {
+                        ex = ApiException(code = -2, message = songAvailModel.message)
+                        w(TAG, ex) { "Song check business error.  msg=${ex?.message}" }
+                    }
+                },
+                onFailure = { e ->
+                    w(TAG, e) { "Song check error.  msg=${e.message}" }
+                    ex = e
+                }
+            )
+
+            ex = ex ?: songInfoResult.exceptionOrNull()
+                    ?: songCommentsResult?.exceptionOrNull()
+                    ?: songRedCountResult?.exceptionOrNull()
+
+            if (ex != null) {
+                d(TAG, throwable = ex) { "Exception while getData()" }
+            }
 
             loading = false
             _uiState.update {
-                it.copy(
-                    songInfo = firstSong, exception = ex
-                )
+                it.copy(songInfo = firstSong, exception = ex)
             }
             d(TAG) { "Player -> getData() done." }
         }
@@ -167,7 +201,7 @@ data class PlayerUiState(
     fun getSongName(def: String = ""): String = songInfo?.name ?: def
     fun getSongArtist(def: String = ""): String = songInfo?.artists?.firstOrNull()?.name ?: def
     fun getSongDuration(): Long = songInfo?.duration ?: 0
-    fun getSongQuality(): SongModel.Quality = songInfo?.quality ?: SongModel.Quality.STANDARD
+    fun getSongQuality(): SongModel.Quality = songInfo?.quality ?: SongModel.Quality.Standard
 
     fun getSongRedCount(): Long = songInfo?.redCountModel?.count ?: 0
     fun getSongRedCountStr(): String? = songInfo?.redCountModel?.countDesc

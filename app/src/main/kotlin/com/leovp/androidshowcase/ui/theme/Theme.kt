@@ -1,6 +1,7 @@
 package com.leovp.androidshowcase.ui.theme
 
 import android.app.Activity
+import android.os.Build
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -19,8 +20,11 @@ fun SplashTheme(content: @Composable () -> Unit) {
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = systemBarColor.toArgb()
-            window.navigationBarColor = systemBarColor.toArgb()
+            @Suppress("DEPRECATION")
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                window.statusBarColor = systemBarColor.toArgb()
+                window.navigationBarColor = systemBarColor.toArgb()
+            }
             val isLightBar = false
             with(WindowCompat.getInsetsController(window, view)) {
                 isAppearanceLightStatusBars = isLightBar

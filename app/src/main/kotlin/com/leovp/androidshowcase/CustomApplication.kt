@@ -26,6 +26,7 @@ class CustomApplication : MultiDexApplication(), ImageLoaderFactory {
 
         // Log must be initialized first.
         LogContext.setLogImpl(MarsXLog("AOS").apply {
+            @Suppress("SENSELESS_COMPARISON")
             init(this@CustomApplication, BuildConfig.CONSOLE_LOG_OPEN)
         })
     }

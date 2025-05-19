@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
  */
 sealed interface Result<out R> {
     data class Success<out T>(val data: T) : Result<T>
-    data class Failure(val exception: Throwable) : Result<Nothing>
+    data class Failure(val exception: ApiException) : Result<Nothing>
 
     val isSuccess: Boolean get() = this is Success
     val isFailure: Boolean get() = this is Failure
@@ -49,7 +49,7 @@ fun <T> Result<T>.getOrThrow(): T = when {
     else -> (this as Result.Success<T>).data
 }
 
-inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwable) -> R): R {
+inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: ApiException) -> R): R {
     return when (val exception = exceptionOrNull()) {
         null -> (this as Result.Success<T>).data
         else -> onFailure(exception)
@@ -63,7 +63,7 @@ inline fun <T, R> Result<T>.map(transform: (value: T) -> R): Result<R> {
     }
 }
 
-fun <T> Result<T>.exceptionOrNull(): Throwable? = when {
+fun <T> Result<T>.exceptionOrNull(): ApiException? = when {
     isFailure -> (this as Result.Failure).exception
     else -> null
 }
@@ -73,13 +73,13 @@ inline fun <T> Result<T>.onSuccess(action: (value: T) -> Unit): Result<T> {
     return this
 }
 
-inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit): Result<T> {
+inline fun <T> Result<T>.onFailure(action: (exception: ApiException) -> Unit): Result<T> {
     exceptionOrNull()?.let { action(it) }
     return this
 }
 
 inline fun <T, R> Result<T>.fold(
-    onSuccess: (value: T) -> R, onFailure: (exception: Throwable) -> R
+    onSuccess: (value: T) -> R, onFailure: (exception: ApiException) -> R
 ): R {
     return when (val exception = exceptionOrNull()) {
         null -> onSuccess((this as Result.Success<T>).data)

@@ -4,8 +4,10 @@ import com.drake.net.Get
 import com.leovp.feature_discovery.data.datasource.PlayerDataSource
 import com.leovp.feature_discovery.data.datasource.api.model.toDomainModel
 import com.leovp.feature_discovery.data.datasource.api.response.CommentResponse
+import com.leovp.feature_discovery.data.datasource.api.response.MusicAvailableResponse
 import com.leovp.feature_discovery.data.datasource.api.response.SongDetailResponse
 import com.leovp.feature_discovery.data.datasource.api.response.SongRedCountResponse
+import com.leovp.feature_discovery.data.datasource.api.response.SongUrlResponse
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.repository.PlayerRepository
 import com.leovp.module.common.GlobalConst
@@ -20,7 +22,7 @@ import javax.inject.Inject
  */
 
 class PlayerRepositoryImpl @Inject constructor(
-    private val dataSource: PlayerDataSource
+    @Suppress("unused") private val dataSource: PlayerDataSource
 ) : PlayerRepository {
     override suspend fun getSongInfo(vararg ids: Long): Result<List<SongModel>> =
         result(Dispatchers.IO) {
@@ -54,5 +56,29 @@ class PlayerRepositoryImpl @Inject constructor(
             Get<SongRedCountResponse>(GlobalConst.HTTP_GET_SONG_RED_COUNT) {
                 param("id", id)
             }.await().data.toDomainModel()
+        }
+
+    override suspend fun getSongUrlV1(
+        id: Long,
+        level: SongModel.Quality
+    ): Result<List<SongModel.UrlModel>> =
+        result(Dispatchers.IO) {
+            Get<SongUrlResponse>(GlobalConst.HTTP_GET_SONG_URL_V1) {
+                param("id", id)
+                param("level", level.name.lowercase())
+            }.await().data.map { it.toDomainModel() }
+        }
+
+    override suspend fun checkMusic(id: Long, br: Int): Result<SongModel.MusicAvailableModel> =
+        result(Dispatchers.IO) {
+            Get<MusicAvailableResponse>(GlobalConst.HTTP_GET_CHECK_MUSIC) {
+                param("id", id)
+                param("br", br)
+            }.await().let {
+                SongModel.MusicAvailableModel(
+                    success = it.success,
+                    message = it.message
+                )
+            }
         }
 }

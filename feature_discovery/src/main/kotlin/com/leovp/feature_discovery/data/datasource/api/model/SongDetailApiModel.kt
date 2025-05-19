@@ -42,8 +42,17 @@ data class SongDetailApiModel(
      * 其他：是DJ节目，表示 DJ ID
      */
     val djId: Long = 0L,
-)
 
+    /**
+     * fee: enum
+     *   0: 免费或无版权
+     *   1: VIP 歌曲
+     *   4: 购买专辑
+     *   8: 非会员可免费播放低音质，会员可播放高音质及下载
+     *   fee 为 1 或 8 的歌曲均可单独购买 2 元单曲
+     */
+    val fee: Int,
+)
 
 fun SongDetailApiModel.toDomainModel(): SongModel {
     return SongModel(
@@ -52,6 +61,7 @@ fun SongDetailApiModel.toDomainModel(): SongModel {
         duration = this.dt,
         artists = this.artists.map { it.toDomainModel() },
         album = this.album.toDomainModel(),
-        quality = SongModel.Quality.STANDARD,
+        quality = SongModel.Quality.Standard,
+        fee = this.fee,
     )
 }

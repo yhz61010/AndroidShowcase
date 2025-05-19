@@ -1,7 +1,7 @@
 package com.leovp.module.common.http.interceptors
 
-import com.leovp.log.LogContext
-import com.leovp.log.base.AbsLog.Companion.OUTPUT_TYPE_HTTP_HEADER_COOKIE
+import com.leovp.log.base.LogOutType
+import com.leovp.module.common.log.w
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Protocol
@@ -15,7 +15,8 @@ import java.util.concurrent.TimeUnit
  * Author: Michael Leo
  * Date: 20-5-27 下午8:41
  */
-class HttpLoggingInterceptor constructor(private val logger: Logger = Logger.DEFAULT) : Interceptor {
+class HttpLoggingInterceptor(private val logger: Logger = Logger.DEFAULT) :
+    Interceptor {
     enum class Level {
         /**
          * No logs.
@@ -57,7 +58,8 @@ class HttpLoggingInterceptor constructor(private val logger: Logger = Logger.DEF
         HEADERS,
 
         /**
-         * Logs request and response lines and their respective headers and bodies (if present).
+         * Logs request and response lines
+         * and their respective headers and bodies (if present).
          *
          *
          * Example:
@@ -82,15 +84,15 @@ class HttpLoggingInterceptor constructor(private val logger: Logger = Logger.DEF
     }
 
     interface Logger {
-        fun log(message: String?, outputType: Int = -1)
+        fun log(message: String?, outputType: LogOutType = LogOutType.COMMON)
 
         companion object {
             /**
              * A [Logger] defaults output appropriate for the current platform.
              */
             val DEFAULT: Logger = object : Logger {
-                override fun log(message: String?, outputType: Int) {
-                    LogContext.log.w(TAG, message, outputType = outputType)
+                override fun log(message: String?, outputType: LogOutType) {
+                    w(TAG, outputType = outputType) { message }
                 }
             }
         }
@@ -116,30 +118,38 @@ class HttpLoggingInterceptor constructor(private val logger: Logger = Logger.DEF
         val connection = chain.connection()
         val protocol = connection?.protocol() ?: Protocol.HTTP_1_1
         var hasBoundary = false
-        logger.log("─────────────────────────────────────────────────────────────────────────────────────────────────────────────────")
+        logger.log("──────────────────────────────────────────────────────────")
         var requestStartMessage = "--> ${request.method} ${request.url} $protocol"
-        if (!logHeaders && hasRequestBody) requestStartMessage = "$requestStartMessage (${requestBody?.contentLength()}-byte body)"
+        if (!logHeaders && hasRequestBody) requestStartMessage =
+            "$requestStartMessage (${requestBody.contentLength()}-byte body)"
         logger.log(requestStartMessage)
         if (logHeaders) {
             if (hasRequestBody) {
-                // Request body headers are only present when installed as a network interceptor. Force
-                // them to be included (when available) so there values are known.
-                requestBody?.contentType()?.let {
+                // Request body headers are only present when installed as a network interceptor.
+                // Force them to be included (when available) so there values are known.
+                requestBody.contentType()?.let {
                     logger.log("Content-Type: $it")
                     if (it.toString().contains("boundary=")) {
                         hasBoundary = true
                     }
                 }
-                if ((requestBody?.contentLength() ?: -1) != -1L) {
-                    logger.log("Content-Length: ${requestBody?.contentLength()}")
+                if (requestBody.contentLength() != -1L) {
+                    logger.log("Content-Length: ${requestBody.contentLength()}")
                 }
             }
             val headers = request.headers
             for (i in 0 until headers.size) {
                 val name = headers.name(i)
                 // Skip headers from the request body as they are explicitly logged above.
-                if (!"Content-Type".equals(name, ignoreCase = true) && !"Content-Length".equals(name, ignoreCase = true)) {
-                    logger.log("$name: ${headers.value(i)}", outputType = OUTPUT_TYPE_HTTP_HEADER_COOKIE)
+                if (!"Content-Type".equals(
+                        name,
+                        ignoreCase = true
+                    ) && !"Content-Length".equals(name, ignoreCase = true)
+                ) {
+                    logger.log(
+                        "$name: ${headers.value(i)}",
+                        outputType = LogOutType.HTTP_HEADER
+                    )
                 }
             }
             if (!logBody || !hasRequestBody) {
@@ -147,48 +157,54 @@ class HttpLoggingInterceptor constructor(private val logger: Logger = Logger.DEF
             } else if (bodyEncoded(request.headers)) {
                 logger.log("--> END ${request.method} (encoded body omitted)")
             } else if (hasBoundary) {
-                logger.log("--> END ${request.method} (Found boundary ${requestBody?.contentLength()}-byte body omitted)")
+                val extraLogSize = "${requestBody.contentLength()}-byte"
+                logger.log("--> END ${request.method} (Found boundary $extraLogSize body omitted)")
             } else {
                 val buffer = Buffer()
-                requestBody?.writeTo(buffer)
+                requestBody.writeTo(buffer)
                 var charset = DEFAULT_CHARSET
-                requestBody?.contentType()?.also {
+                requestBody.contentType()?.also {
                     charset = it.charset(DEFAULT_CHARSET)!!
                 }
                 logger.log("")
+                val extraLogSize = "${requestBody.contentLength()}-byte"
                 if (isPlaintext(buffer)) {
                     val content = buffer.readString(charset)
                     logger.log(content)
-                    logger.log("--> END ${request.method} (${requestBody?.contentLength()}-byte body)")
+                    logger.log("--> END ${request.method} ($extraLogSize body)")
                 } else {
-                    logger.log("--> END ${request.method} (binary ${requestBody?.contentLength()}-byte body omitted)")
+                    logger.log("--> END ${request.method} (binary $extraLogSize body omitted)")
                 }
             }
-            logger.log("─────────────────────────────────────────────────────────────────────────────────────────────────────────────────")
+            logger.log("──────────────────────────────────────────────────────────")
         }
         val startNs = System.nanoTime()
         val response: Response = try {
             chain.proceed(request)
         } catch (e: Exception) {
-            logger.log("─────────────────────────────────────────────────────────────────────────────────────────────────────────────────")
+            logger.log("──────────────────────────────────────────────────────────")
             logger.log("<-- HTTP FAILED: $e")
-            logger.log("─────────────────────────────────────────────────────────────────────────────────────────────────────────────────")
+            logger.log("──────────────────────────────────────────────────────────")
             throw e
         }
         val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
-        logger.log("─────────────────────────────────────────────────────────────────────────────────────────────────────────────────")
+        logger.log("──────────────────────────────────────────────────────────")
         val responseBody = response.body
         val contentLength = responseBody?.contentLength() ?: -1
         val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
+        val logRespPart = "${response.code} ${response.message} ${response.request.url}"
         logger.log(
-            "<-- ${response.code} ${response.message} ${response.request.url} (${tookMs}ms${if (!logHeaders) " , $bodySize body" else ""})"
+            "<-- $logRespPart (${tookMs}ms${if (!logHeaders) " , $bodySize body" else ""})"
         )
         if (logHeaders) {
             val headers = response.headers
             var hasInlineFile = false
             var hasAttachment = false
             for (i in 0 until headers.size) {
-                logger.log("${headers.name(i)}: ${headers.value(i)}", outputType = OUTPUT_TYPE_HTTP_HEADER_COOKIE)
+                logger.log(
+                    "${headers.name(i)}: ${headers.value(i)}",
+                    outputType = LogOutType.HTTP_HEADER
+                )
                 if ("Content-Disposition".contentEquals(headers.name(i), ignoreCase = true)) {
                     if (headers.value(i).startsWith("inline; filename")) {
                         hasInlineFile = true
@@ -221,7 +237,7 @@ class HttpLoggingInterceptor constructor(private val logger: Logger = Logger.DEF
                 logger.log("<-- END HTTP (${buffer?.size}-byte body)")
             }
         }
-        logger.log("─────────────────────────────────────────────────────────────────────────────────────────────────────────────────")
+        logger.log("──────────────────────────────────────────────────────────")
         return response
     }
 
@@ -235,8 +251,9 @@ class HttpLoggingInterceptor constructor(private val logger: Logger = Logger.DEF
         private const val TAG = "HTTP"
 
         /**
-         * Returns true if the body in question probably contains human readable text. Uses a small sample
-         * of code points to detect unicode control characters commonly used in binary file signatures.
+         * Returns true if the body in question probably contains human readable text.
+         * Uses a small sample of code points to detect unicode control characters commonly
+         * used in binary file signatures.
          */
         fun isPlaintext(buffer: Buffer): Boolean {
             return runCatching {
@@ -244,7 +261,7 @@ class HttpLoggingInterceptor constructor(private val logger: Logger = Logger.DEF
                 val byteCount = if (buffer.size < 64) buffer.size else 64
                 buffer.copyTo(prefix, 0, byteCount)
                 for (i in 0..15) {
-                    if (prefix.exhausted()) {
+                    if (prefix.exhausted() || i >= prefix.size) {
                         break
                     }
                     val codePoint = prefix.readUtf8CodePoint()

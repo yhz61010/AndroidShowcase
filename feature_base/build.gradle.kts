@@ -1,3 +1,4 @@
+
 import com.android.build.api.dsl.LibraryDefaultConfig
 import java.util.Locale
 
@@ -68,7 +69,9 @@ android {
 }
 
 composeCompiler {
-    enableStrongSkippingMode = true
+    // deprecated
+    // enableStrongSkippingMode = true
+    // featureFlags.addAll(ComposeFeatureFlag.StrongSkipping, ComposeFeatureFlag.OptimizeNonSkippingGroups)
     includeSourceInformation = true
 }
 

@@ -7,6 +7,7 @@ apply(from = "../jacoco.gradle.kts")
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     // Apply the `compose.compiler` plugin to every module that uses Jetpack Compose.
     alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.hilt)
@@ -19,6 +20,14 @@ plugins {
     alias(libs.plugins.sonarqube)
     jacoco
 }
+
+// val jvmTargetVersion by extra {
+//     org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(libs.versions.jvmVersion.get())
+// }
+
+// val kotlinApi by extra {
+//     org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.api.get())
+// }
 
 android {
     val appName = "LeoAndroidShowcase"
@@ -42,7 +51,7 @@ android {
         ndk {
             // abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
             @android.annotation.SuppressLint("ChromeOsAbiSupport")
-            abiFilters += setOf("arm64-v8a")
+            abiFilters += setOf("armeabi-v7a")
         }
 
         // https://github.com/mannodermaus/android-junit5
@@ -176,6 +185,15 @@ android {
     }
 }
 
+// This configuration will override the global setting which is configured in root build.gradle.kts.
+// https://kotlinlang.org/docs/gradle-compiler-options.html#target-the-jvm
+// tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+//     compilerOptions {
+//         // apiVersion.set(kotlinApi)
+//         jvmTarget.set(jvmTargetVersion)
+//     }
+// }
+
 /** Note that, the composeCompiler is outside the android node. */
 // composeCompiler {
 //     enableStrongSkippingMode = true
@@ -185,7 +203,9 @@ android {
 // }
 
 composeCompiler {
-    enableStrongSkippingMode = true
+    // deprecated
+    // enableStrongSkippingMode = true
+    // featureFlags.addAll(ComposeFeatureFlag.StrongSkipping, ComposeFeatureFlag.OptimizeNonSkippingGroups)
     includeSourceInformation = true
 }
 

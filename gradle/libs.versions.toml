@@ -21,28 +21,34 @@
 #===== Project =====
 #===================
 # @keep
-compile-sdk = "34"
+compile-sdk = "36"
 # @keep
-min-sdk = "26"
+min-sdk = "25"
 # @keep
-target-sdk = "34"
+target-sdk = "36"
 # @keep
-ndk-sdk = "25.2.9519653"
+# ndk-sdk = "25.2.9519653"
 
 # @keep
-versionName = "1.0.3"
+versionName = "1.0.5"
 # @keep
-versionCode = "103"
+versionCode = "105"
 
 # @keep
-leo-version = "5.12.40"
+leo-version = "5.12.49"
 
 #===================
 #===== Compile =====
 #===================
-agp = "8.8.0-alpha01"
-kotlin = "2.0.0"
-ksp = "2.0.0-1.0.21"
+agp = "8.10.0"
+kotlin = "2.1.21"
+ksp = "2.1.21-2.0.1"
+kotlin-language = "2.1"
+kotlin-api = "2.1"
+
+javaVersion = "17"
+jvmVersion = "17"
+
 # Compose Compiler & Kotlin versions
 # https://androidx.dev/storage/compose-compiler/repository
 # https://developer.android.com/jetpack/androidx/releases/compose-kotlin?hl=zh-cn
@@ -50,66 +56,66 @@ ksp = "2.0.0-1.0.21"
 #=================================
 #===== Android dependencies ======
 #=================================
-compose-bom = "2024.09.00"
-compose-activity = "1.9.2"
-compose-navigation = "2.8.0"
+compose-bom = "2025.05.00"
+compose-activity = "1.10.1"
+compose-navigation = "2.9.0"
 #compose-constraintlayout= "1.0.1"
 
-hilt = "2.51.1"
+hilt = "2.56"
 hilt-navigation-compose = "1.2.0"
-core-ktx = "1.13.1"
-lifecycle = "2.8.5" # https://stackoverflow.com/a/78490417/6091500
+core-ktx = "1.16.0"
+lifecycle = "2.9.0" # https://stackoverflow.com/a/78490417/6091500
 multidex = "2.0.1"
-coroutines = "1.8.1"
-annotation = "1.8.2"
+coroutines = "1.10.1"
+#annotation = "1.9.0"
 
 #=======================
 #===== Third party =====
 #=======================
 mars-xlog = "1.2.6"
 karn-notify = "1.4.0"
-xx-permissions = "18.63"
-net = "3.6.4"
-coil = "2.6.0"
+#xx-permissions = "18.63"
+net = "3.7.0"
+coil = "2.7.0"
 square-okhttp = "4.12.0"
-serialization-json = "1.6.3"
+serialization-json = "1.8.0"
 colorful-slider = "1.2.2"
 #lottie-compose = "6.1.0"
 
 #=======================
-#===== Helper =====
+#======= Helper ========
 #=======================
-detekt = "1.23.6"
-dokka = "1.7.10"
+detekt = "1.23.8"
+#dokka = "1.7.10"
 ktlint = "0.51.0-FINAL"
-ktlint-gradle = "12.1.1"
+ktlint-gradle = "12.1.2"
 benmanes = "0.51.0"
 jacoco = "0.8.9"
 # Ensure the SonarQube is compatible with the server version.
-sonarqube = "5.0.0.4638" # 4.2.0.3129
+sonarqube = "6.0.1.5171" # 4.2.0.3129
 
 #================
 #===== Test =====
 #================
-compose-runtime-tracing = "1.0.0-beta01"
-tracing-perfetto = "1.0.0"
-jupiter = "5.10.2" # JUnit 5
-androidx-test = "1.6.1"
+compose-runtime-tracing = "1.8.1"
+#tracing-perfetto = "1.0.0"
+jupiter = "5.12.1" # JUnit 5
+#androidx-test = "1.6.1"
 androidx-test-ext = "1.2.1"
-androidx-test-runner = "1.6.2"
-androidx-test-monitor = "1.7.2"
-androidx-test-uiautomator = "2.3.0"
+#androidx-test-runner = "1.6.2"
+#androidx-test-monitor = "1.7.2"
+#androidx-test-uiautomator = "2.3.0"
 espresso-core = "3.6.1"
-kluent = "1.73"
-mockk = "1.13.11"
-arch = "2.2.0"
-powermock-version = "2.0.9"
-robolectric-version = "4.12.2"
-mannodermaus-android-junit5 = "1.10.0.0"
-mannodermaus-junit5 = "1.4.0"
-junit = "4.13.2"
-appcompat = "1.7.0"
-material = "1.12.0"
+#kluent = "1.73"
+#mockk = "1.13.11"
+#arch = "2.2.0"
+#powermock-version = "2.0.9"
+#robolectric-version = "4.12.2"
+mannodermaus-android-junit5 = "1.12.0.0"
+mannodermaus-junit5 = "1.7.0"
+#junit = "4.13.2"
+#appcompat = "1.7.0"
+#material = "1.12.0"
 
 #===================#===================#===================#===================
 #===================#===================#===================#===================
@@ -120,13 +126,14 @@ material = "1.12.0"
 #===== Android =====
 #===================
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
-androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
+#ksp-symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+#lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+#androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 
 #=========================
 #===== Leo Libraries =====
@@ -157,7 +164,7 @@ androidx-compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-compose-materialWindow = { module = "androidx.compose.material3:material3-window-size-class" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
-androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+#androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 
@@ -172,7 +179,7 @@ androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4
 #===== Third party =====
 #=======================
 mars-xlog = { module = "com.tencent.mars:mars-xlog", version.ref = "mars-xlog" }
-xx-permissions = { module = "com.github.getActivity:XXPermissions", version.ref = "xx-permissions" }
+#xx-permissions = { module = "com.github.getActivity:XXPermissions", version.ref = "xx-permissions" }
 karn-notify = { module = "io.karn:notify", version.ref = "karn-notify" }
 net = { module = "com.github.liangjingkanji:Net", version.ref = "net" }
 #coil = { module = "io.coil-kt:coil", version.ref = "coil" }
@@ -186,9 +193,9 @@ colorful-slider = { module = "com.github.SmartToolFactory:Compose-Colorful-Slide
 #=======================
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 # https://github.com/Kotlin/dokka
-dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
-dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.ref = "dokka" }
-jacoco = { module = "org.jacoco:org.jacoco.core", version.ref = "jacoco" }
+#dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+#dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.ref = "dokka" }
+#jacoco = { module = "org.jacoco:org.jacoco.core", version.ref = "jacoco" }
 
 #================
 #===== Test =====
@@ -198,40 +205,40 @@ compose-runtime-tracing = { module = "androidx.compose.runtime:runtime-tracing",
 # testImplementation
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter" }
 # testRuntimeOnly
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jupiter" }
+#junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jupiter" }
 # (Optional) If you need "Parameterized Tests"
 # testImplementation
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
 # testRuntimeOnly
-junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "jupiter" }
-kotlin-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+#junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "jupiter" }
+#kotlin-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-core" }
-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso-core" }
-espresso-web = { module = "androidx.test.espresso:espresso-web", version.ref = "espresso-core" }
-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espresso-core" }
-androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test" }
-androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test" }
-androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
-androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
+#espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso-core" }
+#espresso-web = { module = "androidx.test.espresso:espresso-web", version.ref = "espresso-core" }
+#espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espresso-core" }
+#androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test" }
+#androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test" }
+#androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
+#androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext" }
-androidx-test-ext-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-ext" }
-androidx-test-monitor = { module = "androidx.test:monitor", version.ref = "androidx-test-monitor" }
-androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androidx-test-uiautomator" }
-test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-kluent-android = { module = "org.amshove.kluent:kluent-android", version.ref = "kluent" }
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-arch = { module = "androidx.arch.core:core-testing", version.ref = "arch" }
-powermock-junit4 = { module = "org.powermock:powermock-module-junit4", version.ref = "powermock-version" }
-powermock-core = { module = "org.powermock:powermock-core", version.ref = "powermock-version" }
-powermock-api = { module = "org.powermock:powermock-api-mockito2", version.ref = "powermock-version" }
-robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric-version" }
+#androidx-test-ext-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-ext" }
+#androidx-test-monitor = { module = "androidx.test:monitor", version.ref = "androidx-test-monitor" }
+#androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androidx-test-uiautomator" }
+#test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+#kluent-android = { module = "org.amshove.kluent:kluent-android", version.ref = "kluent" }
+#mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+#arch = { module = "androidx.arch.core:core-testing", version.ref = "arch" }
+#powermock-junit4 = { module = "org.powermock:powermock-module-junit4", version.ref = "powermock-version" }
+#powermock-core = { module = "org.powermock:powermock-core", version.ref = "powermock-version" }
+#powermock-api = { module = "org.powermock:powermock-api-mockito2", version.ref = "powermock-version" }
+#robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric-version" }
 # androidTestImplementation
 mannodermaus-junit5-core = { module = "de.mannodermaus.junit5:android-test-core", version.ref = "mannodermaus-junit5" }
 # androidTestRuntimeOnly
 mannodermaus-junit5-runner = { module = "de.mannodermaus.junit5:android-test-runner", version.ref = "mannodermaus-junit5" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+#junit = { group = "junit", name = "junit", version.ref = "junit" }
+#appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+#material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 #===================#===================#===================#===================
 #===================#===================#===================#===================
@@ -276,27 +283,29 @@ android-test = [
     #    "espresso-web",
     #    "espresso-intents"
 ]
-test-runtime-only = ["junit-jupiter-engine", "junit-vintage-engine"]
-powermock = [
-    "powermock-junit4",
-    "powermock-core",
-    "powermock-api"
-]
+#test-runtime-only = ["junit-jupiter-engine", "junit-vintage-engine"]
+#powermock = [
+#    "powermock-junit4",
+#    "powermock-core",
+#    "powermock-api"
+#]
 
 #===================#===================#===================#===================
 #===================#===================#===================#===================
 #===================#===================#===================#===================
 
 [plugins]
+# Equivalent agp - com.android.tools.build:gradle
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
+# Equivalent kgp - org.jetbrains.kotlin:kotlin-gradle-plugin
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 # https://developer.android.com/develop/ui/compose/compiler?hl=zh-cn
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint-gradle = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }

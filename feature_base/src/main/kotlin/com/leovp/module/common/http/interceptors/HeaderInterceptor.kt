@@ -1,7 +1,7 @@
 package com.leovp.module.common.http.interceptors
 
-import com.leovp.log.LogContext
-import com.leovp.log.base.AbsLog.Companion.OUTPUT_TYPE_HTTP_HEADER_COOKIE
+import com.leovp.log.base.LogOutType
+import com.leovp.module.common.log.d
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -14,10 +14,9 @@ class HeaderInterceptor(private val headerMap: Map<String, String>? = null) : In
         val request = headerMap?.let { headers ->
             val builder = it.newBuilder()
             for ((k, v) in headers) {
-                LogContext.log.d(
-                    "Assign cookie: $k=$v",
-                    outputType = OUTPUT_TYPE_HTTP_HEADER_COOKIE
-                )
+                d(tag = "Interceptor", outputType = LogOutType.HTTP_HEADER) {
+                    "Assign cookie: $k=$v"
+                }
                 builder.addHeader(k, v)
             }
             builder.build()
