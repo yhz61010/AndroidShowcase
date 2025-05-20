@@ -1,4 +1,3 @@
-import java.io.ByteArrayOutputStream
 import java.util.Properties
 
 // https://developer.android.com/studio/build?hl=zh-cn#module-level
@@ -210,19 +209,16 @@ composeCompiler {
 }
 
 // 获取当前分支的提交总次数
-fun gitCommitCount(): Int {
+fun gitCommitCount(): String {
 //    val cmd = 'git rev-list HEAD --first-parent --count'
     val cmd = "git rev-list HEAD --count"
 
-    val stdout = ByteArrayOutputStream()
-    runCatching {
-        exec {
+    return runCatching {
+        // You must trim() the result. Because the result of command has a suffix '\n'.
+        providers.exec {
             commandLine = cmd.trim().split(' ')
-            standardOutput = stdout
-        }
-    }.getOrDefault(0)
-    // You must trim() the result. Because the result of command has a suffix '\n'.
-    return runCatching { stdout.toString().trim().toInt() }.getOrDefault(0)
+        }.standardOutput.asText.get().trim()
+    }.getOrDefault("NA")
 }
 
 // 使用commit的哈希值作为版本号也是可以的，获取最新的一次提交的哈希值的前七个字符
@@ -241,30 +237,25 @@ fun gitCommitCount(): Int {
  */
 fun gitVersionTag(): String {
     // https://stackoverflow.com/a/4916591/1685062
-    // val cmd = "git describe --tags"
+//    val cmd = "git describe --tags"
     val cmd = "git describe --always"
 
-    val stdout = ByteArrayOutputStream()
-    runCatching {
-        exec {
+    val versionTag = runCatching {
+        // You must trim() the result. Because the result of command has a suffix '\n'.
+        providers.exec {
             commandLine = cmd.trim().split(' ')
-            standardOutput = stdout
-        }
+        }.standardOutput.asText.get().trim()
     }.getOrDefault("NA")
 
-    return runCatching {
-        val versionTag = stdout.toString().trim()
+    val regex = "-(\\d+)-g".toRegex()
+    val matcher: MatchResult? = regex.matchEntire(versionTag)
 
-        val regex = "-(\\d+)-g".toRegex()
-        val matcher: MatchResult? = regex.matchEntire(versionTag)
-
-        val matcherGroup0: MatchGroup? = matcher?.groups?.get(0)
-        if (matcher?.value?.isNotBlank() == true && matcherGroup0?.value?.isNotBlank() == true) {
-            versionTag.substring(0, matcherGroup0.range.first) + "." + matcherGroup0.value
-        } else {
-            versionTag
-        }
-    }.getOrDefault("NA")
+    val matcherGroup0: MatchGroup? = matcher?.groups?.get(0)
+    return if (matcher?.value?.isNotBlank() == true && matcherGroup0?.value?.isNotBlank() == true) {
+        versionTag.substring(0, matcherGroup0.range.first) + "." + matcherGroup0.value
+    } else {
+        versionTag
+    }
 }
 
 fun Project.getSignProperty(key: String, path: String = "config/sign/keystore.properties"): String {
