@@ -24,14 +24,14 @@ val javaVersion: JavaVersion by extra {
 val jvmTargetVersion by extra {
     org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(libs.versions.jvmVersion.get())
 }
-val kotlinApiVersion by extra {
-    // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
-    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.api.get())
-}
-val kotlinLanguageVersion by extra {
-    // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
-    org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.language.get())
-}
+// val kotlinApiVersion by extra {
+//     // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
+//     org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.api.get())
+// }
+// val kotlinLanguageVersion by extra {
+//     // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
+//     org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(libs.versions.kotlin.language.get())
+// }
 
 /**
  * resourcePrefix 的校验规则：
@@ -385,7 +385,7 @@ tasks.withType<Detekt>().configureEach {
  * Note that this task is intended to run locally (not on CI), because on CI we prefer to have parallel execution
  * and separate reports for each of the checks (multiple statuses eg. on github PR page).
  */
-task("staticCheck") {
+tasks.register("staticCheck", fun Task.() {
     group = "verification"
 
     afterEvaluate {
@@ -407,7 +407,7 @@ task("staticCheck") {
         // By defining Gradle dependency all dependent tasks will run before this "empty" task
         dependsOn(taskDependencies)
     }
-}
+})
 
 // https://github.com/ben-manes/gradle-versions-plugin
 tasks.withType<DependencyUpdatesTask> {
