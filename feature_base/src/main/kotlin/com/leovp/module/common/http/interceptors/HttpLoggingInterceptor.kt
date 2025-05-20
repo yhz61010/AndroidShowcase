@@ -270,7 +270,7 @@ class HttpLoggingInterceptor(private val logger: Logger = Logger.DEFAULT) :
                     }
                 }
                 true
-            }.getOrDefault(false /* Truncated UTF-8 sequence. */)
+            }.getOrDefault(false) // Truncated UTF-8 sequence.
         }
     }
 }

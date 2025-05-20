@@ -26,8 +26,9 @@ class GsonConverter : NetConverter {
             val code = response.code
             when {
                 code in 200..299 -> {
-                    val bodyString = response.body?.string() ?: return null
-                    return gson.fromJson<R>(bodyString, succeed)
+                    return response.body?.string()?.let { bodyString ->
+                       gson.fromJson<R>(bodyString, succeed)
+                    }
                 }
 
                 code in 400..499 -> throw RequestParamsException(response, code.toString())

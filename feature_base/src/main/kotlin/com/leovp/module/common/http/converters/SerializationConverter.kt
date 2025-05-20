@@ -38,8 +38,6 @@ class SerializationConverter : NetConverter {
             }
             when {
                 code in 200..299 -> {
-                    val bodyString = response.body?.string() ?: return null
-
                     // multiCatch(
                     //     runBlock = {
                     //         // Business error.
@@ -52,10 +50,12 @@ class SerializationConverter : NetConverter {
                     //     )
                     // )
 
-                    val kType = response.request.kType ?: throw ConvertException(
-                        response, "Request does not contain KType"
-                    )
-                    return bodyString.parseBody<R>(kType)
+                    return response.body?.string()?.let { bodyString ->
+                        val kType = response.request.kType ?: throw ConvertException(
+                            response, "Request does not contain KType"
+                        )
+                        bodyString.parseBody<R>(kType)
+                    }
                 }
 
                 code in 400..499 -> throw RequestParamsException(response, code.toString(), e)
