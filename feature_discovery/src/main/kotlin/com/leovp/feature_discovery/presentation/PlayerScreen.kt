@@ -610,7 +610,7 @@ fun PlayerScreenContent(
                     viewModel.onDownloadClick()
                 },
                 onInfoClick = {
-                    ctx.toast("You click on Mirror.")
+                    ctx.toast("You click on Information.")
                     viewModel.onInfoClick()
                 }
             ) // End of ExtraControllerItem
