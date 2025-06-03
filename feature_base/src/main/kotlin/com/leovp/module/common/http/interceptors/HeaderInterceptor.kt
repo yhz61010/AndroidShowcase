@@ -1,5 +1,6 @@
 package com.leovp.module.common.http.interceptors
 
+import android.R.id.message
 import com.leovp.log.base.LogOutType
 import com.leovp.module.common.log.d
 import okhttp3.Interceptor
@@ -14,8 +15,10 @@ class HeaderInterceptor(private val headerMap: Map<String, String>? = null) : In
         val request = headerMap?.let { headers ->
             val builder = it.newBuilder()
             for ((k, v) in headers) {
-                d(tag = "Interceptor", outputType = LogOutType.HTTP_HEADER) {
-                    "Assign cookie: $k=$v"
+                d {
+                    tag = "Interceptor"
+                    outputType = LogOutType.HTTP_HEADER
+                    block = { "Assign cookie: $k=$v" }
                 }
                 builder.addHeader(k, v)
             }

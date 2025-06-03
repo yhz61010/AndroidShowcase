@@ -5,7 +5,7 @@ import com.drake.net.exception.ConvertException
 import com.drake.net.exception.RequestParamsException
 import com.drake.net.exception.ServerResponseException
 import com.drake.net.request.kType
-import com.leovp.module.common.log.e
+import com.leovp.log.base.e
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer

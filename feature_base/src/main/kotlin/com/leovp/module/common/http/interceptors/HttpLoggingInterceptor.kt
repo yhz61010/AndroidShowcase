@@ -1,7 +1,7 @@
 package com.leovp.module.common.http.interceptors
 
 import com.leovp.log.base.LogOutType
-import com.leovp.module.common.log.w
+import com.leovp.log.base.w
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Protocol
@@ -92,7 +92,11 @@ class HttpLoggingInterceptor(private val logger: Logger = Logger.DEFAULT) :
              */
             val DEFAULT: Logger = object : Logger {
                 override fun log(message: String?, outputType: LogOutType) {
-                    w(TAG, outputType = outputType) { message }
+                    w {
+                        tag = TAG
+                        this.outputType = outputType
+                        this.message = message
+                    }
                 }
             }
         }

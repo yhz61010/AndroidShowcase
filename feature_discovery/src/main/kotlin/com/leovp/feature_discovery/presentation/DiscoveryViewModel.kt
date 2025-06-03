@@ -7,9 +7,9 @@ import com.leovp.feature_discovery.domain.model.PlaylistModel
 import com.leovp.feature_discovery.domain.model.PrivateContentModel
 import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.usecase.GetDiscoveryListUseCase
+import com.leovp.log.base.i
 import com.leovp.module.common.exceptionOrNull
 import com.leovp.module.common.getOrDefault
-import com.leovp.module.common.log.i
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

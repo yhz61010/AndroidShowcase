@@ -27,8 +27,8 @@ import com.leovp.feature_discovery.presentation.PlayerScreen
 import com.leovp.feature_discovery.presentation.PlayerViewModel
 import com.leovp.feature_discovery.presentation.SearchScreen
 import com.leovp.feature_main_drawer.membercenter.presentation.MemberCenterScreen
+import com.leovp.log.base.i
 import com.leovp.module.common.log.d
-import com.leovp.module.common.log.i
 import com.leovp.ui.theme.ImmersiveTheme
 import com.leovp.ui.theme.immersive_sys_ui
 import java.net.URLEncoder

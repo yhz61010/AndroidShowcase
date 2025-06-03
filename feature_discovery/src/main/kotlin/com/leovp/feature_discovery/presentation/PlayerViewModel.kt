@@ -6,14 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.usecase.PlayerUseCase
 import com.leovp.json.toJsonString
+import com.leovp.log.base.e
+import com.leovp.log.base.i
+import com.leovp.log.base.w
 import com.leovp.module.common.Result
 import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.exceptionOrNull
 import com.leovp.module.common.fold
 import com.leovp.module.common.getOrNull
 import com.leovp.module.common.log.d
-import com.leovp.module.common.log.i
-import com.leovp.module.common.log.w
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -108,11 +109,11 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
                         }
                     } else {
                         ex = ApiException(code = -2, message = songAvailModel.message)
-                        w(TAG, ex) { "Song check business error.  msg=${ex?.message}" }
+                        e(TAG, ex) { "Song check business error.  msg=${ex?.message}" }
                     }
                 },
                 onFailure = { e ->
-                    w(TAG, e) { "Song check error.  msg=${e.message}" }
+                    e(TAG, e) { "Song check error.  msg=${e.message}" }
                     ex = e
                 }
             )
@@ -122,7 +123,7 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
                     ?: songRedCountResult?.exceptionOrNull()
 
             if (ex != null) {
-                d(TAG, throwable = ex) { "Exception while getData()" }
+                e(TAG, throwable = ex) { "Exception while getData()" }
             }
 
             loading = false

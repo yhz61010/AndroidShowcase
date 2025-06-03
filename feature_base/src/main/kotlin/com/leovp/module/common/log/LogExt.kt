@@ -3,7 +3,7 @@
 package com.leovp.module.common.log
 
 import com.leovp.log.LogContext
-import com.leovp.log.base.LogOutType
+import com.leovp.log.base.LogConfig4Debug
 import com.leovp.module.common.GlobalConst
 
 /**
@@ -11,72 +11,26 @@ import com.leovp.module.common.GlobalConst
  * Date: 2023/9/19 16:08
  */
 
-inline fun d(
-    tag: String = "",
-    throwable: Throwable? = null,
-    fullOutput: Boolean = false,
-    outputType: LogOutType = LogOutType.COMMON,
-    generateMsg: () -> Any?
-) {
+inline fun d(crossinline config: LogConfig4Debug.() -> Unit) {
+    val logConfig = LogConfig4Debug().apply(config)
     @Suppress("SENSELESS_COMPARISON")
     if (GlobalConst.DEBUG) {
-        val ret = generateMsg()
+        val ret = logConfig.block()
         if (ret is String?) {
             LogContext.log.d(
-                tag = tag,
+                tag = logConfig.tag,
                 message = ret,
-                fullOutput = fullOutput,
-                throwable = throwable,
-                outputType = outputType
+                fullOutput = logConfig.fullOutput,
+                throwable = logConfig.throwable,
+                outputType = logConfig.outputType
             )
         }
     }
 }
 
-inline fun i(
-    tag: String = "",
-    throwable: Throwable? = null,
-    fullOutput: Boolean = false,
-    outputType: LogOutType = LogOutType.COMMON,
-    generateMsg: () -> String?
-) {
-    LogContext.log.i(
-        tag = tag,
-        message = generateMsg(),
-        fullOutput = fullOutput,
-        throwable = throwable,
-        outputType = outputType
-    )
-}
-
-inline fun w(
-    tag: String = "",
-    throwable: Throwable? = null,
-    fullOutput: Boolean = false,
-    outputType: LogOutType = LogOutType.COMMON,
-    generateMsg: () -> String?
-) {
-    LogContext.log.w(
-        tag = tag,
-        message = generateMsg(),
-        fullOutput = fullOutput,
-        throwable = throwable,
-        outputType = outputType
-    )
-}
-
-inline fun e(
-    tag: String = "",
-    throwable: Throwable? = null,
-    fullOutput: Boolean = false,
-    outputType: LogOutType = LogOutType.COMMON,
-    generateMsg: () -> String?
-) {
-    LogContext.log.e(
-        tag = tag,
-        message = generateMsg(),
-        fullOutput = fullOutput,
-        throwable = throwable,
-        outputType = outputType
-    )
+inline fun d(tag: String, crossinline block: () -> Any?) {
+    d {
+        this.tag = tag
+        this.block = { block() }
+    }
 }

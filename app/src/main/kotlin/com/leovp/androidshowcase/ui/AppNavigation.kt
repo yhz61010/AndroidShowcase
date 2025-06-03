@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
+import com.leovp.log.base.i
 import com.leovp.module.common.log.d
-import com.leovp.module.common.log.i
 
 /**
  * Author: Michael Leo
@@ -45,7 +45,7 @@ class AppNavigationActions(private val navController: NavHostController) {
 
     fun navigate(route: String, arguments: String? = null) {
         i(TAG) { "-> navigate to: $route" }
-        d { outputGraphInfo(route, navController) }
+        d { block = { outputGraphInfo(route, navController) } }
         return when (route) {
             Screen.Main.route -> navController.navigateToMain()
 

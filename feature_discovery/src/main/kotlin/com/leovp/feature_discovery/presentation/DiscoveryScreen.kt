@@ -75,9 +75,10 @@ import com.leovp.feature_discovery.ui.theme.mark_vip_text_color
 import com.leovp.feature_discovery.ui.theme.place_holder2_bg_color
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.feature_discovery.ui.theme.place_holder_err_bg_color
+import com.leovp.log.base.e
+import com.leovp.log.base.i
 import com.leovp.module.common.exception.ApiException
 import com.leovp.module.common.log.d
-import com.leovp.module.common.log.i
 import com.leovp.module.common.presentation.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.module.common.presentation.compose.composable.pager.HorizontalAutoPager
 import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
@@ -118,7 +119,7 @@ fun DiscoveryScreen(
         val apiException = it as ApiException
         val code = apiException.code
         val message = apiException.message
-        d(TAG, throwable = it.cause) { "DiscoveryScreen -> ApiException" }
+        e(TAG, throwable = it.cause) { "DiscoveryScreen -> ApiException" }
         ctx.toast(
             "${ctx.getString(com.leovp.module.common.R.string.cmn_load_failed)}\n$code: $message",
             error = true, longDuration = true
