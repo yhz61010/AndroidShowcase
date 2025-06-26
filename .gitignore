@@ -1,16 +1,18 @@
 *.iml
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/.idea/deploymentTargetSelector.xml
-/.idea/deploymentTargetDropDown.xml
-/.idea/inspectionProfiles/
-/.idea/runConfigurations.xml
+# ---------------
+# Ignore all .idea files...
+.idea/
+
+# ...except for those useful for team-shared project setup
+!.idea/codeStyles/
+!.idea/misc.xml
+!.idea/modules.xml
+!.idea/vcs.xml
+!.idea/runConfigurations/
+# ---------------
+
 .DS_Store
 /build
 /captures
@@ -20,7 +22,3 @@ local.properties
 /app/dev/
 /app/prod/
 /.kotlin/
-/.idea/shelf/
-/.idea/AndroidProjectSystem.xml
-/.idea/misc.xml
-/.idea/appInsightsSettings.xml
