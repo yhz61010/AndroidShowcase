@@ -34,6 +34,8 @@ sealed interface Result<out R> {
     }
 }
 
+fun <R, T : R> Result<T>.get(): R = (this as Result.Success<T>).data
+
 fun <R, T : R> Result<T>.getOrDefault(defaultValue: T): R = when {
     isFailure -> defaultValue
     else -> (this as Result.Success<T>).data
