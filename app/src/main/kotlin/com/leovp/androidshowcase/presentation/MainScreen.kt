@@ -1,5 +1,6 @@
 package com.leovp.androidshowcase.presentation
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -39,7 +40,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,12 +76,11 @@ import com.leovp.androidshowcase.ui.Screen
 import com.leovp.androidshowcase.ui.rememberNavigationActions
 import com.leovp.compose.composable.SearchBar
 import com.leovp.compose.composable.defaultLinearGradient
-import com.leovp.compose.composable.loading.RippleAnimation
+import com.leovp.compose.composable.loading.ProgressIndicator
 import com.leovp.compose.composable.rememberSizeAwareDrawerState
 import com.leovp.compose.utils.previewInitLog
-import com.leovp.feature.base.utils.toCounterBadgeText
+import com.leovp.compose.utils.toCounterBadgeText
 import com.leovp.feature_community.presentation.CommunityScreen
-import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
 import com.leovp.feature_discovery.testdata.PreviewDiscoveryModule
@@ -95,7 +94,6 @@ import com.leovp.ui.theme.discovery_top_section_end_color
 import com.leovp.ui.theme.discovery_top_section_middle2_color
 import com.leovp.ui.theme.discovery_top_section_middle3_color
 import com.leovp.ui.theme.discovery_top_section_start_color
-import com.leovp.ui.theme.md_theme_dark_primary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -115,7 +113,6 @@ fun MainScreen(
     navigationActions: AppNavigationActions,
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = hiltViewModel<MainViewModel>(),
-    discoveryViewModel: DiscoveryViewModel = hiltViewModel<DiscoveryViewModel>()
 ) {
     d(TAG) { "=> Enter MainScreen <=" }
     val context = LocalContext.current
@@ -144,19 +141,25 @@ fun MainScreen(
         // Only enable opening the drawer via gestures if the screen is not expanded
         gesturesEnabled = !isExpandedScreen,
     ) {
-        Box(contentAlignment = Alignment.TopEnd) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
             val mainUiState by mainViewModel.uiStateFlow.collectAsStateWithLifecycle()
             var unreadList: List<UnreadModel>
             mainUiState.let {
-                when(it) {
+                when (it) {
                     is MainViewModel.UiState.Content -> unreadList = it.unreadList
                     MainViewModel.UiState.Loading -> {
-                        RippleAnimation(circleColor = md_theme_dark_primary)
+                        ProgressIndicator(
+                            bgColor = MaterialTheme.colorScheme.background,
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.primaryContainer,
+                        )
                         return@Box
                     }
                 }
             }
-            val discoveryUiState by mainViewModel.uiStateFlow.collectAsStateWithLifecycle()
             Scaffold(modifier = modifier, topBar = {
                 HomeTopAppBar(
                     modifier = modifier,
@@ -178,23 +181,13 @@ fun MainScreen(
             }) { contentPadding ->
                 val newModifier = modifier.padding(contentPadding)
                 MainScreenContent(
-                    modifier = newModifier,
-                    onDiscoveryRefresh = {
-                        discoveryViewModel.onEnter()
-                        mainViewModel.onEnter()
-                    },
+                    navigationActions = navigationActions,
                     pagerState = pagerState,
                     pagerScreenValues = pagerScreenValues,
-                    discoveryViewModel = discoveryViewModel,
-                    onPersonalItemClick = { data ->
-                        val artist = URLEncoder.encode(data.getDefaultArtistName(), "UTF-8")
-                        val track = URLEncoder.encode(data.name, "UTF-8")
-                        i(TAG) { "Click [Personal Item] artist=$artist  track=$track" }
-                        navigationActions.navigate(
-                            Screen.PlayerScreen.routeName,
-                            "${data.id}/$artist/$track",
-                        )
+                    onMainRefresh = {
+                        mainViewModel.onEnter()
                     },
+                    modifier = newModifier,
                 )
             } // end of Scaffold
 
@@ -303,13 +296,12 @@ private fun TabIcon(screen: Screen) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreenContent(
-    modifier: Modifier = Modifier,
+    navigationActions: AppNavigationActions,
     pagerState: PagerState,
-    listState: LazyListState = rememberLazyListState(),
     pagerScreenValues: Array<AppBottomNavigationItems>,
-    discoveryViewModel: DiscoveryViewModel,
-    onDiscoveryRefresh: () -> Unit,
-    onPersonalItemClick: (TopSongModel) -> Unit
+    onMainRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState()
 ) {
     d(TAG) { "=> Enter MainScreenContent <=" }
     HorizontalPager(
@@ -320,9 +312,16 @@ fun MainScreenContent(
         when (pagerScreenValues[page]) {
             AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(
                 listState = listState,
-                discoveryViewModel = discoveryViewModel,
-                onRefresh = onDiscoveryRefresh,
-                onPersonalItemClick = onPersonalItemClick
+                onRefresh = onMainRefresh,
+                onPersonalItemClick = { data ->
+                    val artist = URLEncoder.encode(data.getDefaultArtistName(), "UTF-8")
+                    val track = URLEncoder.encode(data.name, "UTF-8")
+                    i(TAG) { "Click [Personal Item] artist=$artist  track=$track" }
+                    navigationActions.navigate(
+                        Screen.PlayerScreen.routeName,
+                        "${data.id}/$artist/$track",
+                    )
+                }
             )
 
             AppBottomNavigationItems.MY -> MyScreen(/*onRefresh*/)
@@ -456,7 +455,7 @@ fun PreviewMainScreen() {
         },
     )
 
-    val discoveryViewModel: DiscoveryViewModel = viewModel(
+    viewModel<DiscoveryViewModel>(
         factory = viewModelProviderFactoryOf {
             DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
         },
@@ -471,7 +470,26 @@ fun PreviewMainScreen() {
             navigationActions = navigationActions,
             modifier = Modifier,
             mainViewModel = mainViewModel,
-            discoveryViewModel = discoveryViewModel,
         )
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_NO)
+@Composable
+fun PreviewMainScreenLoading() {
+    previewInitLog()
+
+    AppTheme(dynamicColor = false) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            ProgressIndicator(
+                bgColor = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.primaryContainer,
+            )
+        }
     }
 }

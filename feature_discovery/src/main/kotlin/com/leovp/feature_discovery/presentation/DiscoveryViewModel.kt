@@ -7,7 +7,7 @@ import com.leovp.feature_discovery.domain.model.PrivateContentModel
 import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.usecase.GetDiscoveryListUseCase
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel.UiState
-import com.leovp.feature_discovery.presentation.DiscoveryViewModel.UiState.Error
+import com.leovp.feature_discovery.presentation.DiscoveryViewModel.UiState.Content
 import com.leovp.log.base.i
 import com.leovp.mvvm.viewmodel.BaseAction
 import com.leovp.mvvm.viewmodel.BaseState
@@ -29,7 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscoveryViewModel @Inject constructor(
     private val useCase: GetDiscoveryListUseCase,
-) : BaseViewModel<UiState, BaseAction<UiState>>(UiState.Loading) {
+) : BaseViewModel<UiState, BaseAction<UiState>>(Content()) {
 
     companion object {
         private const val TAG = "DisVM"
@@ -39,6 +39,10 @@ class DiscoveryViewModel @Inject constructor(
 
     init {
         onEnter()
+    }
+
+    fun showLoading() {
+        sendAction(Action.ShowLoading)
     }
 
     fun onEnter() {
@@ -76,32 +80,55 @@ class DiscoveryViewModel @Inject constructor(
     }
 
     sealed interface Action : BaseAction<UiState> {
+        object ShowLoading : Action {
+            override fun execute(state: UiState): UiState {
+                val uiState = state as Content
+                return Content(
+                    privateContent = uiState.privateContent,
+                    recommendPlaylist = uiState.recommendPlaylist,
+                    topSongs = uiState.topSongs,
+                    isLoading = true,
+                    exception = uiState.exception
+                )
+            }
+        }
+
         class LoadSuccess(
             val privateContent: List<PrivateContentModel> = emptyList(),
             val recommendPlaylist: List<PlaylistModel> = emptyList(),
             val topSongs: List<TopSongModel> = emptyList(),
         ) : Action {
-            override fun execute(state: UiState): UiState = UiState.Content(
+            override fun execute(state: UiState): UiState = Content(
                 privateContent = privateContent,
                 recommendPlaylist = recommendPlaylist,
-                topSongs = topSongs
+                topSongs = topSongs,
+                isLoading = false,
+                exception = null
             )
         }
 
         class LoadFailure(private val err: ResultException) : Action {
-            override fun execute(state: UiState): UiState = Error(err)
+            override fun execute(state: UiState): UiState {
+                val uiState = state as Content
+                return Content(
+                    privateContent = uiState.privateContent,
+                    recommendPlaylist = uiState.recommendPlaylist,
+                    topSongs = uiState.topSongs,
+                    isLoading = false,
+                    exception = err
+                )
+            }
         }
     }
 
     @Keep
     sealed interface UiState : BaseState {
-        data object Loading : UiState
         data class Content(
             val privateContent: List<PrivateContentModel> = emptyList(),
             val recommendPlaylist: List<PlaylistModel> = emptyList(),
             val topSongs: List<TopSongModel> = emptyList(),
+            val isLoading: Boolean = false,
+            val exception: ResultException? = null
         ) : UiState
-
-        data class Error(val err: ResultException) : UiState
     }
 }

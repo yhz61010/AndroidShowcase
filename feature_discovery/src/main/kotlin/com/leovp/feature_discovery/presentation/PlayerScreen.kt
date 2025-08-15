@@ -63,14 +63,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
 import com.leovp.compose.utils.previewInitLog
-import com.leovp.feature.base.utils.formatTimestampShort
-import com.leovp.feature.base.utils.toCounterBadgeText
+import com.leovp.compose.utils.toCounterBadgeText
 import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.testdata.PreviewPlayerModule
 import com.leovp.feature_discovery.ui.theme.mark_vip_bg2
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.json.toJsonString
+import com.leovp.kotlin.exts.formatTimestampShort
 import com.leovp.log.base.d
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 import com.leovp.network.http.exception.ResultException

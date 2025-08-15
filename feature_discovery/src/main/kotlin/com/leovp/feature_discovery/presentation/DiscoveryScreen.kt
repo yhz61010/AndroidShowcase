@@ -35,11 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -59,20 +54,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
 import com.leovp.compose.composable.pager.DefaultPagerIndicator
+import com.leovp.compose.composable.pager.HorizontalAutoPager
 import com.leovp.compose.utils.previewInitLog
-import com.leovp.feature.base.presentation.compose.composable.pager.HorizontalAutoPager
-import com.leovp.feature.base.utils.replaceAll
 import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.enum.MarkType
 import com.leovp.feature_discovery.domain.model.PlaylistModel
 import com.leovp.feature_discovery.domain.model.PrivateContentModel
 import com.leovp.feature_discovery.domain.model.TopSongModel
+import com.leovp.feature_discovery.presentation.DiscoveryViewModel.UiState.Content
 import com.leovp.feature_discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature_discovery.ui.theme.mark_hot_bg
 import com.leovp.feature_discovery.ui.theme.mark_hot_text_color
@@ -100,52 +96,41 @@ private const val TAG = "Discovery"
 @Composable
 fun DiscoveryScreen(
     listState: LazyListState,
-    discoveryViewModel: DiscoveryViewModel,
     onRefresh: () -> Unit,
     onPersonalItemClick: (data: TopSongModel) -> Unit,
     modifier: Modifier = Modifier,
+    discoveryViewModel: DiscoveryViewModel = hiltViewModel<DiscoveryViewModel>(),
 ) {
     val ctx = LocalContext.current
-    val discoveryUiState by discoveryViewModel.uiStateFlow.collectAsStateWithLifecycle()
-    var isLoading by remember { mutableStateOf(false) }
-    val privateContent = remember { mutableStateListOf<PrivateContentModel>() }
-    val recommendPlaylist = remember { mutableStateListOf<PlaylistModel>() }
-    val topSongs = remember { mutableStateListOf<TopSongModel>() }
-    discoveryUiState.let {
-        when (it) {
-            is DiscoveryViewModel.UiState.Content -> {
-                isLoading = false
-                privateContent.replaceAll(it.privateContent)
-                recommendPlaylist.replaceAll(it.recommendPlaylist)
-                topSongs.replaceAll(it.topSongs)
-            }
-
-            is DiscoveryViewModel.UiState.Error -> {
-                isLoading = false
-                val message = it.err.cause?.message ?: it.err.message
-                e(TAG, throwable = it.err) { "DiscoveryScreen -> ResultException" }
-                ctx.toast(
-                    "${ctx.getString(com.leovp.feature.base.R.string.bas_load_failed)}\n$message",
-                    error = true, longDuration = true
-                )
-            }
-
-            DiscoveryViewModel.UiState.Loading -> isLoading = true
-        }
-    }
+    val discoveryUiState =
+        discoveryViewModel.uiStateFlow.collectAsStateWithLifecycle().value as Content
 
     SideEffect {
         i(TAG) {
             "=> Enter DiscoveryScreen <=  " +
-                    "privateContent=${privateContent.size}  " +
-                    "recommendPlaylist=${recommendPlaylist.size}  " +
-                    "topSong=${topSongs.size}"
+                    "loading=${discoveryUiState.isLoading} " +
+                    "privateContent[${discoveryUiState.privateContent.size}] " +
+                    "recommendPlaylist[${discoveryUiState.recommendPlaylist.size}] " +
+                    "topSong[${discoveryUiState.topSongs.size}]"
         }
     }
 
+    discoveryUiState.exception?.let { resultException ->
+        val message = resultException.cause?.cause?.message ?: resultException.message
+        e(TAG, throwable = resultException.cause) { "DiscoveryScreen -> ResultException" }
+        ctx.toast(
+            "${ctx.getString(com.leovp.feature.base.R.string.bas_load_failed)}\n$message",
+            error = true, longDuration = true
+        )
+    }
+
     PullToRefreshBox(
-        isRefreshing = isLoading,
-        onRefresh = onRefresh,
+        isRefreshing = discoveryUiState.isLoading,
+        onRefresh = {
+            discoveryViewModel.showLoading()
+            discoveryViewModel.onEnter()
+            onRefresh()
+        },
         modifier = Modifier
             .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 6.dp)
             .fillMaxSize(),
@@ -156,27 +141,27 @@ fun DiscoveryScreen(
             modifier = modifier.fillMaxSize(),
             state = listState,
         ) {
-            if (privateContent.isNotEmpty()) {
+            if (discoveryUiState.privateContent.isNotEmpty()) {
                 item {
-                    CarouselContent(privateContent) { clickedItem ->
+                    CarouselContent(discoveryUiState.privateContent) { clickedItem ->
                         ctx.toast("Carousel recommend clickedItem: $clickedItem")
                     }
                 }
             }
-            if (recommendPlaylist.isNotEmpty()) {
+            if (discoveryUiState.recommendPlaylist.isNotEmpty()) {
                 item {
                     RecommendsPlaylistHeader()
-                    RecommendsPlaylistContent(recommendPlaylist) { clickedItem ->
+                    RecommendsPlaylistContent(discoveryUiState.recommendPlaylist) { clickedItem ->
                         ctx.toast("Everyday recommend clickedItem: $clickedItem")
                     }
                 }
             }
-            if (topSongs.isNotEmpty()) {
+            if (discoveryUiState.topSongs.isNotEmpty()) {
                 item {
                     TopSongsHeader()
                 }
                 items(
-                    items = topSongs,
+                    items = discoveryUiState.topSongs,
                     key = { it.id }
                 ) { data ->
                     TopSongsItem(data, onPersonalItemClick)
@@ -369,7 +354,7 @@ fun CarouselItem(currentItem: PrivateContentModel, onItemClick: (PrivateContentM
                     Text(
                         modifier = Modifier
                             .background(Color.White, RoundedCornerShape(4.dp))
-                            .padding(4.dp, 0.dp),
+                            .padding(4.dp, 2.dp),
                         text = currentItem.typeName,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,
