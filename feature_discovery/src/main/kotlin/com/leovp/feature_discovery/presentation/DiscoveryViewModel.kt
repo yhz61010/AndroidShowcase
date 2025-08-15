@@ -8,8 +8,8 @@ import com.leovp.feature_discovery.domain.model.PrivateContentModel
 import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.usecase.GetDiscoveryListUseCase
 import com.leovp.log.base.i
-import com.leovp.module.common.exceptionOrNull
-import com.leovp.module.common.getOrDefault
+import com.leovp.network.http.exceptionOrNull
+import com.leovp.network.http.getOrDefault
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

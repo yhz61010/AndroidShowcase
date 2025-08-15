@@ -3,7 +3,7 @@ package com.leovp.androidshowcase.data.repository
 import com.leovp.androidshowcase.data.datasource.MainDataSource
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.domain.repository.MainRepository
-import com.leovp.module.common.Result
+import com.leovp.network.http.Result
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton

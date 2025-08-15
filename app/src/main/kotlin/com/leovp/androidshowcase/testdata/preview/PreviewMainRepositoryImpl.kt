@@ -3,7 +3,7 @@ package com.leovp.androidshowcase.testdata.preview
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.domain.repository.MainRepository
 import com.leovp.androidshowcase.testdata.local_datasource.LocalMainDataSource
-import com.leovp.module.common.Result
+import com.leovp.network.http.Result
 import javax.inject.Inject
 
 /**

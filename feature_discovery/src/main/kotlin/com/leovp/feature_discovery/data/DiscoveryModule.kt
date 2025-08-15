@@ -8,7 +8,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 /**
@@ -16,15 +15,15 @@ import javax.inject.Singleton
  * Date: 2023/9/13 10:49
  */
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class DiscoveryRepositoryImplement
+// @Qualifier
+// @Retention(AnnotationRetention.BINARY)
+// annotation class DiscoveryRepositoryImplement
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class DiscoveryModule {
     @Singleton
-    @DiscoveryRepositoryImplement
+    // @DiscoveryRepositoryImplement
     @Binds
     abstract fun bindRepository(repository: DiscoveryRepositoryImpl): DiscoveryRepository
 }

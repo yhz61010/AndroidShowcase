@@ -59,6 +59,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
+import com.leovp.compose.composable.pager.DefaultPagerIndicator
+import com.leovp.compose.utils.previewInitLog
+import com.leovp.feature.base.presentation.compose.composable.pager.HorizontalAutoPager
 import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.enum.MarkType
 import com.leovp.feature_discovery.domain.model.PlaylistModel
@@ -75,14 +78,11 @@ import com.leovp.feature_discovery.ui.theme.mark_vip_text_color
 import com.leovp.feature_discovery.ui.theme.place_holder2_bg_color
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.feature_discovery.ui.theme.place_holder_err_bg_color
+import com.leovp.log.base.d
 import com.leovp.log.base.e
 import com.leovp.log.base.i
-import com.leovp.module.common.exception.ApiException
-import com.leovp.module.common.log.d
-import com.leovp.module.common.presentation.compose.composable.pager.DefaultPagerIndicator
-import com.leovp.module.common.presentation.compose.composable.pager.HorizontalAutoPager
-import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
-import com.leovp.module.common.utils.previewInitLog
+import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
+import com.leovp.network.http.exception.ResultException
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -116,12 +116,11 @@ fun DiscoveryScreen(
     val ctx = LocalContext.current
 
     uiState.exception?.let {
-        val apiException = it as ApiException
-        val code = apiException.code
-        val message = apiException.message
-        e(TAG, throwable = it.cause) { "DiscoveryScreen -> ApiException" }
+        val resultException = it as ResultException
+        val message = resultException.cause?.cause?.message ?: resultException.message
+        e(TAG, throwable = it.cause) { "DiscoveryScreen -> ResultException" }
         ctx.toast(
-            "${ctx.getString(com.leovp.module.common.R.string.cmn_load_failed)}\n$code: $message",
+            "${ctx.getString(com.leovp.feature.base.R.string.bas_load_failed)}\n$message",
             error = true, longDuration = true
         )
     }
@@ -250,7 +249,7 @@ fun RecommendsPlaylistContent(
                     modifier = Modifier
                         .clickable { onItemClick(playlist) }
                         .size(cardWidth),
-                     shape = MaterialTheme.shapes.large) {
+                    shape = MaterialTheme.shapes.large) {
                     Box {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)

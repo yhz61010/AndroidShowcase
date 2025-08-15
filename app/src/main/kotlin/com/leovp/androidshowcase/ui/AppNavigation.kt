@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import com.leovp.log.base.i
-import com.leovp.module.common.log.d
+import com.leovp.log.base.d
 
 /**
  * Author: Michael Leo

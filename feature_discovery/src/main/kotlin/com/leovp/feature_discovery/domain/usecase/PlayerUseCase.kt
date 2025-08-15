@@ -1,9 +1,8 @@
 package com.leovp.feature_discovery.domain.usecase
 
-import com.leovp.feature_discovery.data.PlayerRepositoryImplement
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.repository.PlayerRepository
-import com.leovp.module.common.Result
+import com.leovp.network.http.Result
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,7 +12,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class PlayerUseCase @Inject constructor(
-    @PlayerRepositoryImplement private val repository: PlayerRepository
+    /*@PlayerRepositoryImplement*/ private val repository: PlayerRepository
 ) {
     suspend fun getSongInfo(vararg ids: Long): Result<List<SongModel>> {
         require(ids.isNotEmpty()) { "The parameter ids can't be empty." }

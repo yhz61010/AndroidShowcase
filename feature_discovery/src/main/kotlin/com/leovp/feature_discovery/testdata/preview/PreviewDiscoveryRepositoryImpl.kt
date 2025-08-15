@@ -6,7 +6,7 @@ import com.leovp.feature_discovery.domain.model.PrivateContentModel
 import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.repository.DiscoveryRepository
 import com.leovp.feature_discovery.testdata.local_datasource.LocalDiscoveryDataSource
-import com.leovp.module.common.Result
+import com.leovp.network.http.Result
 import javax.inject.Inject
 
 /**

@@ -15,9 +15,9 @@ import com.leovp.androidshowcase.R
  */
 sealed class Screen(
     val route: String,
-    @StringRes val nameResId: Int = 0,
+    @param:StringRes val nameResId: Int = 0,
     val iconVector: ImageVector? = null,
-    @DrawableRes val iconResId: Int = 0,
+    @param:DrawableRes val iconResId: Int = 0,
 ) {
     inline fun <reified T : Any> getIcon(): T = (iconVector ?: iconResId) as T
 

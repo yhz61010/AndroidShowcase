@@ -2,7 +2,7 @@ package com.leovp.feature_discovery.domain.model
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
-import com.leovp.module.common.GlobalConst.ImageThumb
+import com.leovp.feature.base.GlobalConst.ImageThumb
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 

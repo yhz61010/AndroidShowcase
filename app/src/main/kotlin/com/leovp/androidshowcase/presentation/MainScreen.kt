@@ -69,6 +69,11 @@ import com.leovp.androidshowcase.ui.AppBottomNavigationItems
 import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.androidshowcase.ui.DrawerDestinations
 import com.leovp.androidshowcase.ui.Screen
+import com.leovp.compose.composable.SearchBar
+import com.leovp.compose.composable.defaultLinearGradient
+import com.leovp.compose.composable.rememberSizeAwareDrawerState
+import com.leovp.compose.utils.previewInitLog
+import com.leovp.feature.base.utils.toCounterBadgeText
 import com.leovp.feature_community.presentation.CommunityScreen
 import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
@@ -77,13 +82,8 @@ import com.leovp.feature_discovery.presentation.DiscoveryViewModel
 import com.leovp.feature_discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature_my.presentation.MyScreen
 import com.leovp.log.LogContext
-import com.leovp.module.common.log.d
-import com.leovp.module.common.presentation.compose.composable.SearchBar
-import com.leovp.module.common.presentation.compose.composable.defaultLinearGradient
-import com.leovp.module.common.presentation.compose.composable.rememberSizeAwareDrawerState
-import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
-import com.leovp.module.common.utils.previewInitLog
-import com.leovp.module.common.utils.toCounterBadgeText
+import com.leovp.log.base.d
+import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 import com.leovp.ui.theme.AppTheme
 import com.leovp.ui.theme.discovery_top_section_end_color
 import com.leovp.ui.theme.discovery_top_section_middle2_color

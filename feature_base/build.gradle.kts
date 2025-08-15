@@ -21,9 +21,9 @@ plugins {
 }
 
 android {
-    namespace = "com.leovp.module.common"
+    namespace = "com.leovp.feature.base"
 
-    resourcePrefix = "cmn_"
+    resourcePrefix = "bas_"
 
     // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
     buildFeatures {
@@ -92,6 +92,8 @@ dependencies {
     api(libs.androidx.lifecycle.runtime.compose)
 
     api(libs.leo.androidbase)
+    api(libs.leo.lib.compose)
+    api(libs.leo.lib.network)
     // api(libs.leo.log)
     // api(libs.leo.lib.json)
     // api(libs.leo.lib.common.kotlin)

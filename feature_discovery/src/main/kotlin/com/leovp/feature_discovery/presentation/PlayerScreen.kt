@@ -62,18 +62,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
+import com.leovp.compose.utils.previewInitLog
+import com.leovp.feature.base.utils.formatTimestampShort
+import com.leovp.feature.base.utils.toCounterBadgeText
 import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.testdata.PreviewPlayerModule
 import com.leovp.feature_discovery.ui.theme.mark_vip_bg2
 import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.json.toJsonString
-import com.leovp.module.common.exception.ApiException
-import com.leovp.module.common.log.d
-import com.leovp.module.common.presentation.viewmodel.viewModelProviderFactoryOf
-import com.leovp.module.common.utils.formatTimestampShort
-import com.leovp.module.common.utils.previewInitLog
-import com.leovp.module.common.utils.toCounterBadgeText
+import com.leovp.log.base.d
+import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
+import com.leovp.network.http.exception.ResultException
 import com.leovp.ui.theme.ImmersiveTheme
 import com.smarttoolfactory.slider.ColorfulSlider
 import com.smarttoolfactory.slider.MaterialSliderDefaults
@@ -110,10 +110,9 @@ fun PlayerScreen(
     val uiStateFlow = viewModel.uiState.collectAsStateWithLifecycle()
     val uiState = uiStateFlow.value
     uiState.exception?.let {
-        val apiException = it as ApiException
-        val code = apiException.code
-        val message = apiException.message
-        ctx.toast("$code: $message", error = true, longDuration = true)
+        val resultException = it as ResultException
+        val message = resultException.cause?.cause?.message ?: resultException.message
+        ctx.toast(message, error = true, longDuration = true)
     }
 
     // val context = LocalContext.current

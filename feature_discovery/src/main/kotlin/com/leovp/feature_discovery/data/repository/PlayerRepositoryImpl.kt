@@ -1,6 +1,7 @@
 package com.leovp.feature_discovery.data.repository
 
 import com.drake.net.Get
+import com.leovp.feature.base.GlobalConst
 import com.leovp.feature_discovery.data.datasource.PlayerDataSource
 import com.leovp.feature_discovery.data.datasource.api.model.toDomainModel
 import com.leovp.feature_discovery.data.datasource.api.response.CommentResponse
@@ -10,9 +11,8 @@ import com.leovp.feature_discovery.data.datasource.api.response.SongRedCountResp
 import com.leovp.feature_discovery.data.datasource.api.response.SongUrlResponse
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.repository.PlayerRepository
-import com.leovp.module.common.GlobalConst
-import com.leovp.module.common.Result
-import com.leovp.module.common.result
+import com.leovp.network.http.Result
+import com.leovp.network.http.net.result
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 

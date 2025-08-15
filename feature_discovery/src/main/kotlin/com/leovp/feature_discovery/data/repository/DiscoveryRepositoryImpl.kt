@@ -1,6 +1,8 @@
 package com.leovp.feature_discovery.data.repository
 
 import com.drake.net.Get
+import com.leovp.feature.base.GlobalConst
+import com.leovp.feature.base.GlobalConst.PLAYLIST_SONG_SIZE
 import com.leovp.feature_discovery.data.datasource.DiscoveryDataSource
 import com.leovp.feature_discovery.data.datasource.api.model.toDomainModel
 import com.leovp.feature_discovery.data.datasource.api.response.HomePageBlockResponse
@@ -12,12 +14,11 @@ import com.leovp.feature_discovery.domain.model.PlaylistModel
 import com.leovp.feature_discovery.domain.model.PrivateContentModel
 import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.repository.DiscoveryRepository
-import com.leovp.module.common.GlobalConst
-import com.leovp.module.common.GlobalConst.PLAYLIST_SONG_SIZE
-import com.leovp.module.common.Result
-import com.leovp.module.common.result
+import com.leovp.network.http.Result
+import com.leovp.network.http.net.result
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
+
 
 /**
  * Author: Michael Leo

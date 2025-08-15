@@ -6,9 +6,9 @@ import androidx.core.content.ContextCompat
 import com.leovp.android.exts.LeoToast
 import com.leovp.android.ui.ForegroundComponent
 import com.leovp.androidbase.exts.android.closeAndroidPDialog
+import com.leovp.androidbase.utils.CrashHandler
 import com.leovp.androidshowcase.R
-import com.leovp.module.common.CrashHandler
-import com.leovp.module.common.GlobalConst
+import com.leovp.feature.base.GlobalConst
 import com.leovp.pref.LPref
 import com.leovp.pref.PrefContext
 import io.karn.notify.Notify
@@ -19,9 +19,10 @@ import io.karn.notify.Notify
  */
 object InitManager {
     fun init(app: Application) {
-        CrashHandler.initCrashHandler(app)
+        CrashHandler.initCrashHandler()
 
         LeoToast.getInstance(app).init(
+            @Suppress("SENSELESS_COMPARISON")
             LeoToast.ToastConfig(GlobalConst.DEBUG, R.mipmap.app_ic_launcher_round)
         )
 

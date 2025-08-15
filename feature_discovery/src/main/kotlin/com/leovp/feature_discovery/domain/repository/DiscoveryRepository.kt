@@ -4,7 +4,7 @@ import com.leovp.feature_discovery.domain.model.HomePageBlockModel
 import com.leovp.feature_discovery.domain.model.PlaylistModel
 import com.leovp.feature_discovery.domain.model.PrivateContentModel
 import com.leovp.feature_discovery.domain.model.TopSongModel
-import com.leovp.module.common.Result
+import com.leovp.network.http.Result
 
 /**
  * Author: Michael Leo

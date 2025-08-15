@@ -26,9 +26,9 @@ import com.leovp.androidshowcase.ui.addAppMainGraph
 import com.leovp.androidshowcase.ui.addOtherGraph
 import com.leovp.androidshowcase.ui.rememberNavigationActions
 import com.leovp.androidshowcase.utils.InitManager
-import com.leovp.module.common.GlobalConst
-import com.leovp.module.common.http.RequestUtil
-import com.leovp.module.common.log.d
+import com.leovp.feature.base.GlobalConst
+import com.leovp.feature.base.http.RequestUtil
+import com.leovp.log.base.d
 import dagger.hilt.android.AndroidEntryPoint
 
 /**

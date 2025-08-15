@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.feature_discovery.R
-import com.leovp.module.common.utils.previewInitLog
+import com.leovp.compose.utils.previewInitLog
 import com.leovp.ui.theme.AppTheme
 
 /**
@@ -60,7 +60,7 @@ fun SearchScreen(
                     IconButton(onClick = onMenuUpAction) {
                         Icon(
                             painter = painterResource(
-                                id = com.leovp.module.common.R.drawable.cmn_arrow_back
+                                id = com.leovp.feature.base.R.drawable.bas_arrow_back
                             ),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,

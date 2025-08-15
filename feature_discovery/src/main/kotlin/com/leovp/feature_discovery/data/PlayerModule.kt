@@ -8,23 +8,22 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 /**
-  * Author: Michael Leo
-  * Date: 2024/8/26 14:00
-  */
+ * Author: Michael Leo
+ * Date: 2024/8/26 14:00
+ */
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class PlayerRepositoryImplement
+// @Qualifier
+// @Retention(AnnotationRetention.BINARY)
+// annotation class PlayerRepositoryImplement
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class PlayerModule {
     @Singleton
-    @PlayerRepositoryImplement
+    // @PlayerRepositoryImplement
     @Binds
     abstract fun bindRepository(repository: PlayerRepositoryImpl): PlayerRepository
 }

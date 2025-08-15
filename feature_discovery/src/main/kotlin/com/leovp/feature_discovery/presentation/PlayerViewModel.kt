@@ -6,15 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.usecase.PlayerUseCase
 import com.leovp.json.toJsonString
+import com.leovp.log.base.d
 import com.leovp.log.base.e
 import com.leovp.log.base.i
 import com.leovp.log.base.w
-import com.leovp.module.common.Result
-import com.leovp.module.common.exception.ApiException
-import com.leovp.module.common.exceptionOrNull
-import com.leovp.module.common.fold
-import com.leovp.module.common.getOrNull
-import com.leovp.module.common.log.d
+import com.leovp.network.http.Result
+import com.leovp.network.http.exception.ResultException
+import com.leovp.network.http.exceptionOrNull
+import com.leovp.network.http.fold
+import com.leovp.network.http.getOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -62,7 +62,7 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
 
         val firstSongId = ids[0]
         job = viewModelScope.launch {
-            var ex: ApiException? = null
+            var ex: ResultException? = null
 
             var songCommentsDeferred: Deferred<Result<SongModel.CommentsModel>>? = null
             if (ids.isNotEmpty()) {
@@ -88,7 +88,7 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
             val songRedCountResult = songRedCountDeferred?.await()
             val songAvailableResult = songAvailableDeferred.await()
 
-            var firstSong: SongModel? =
+            val firstSong: SongModel? =
                 songInfoResult.getOrNull()?.firstOrNull()?.also { firstSongRef ->
                     firstSongRef.commentsModel = songCommentsResult?.getOrNull()
                     firstSongRef.redCountModel = songRedCountResult?.getOrNull()
@@ -105,10 +105,10 @@ class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) : 
                         d(TAG) { "---> UrlModel: ${firstSong?.toJsonString()}" }
                         if (firstSong?.getUrlSuccess() != true) {
                             w(TAG) { "Failed to get song url.  code=${firstSong?.getUrlCode()}  url=${firstSong?.getUrl()}" }
-                            ex = ApiException(code = -1, message = "Failed to get song url.")
+                            ex = ResultException(message = "Failed to get song url.")
                         }
                     } else {
-                        ex = ApiException(code = -2, message = songAvailModel.message)
+                        ex = ResultException(message = songAvailModel.message)
                         e(TAG, ex) { "Song check business error.  msg=${ex?.message}" }
                     }
                 },

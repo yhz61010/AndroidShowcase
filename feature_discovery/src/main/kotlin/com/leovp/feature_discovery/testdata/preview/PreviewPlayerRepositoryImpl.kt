@@ -3,7 +3,7 @@ package com.leovp.feature_discovery.testdata.preview
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.repository.PlayerRepository
 import com.leovp.feature_discovery.testdata.local_datasource.LocalPlayerDataSource
-import com.leovp.module.common.Result
+import com.leovp.network.http.Result
 import javax.inject.Inject
 
 /**

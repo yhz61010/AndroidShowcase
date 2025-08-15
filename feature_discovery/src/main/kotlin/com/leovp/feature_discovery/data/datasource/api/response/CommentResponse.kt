@@ -3,7 +3,7 @@ package com.leovp.feature_discovery.data.datasource.api.response
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import com.leovp.feature_discovery.data.datasource.api.model.CommentApiModel
-import com.leovp.module.common.http.model.ApiResponseResult
+import com.leovp.feature.base.http.model.ApiResponseResult
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 

@@ -14,7 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
-import com.leovp.module.common.utils.previewInitLog
+import com.leovp.compose.utils.previewInitLog
 import kotlinx.coroutines.delay
 
 /**

@@ -141,6 +141,9 @@ androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "mult
 # Try to migrate this library to M3.
 leo-androidbase = { module = "com.leovp.android:androidbase", version.ref = "leo-version" }
 
+leo-lib-network = { module = "com.leovp.android:lib-network", version.ref = "leo-version" }
+leo-lib-compose = { module = "com.leovp.android:lib-compose", version.ref = "leo-version" }
+
 # The following FIVE libraries are already included by leo-androidbase.
 #leo-log = { module = "com.leovp.android:log", version.ref = "leo-version" }
 #leo-lib-json = { module = "com.leovp.android:lib-json", version.ref = "leo-version" }

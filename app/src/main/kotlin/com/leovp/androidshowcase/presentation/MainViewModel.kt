@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.domain.usecase.MainUseCase
 import com.leovp.log.LogContext
-import com.leovp.module.common.getOrDefault
+import com.leovp.network.http.getOrDefault
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow

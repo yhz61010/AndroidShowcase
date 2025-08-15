@@ -7,7 +7,7 @@ import coil.ImageLoaderFactory
 import coil.compose.AsyncImage
 import coil.disk.DiskCache
 import com.leovp.log.LogContext
-import com.leovp.module.common.log.MarsXLog
+import com.leovp.feature.base.log.MarsXLog
 import dagger.hilt.android.HiltAndroidApp
 
 /**
