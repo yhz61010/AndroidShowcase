@@ -15,7 +15,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class GetDiscoveryListUseCase @Inject constructor(
-    @DiscoveryRepositoryImplement private val repository: DiscoveryRepository
+    @param:DiscoveryRepositoryImplement private val repository: DiscoveryRepository
 ) {
 
     suspend fun getPrivateContent(): Result<List<PrivateContentModel>> = repository.getPrivateContent()
