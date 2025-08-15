@@ -1,22 +1,23 @@
 package com.leovp.feature_discovery.presentation
 
 import androidx.annotation.Keep
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leovp.feature_discovery.domain.model.PlaylistModel
 import com.leovp.feature_discovery.domain.model.PrivateContentModel
 import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.domain.usecase.GetDiscoveryListUseCase
+import com.leovp.feature_discovery.presentation.DiscoveryViewModel.UiState
+import com.leovp.feature_discovery.presentation.DiscoveryViewModel.UiState.Error
 import com.leovp.log.base.i
+import com.leovp.mvvm.viewmodel.BaseAction
+import com.leovp.mvvm.viewmodel.BaseState
+import com.leovp.mvvm.viewmodel.BaseViewModel
+import com.leovp.network.http.exception.ResultException
 import com.leovp.network.http.exceptionOrNull
 import com.leovp.network.http.getOrDefault
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,32 +29,24 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscoveryViewModel @Inject constructor(
     private val useCase: GetDiscoveryListUseCase,
-) : ViewModel() {
+) : BaseViewModel<UiState, BaseAction<UiState>>(UiState.Loading) {
 
     companion object {
         private const val TAG = "DisVM"
     }
 
-    // Backing property to avoid state updates from other classes
-    private val _uiState = MutableStateFlow(DiscoveryUiState(loading = true))
-
-    // UI state exposed to the UI
-    val uiState: StateFlow<DiscoveryUiState> = _uiState.asStateFlow()
-
     private var job: Job? = null
 
     init {
-        refreshAll()
+        onEnter()
     }
 
-    fun refreshAll() {
+    fun onEnter() {
         i(TAG) { "Discovery -> refreshAll()" }
         if (job != null) {
             job?.cancel()
             job = null
         }
-
-        _uiState.update { it.copy(loading = true) }
 
         job = viewModelScope.launch {
             val privateContentDeferred = async { useCase.getPrivateContent() }
@@ -68,27 +61,47 @@ class DiscoveryViewModel @Inject constructor(
                 ?: recommendPlaylistResult.exceptionOrNull()
                 ?: topSongsResult.exceptionOrNull()
 
-            _uiState.update {
-                it.copy(
-                    loading = false,
-                    privateContent = privateContentResult.getOrDefault(emptyList()),
-                    recommendPlaylist = recommendPlaylistResult.getOrDefault(emptyList()),
-                    topSongs = topSongsResult.getOrDefault(emptyList()),
-                    exception = ex
+            if (ex != null) {
+                sendAction(Action.LoadFailure(ex))
+            } else {
+                sendAction(
+                    Action.LoadSuccess(
+                        privateContent = privateContentResult.getOrDefault(emptyList()),
+                        recommendPlaylist = recommendPlaylistResult.getOrDefault(emptyList()),
+                        topSongs = topSongsResult.getOrDefault(emptyList()),
+                    )
                 )
             }
         }
     }
-}
 
-/**
- * UI state for the Discovery screen
- */
-@Keep
-data class DiscoveryUiState(
-    val privateContent: List<PrivateContentModel> = emptyList(),
-    val recommendPlaylist: List<PlaylistModel> = emptyList(),
-    val topSongs: List<TopSongModel> = emptyList(),
-    val loading: Boolean = false,
-    val exception: Throwable? = null
-)
+    sealed interface Action : BaseAction<UiState> {
+        class LoadSuccess(
+            val privateContent: List<PrivateContentModel> = emptyList(),
+            val recommendPlaylist: List<PlaylistModel> = emptyList(),
+            val topSongs: List<TopSongModel> = emptyList(),
+        ) : Action {
+            override fun execute(state: UiState): UiState = UiState.Content(
+                privateContent = privateContent,
+                recommendPlaylist = recommendPlaylist,
+                topSongs = topSongs
+            )
+        }
+
+        class LoadFailure(private val err: ResultException) : Action {
+            override fun execute(state: UiState): UiState = Error(err)
+        }
+    }
+
+    @Keep
+    sealed interface UiState : BaseState {
+        data object Loading : UiState
+        data class Content(
+            val privateContent: List<PrivateContentModel> = emptyList(),
+            val recommendPlaylist: List<PlaylistModel> = emptyList(),
+            val topSongs: List<TopSongModel> = emptyList(),
+        ) : UiState
+
+        data class Error(val err: ResultException) : UiState
+    }
+}

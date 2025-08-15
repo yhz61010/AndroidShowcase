@@ -39,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,39 +60,45 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.testdata.PreviewMainModule
 import com.leovp.androidshowcase.ui.AppBottomNavigationItems
 import com.leovp.androidshowcase.ui.AppDrawer
+import com.leovp.androidshowcase.ui.AppNavigationActions
 import com.leovp.androidshowcase.ui.DrawerDestinations
 import com.leovp.androidshowcase.ui.Screen
+import com.leovp.androidshowcase.ui.rememberNavigationActions
 import com.leovp.compose.composable.SearchBar
 import com.leovp.compose.composable.defaultLinearGradient
+import com.leovp.compose.composable.loading.RippleAnimation
 import com.leovp.compose.composable.rememberSizeAwareDrawerState
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.feature.base.utils.toCounterBadgeText
 import com.leovp.feature_community.presentation.CommunityScreen
 import com.leovp.feature_discovery.domain.model.TopSongModel
 import com.leovp.feature_discovery.presentation.DiscoveryScreen
-import com.leovp.feature_discovery.presentation.DiscoveryUiState
 import com.leovp.feature_discovery.presentation.DiscoveryViewModel
 import com.leovp.feature_discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature_my.presentation.MyScreen
 import com.leovp.log.LogContext
 import com.leovp.log.base.d
+import com.leovp.log.base.i
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 import com.leovp.ui.theme.AppTheme
 import com.leovp.ui.theme.discovery_top_section_end_color
 import com.leovp.ui.theme.discovery_top_section_middle2_color
 import com.leovp.ui.theme.discovery_top_section_middle3_color
 import com.leovp.ui.theme.discovery_top_section_start_color
+import com.leovp.ui.theme.md_theme_dark_primary
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
 
 /**
  * Author: Michael Leo
@@ -104,14 +111,11 @@ private const val TAB_SWITCH_ANIM_DURATION = 300
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    modifier: Modifier = Modifier,
     widthSize: WindowWidthSizeClass,
-    mainUiStateFlow: StateFlow<MainUiState>,
-    discoveryUiStateFlow: StateFlow<DiscoveryUiState>,
-    onNavigationToDrawerItem: (drawerItemRoute: String) -> Unit,
-    onSearchBarClick: () -> Unit,
-    onDiscoveryRefresh: () -> Unit,
-    onPersonalItemClick: (data: TopSongModel) -> Unit
+    navigationActions: AppNavigationActions,
+    modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel = hiltViewModel<MainViewModel>(),
+    discoveryViewModel: DiscoveryViewModel = hiltViewModel<DiscoveryViewModel>()
 ) {
     d(TAG) { "=> Enter MainScreen <=" }
     val context = LocalContext.current
@@ -127,14 +131,11 @@ fun MainScreen(
         pageCount = { pagerScreenValues.size },
     )
 
-    val mainUiState = mainUiStateFlow.collectAsStateWithLifecycle().value
-
-    val listState = rememberLazyListState()
     ModalNavigationDrawer(
         drawerContent = {
             AppDrawer(
                 currentRoute = DrawerDestinations.NO_ROUTE,
-                onNavigateTo = { route -> onNavigationToDrawerItem(route) },
+                onNavigateTo = { route -> navigationActions.navigate(route) },
                 onCloseDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
                 modifier = Modifier.requiredWidth(300.dp)
             )
@@ -144,10 +145,22 @@ fun MainScreen(
         gesturesEnabled = !isExpandedScreen,
     ) {
         Box(contentAlignment = Alignment.TopEnd) {
+            val mainUiState by mainViewModel.uiStateFlow.collectAsStateWithLifecycle()
+            var unreadList: List<UnreadModel>
+            mainUiState.let {
+                when(it) {
+                    is MainViewModel.UiState.Content -> unreadList = it.unreadList
+                    MainViewModel.UiState.Loading -> {
+                        RippleAnimation(circleColor = md_theme_dark_primary)
+                        return@Box
+                    }
+                }
+            }
+            val discoveryUiState by mainViewModel.uiStateFlow.collectAsStateWithLifecycle()
             Scaffold(modifier = modifier, topBar = {
                 HomeTopAppBar(
                     modifier = modifier,
-                    unread = mainUiState.unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
+                    unread = unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
                     pagerState = pagerState,
                     onNavigationClick = { coroutineScope.launch { sizeAwareDrawerState.open() } },
                     onActionClick = {
@@ -157,21 +170,31 @@ fun MainScreen(
                     HomeTopAppBarContent(
                         // listState = listState,
                         pagerState = pagerState,
-                        onClick = onSearchBarClick,
+                        onClick = { navigationActions.navigate(Screen.SearchScreen.route) },
                     )
                 }
             }, bottomBar = {
-                CustomBottomBar(pagerState, coroutineScope, mainUiState.unreadList)
+                CustomBottomBar(pagerState, coroutineScope, unreadList)
             }) { contentPadding ->
                 val newModifier = modifier.padding(contentPadding)
                 MainScreenContent(
                     modifier = newModifier,
-                    onDiscoveryRefresh = onDiscoveryRefresh,
+                    onDiscoveryRefresh = {
+                        discoveryViewModel.onEnter()
+                        mainViewModel.onEnter()
+                    },
                     pagerState = pagerState,
-                    listState = listState,
                     pagerScreenValues = pagerScreenValues,
-                    discoveryUiStateFlow = discoveryUiStateFlow,
-                    onPersonalItemClick = onPersonalItemClick,
+                    discoveryViewModel = discoveryViewModel,
+                    onPersonalItemClick = { data ->
+                        val artist = URLEncoder.encode(data.getDefaultArtistName(), "UTF-8")
+                        val track = URLEncoder.encode(data.name, "UTF-8")
+                        i(TAG) { "Click [Personal Item] artist=$artist  track=$track" }
+                        navigationActions.navigate(
+                            Screen.PlayerScreen.routeName,
+                            "${data.id}/$artist/$track",
+                        )
+                    },
                 )
             } // end of Scaffold
 
@@ -282,11 +305,11 @@ private fun TabIcon(screen: Screen) {
 fun MainScreenContent(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
-    listState: LazyListState,
+    listState: LazyListState = rememberLazyListState(),
     pagerScreenValues: Array<AppBottomNavigationItems>,
-    discoveryUiStateFlow: StateFlow<DiscoveryUiState>,
+    discoveryViewModel: DiscoveryViewModel,
     onDiscoveryRefresh: () -> Unit,
-    onPersonalItemClick: (data: TopSongModel) -> Unit
+    onPersonalItemClick: (TopSongModel) -> Unit
 ) {
     d(TAG) { "=> Enter MainScreenContent <=" }
     HorizontalPager(
@@ -297,7 +320,7 @@ fun MainScreenContent(
         when (pagerScreenValues[page]) {
             AppBottomNavigationItems.DISCOVERY -> DiscoveryScreen(
                 listState = listState,
-                uiStateFlow = discoveryUiStateFlow,
+                discoveryViewModel = discoveryViewModel,
                 onRefresh = onDiscoveryRefresh,
                 onPersonalItemClick = onPersonalItemClick
             )
@@ -440,14 +463,15 @@ fun PreviewMainScreen() {
     )
 
     AppTheme(dynamicColor = false) {
+        val navController = rememberNavController()
+        val navigationActions = rememberNavigationActions(navController = navController)
+
         MainScreen(
             widthSize = WindowWidthSizeClass.Compact,
-            onNavigationToDrawerItem = {},
-            mainUiStateFlow = mainViewModel.uiState,
-            discoveryUiStateFlow = discoveryViewModel.uiState,
-            onSearchBarClick = {},
-            onDiscoveryRefresh = {},
-            onPersonalItemClick = {},
+            navigationActions = navigationActions,
+            modifier = Modifier,
+            mainViewModel = mainViewModel,
+            discoveryViewModel = discoveryViewModel,
         )
     }
 }

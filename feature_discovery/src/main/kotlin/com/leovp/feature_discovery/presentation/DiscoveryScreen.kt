@@ -35,6 +35,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -62,6 +67,7 @@ import com.leovp.android.exts.toast
 import com.leovp.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.feature.base.presentation.compose.composable.pager.HorizontalAutoPager
+import com.leovp.feature.base.utils.replaceAll
 import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.enum.MarkType
 import com.leovp.feature_discovery.domain.model.PlaylistModel
@@ -82,8 +88,6 @@ import com.leovp.log.base.d
 import com.leovp.log.base.e
 import com.leovp.log.base.i
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
-import com.leovp.network.http.exception.ResultException
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Author: Michael Leo
@@ -96,15 +100,40 @@ private const val TAG = "Discovery"
 @Composable
 fun DiscoveryScreen(
     listState: LazyListState,
-    uiStateFlow: StateFlow<DiscoveryUiState>,
+    discoveryViewModel: DiscoveryViewModel,
     onRefresh: () -> Unit,
     onPersonalItemClick: (data: TopSongModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val uiState = uiStateFlow.collectAsStateWithLifecycle().value
-    val privateContent = uiState.privateContent
-    val recommendPlaylist = uiState.recommendPlaylist
-    val topSongs = uiState.topSongs
+    val ctx = LocalContext.current
+    val discoveryUiState by discoveryViewModel.uiStateFlow.collectAsStateWithLifecycle()
+    var isLoading by remember { mutableStateOf(false) }
+    val privateContent = remember { mutableStateListOf<PrivateContentModel>() }
+    val recommendPlaylist = remember { mutableStateListOf<PlaylistModel>() }
+    val topSongs = remember { mutableStateListOf<TopSongModel>() }
+    discoveryUiState.let {
+        when (it) {
+            is DiscoveryViewModel.UiState.Content -> {
+                isLoading = false
+                privateContent.replaceAll(it.privateContent)
+                recommendPlaylist.replaceAll(it.recommendPlaylist)
+                topSongs.replaceAll(it.topSongs)
+            }
+
+            is DiscoveryViewModel.UiState.Error -> {
+                isLoading = false
+                val message = it.err.cause?.message ?: it.err.message
+                e(TAG, throwable = it.err) { "DiscoveryScreen -> ResultException" }
+                ctx.toast(
+                    "${ctx.getString(com.leovp.feature.base.R.string.bas_load_failed)}\n$message",
+                    error = true, longDuration = true
+                )
+            }
+
+            DiscoveryViewModel.UiState.Loading -> isLoading = true
+        }
+    }
+
     SideEffect {
         i(TAG) {
             "=> Enter DiscoveryScreen <=  " +
@@ -113,20 +142,9 @@ fun DiscoveryScreen(
                     "topSong=${topSongs.size}"
         }
     }
-    val ctx = LocalContext.current
-
-    uiState.exception?.let {
-        val resultException = it as ResultException
-        val message = resultException.cause?.cause?.message ?: resultException.message
-        e(TAG, throwable = it.cause) { "DiscoveryScreen -> ResultException" }
-        ctx.toast(
-            "${ctx.getString(com.leovp.feature.base.R.string.bas_load_failed)}\n$message",
-            error = true, longDuration = true
-        )
-    }
 
     PullToRefreshBox(
-        isRefreshing = uiState.loading,
+        isRefreshing = isLoading,
         onRefresh = onRefresh,
         modifier = Modifier
             .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 6.dp)
@@ -517,7 +535,7 @@ fun PreviewDiscoveryScreen() {
     )
     DiscoveryScreen(
         listState = rememberLazyListState(),
-        uiStateFlow = discoveryViewModel.uiState,
+        discoveryViewModel = discoveryViewModel,
         onRefresh = {},
         onPersonalItemClick = {}
     )

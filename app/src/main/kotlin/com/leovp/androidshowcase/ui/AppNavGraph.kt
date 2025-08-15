@@ -69,32 +69,10 @@ fun NavGraphBuilder.addAppMainGraph(
             systemBarColor = Color.Transparent, dynamicColor = false, lightSystemBar = true
         ) {
             // val context = LocalContext.current
-            val mainViewModel = hiltViewModel<MainViewModel>()
-            val discoveryViewModel = hiltViewModel<DiscoveryViewModel>()
-            val mainUiState = mainViewModel.uiState
-            val discoveryUiState = discoveryViewModel.uiState
             MainScreen(
-                modifier = modifier,
+                navigationActions = navigationActions,
                 widthSize = widthSizeClass,
-                onSearchBarClick = { navigationActions.navigate(Screen.SearchScreen.route) },
-                onNavigationToDrawerItem = { drawerItemRoute: String ->
-                    navigationActions.navigate(drawerItemRoute)
-                },
-                mainUiStateFlow = mainUiState,
-                discoveryUiStateFlow = discoveryUiState,
-                onDiscoveryRefresh = {
-                    discoveryViewModel.refreshAll()
-                    mainViewModel.refreshAll()
-                },
-                onPersonalItemClick = { data ->
-                    val artist = URLEncoder.encode(data.getDefaultArtistName(), "UTF-8")
-                    val track = URLEncoder.encode(data.name, "UTF-8")
-                    i(TAG) { "Click [Personal Item] artist=$artist  track=$track" }
-                    navigationActions.navigate(
-                        Screen.PlayerScreen.routeName,
-                        "${data.id}/$artist/$track",
-                    )
-                }
+                modifier = modifier
             )
         }
     }
