@@ -76,11 +76,11 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     val navigationActions = rememberNavigationActions(navController = navController)
 
     /*
-     * Suppose we are moving from screen A to B. Then,
+     * Suppose we are moving from screen A to B:
      * - Screen B will run enterTransition
      * - Screen A will run exitTransition
      *
-     * Suppose we press the back button. I.e, popBackStack.
+     * Suppose we press the back button:
      * - Screen B will runs popExitTransition
      * - Screen A will run popEnterTransition
      */

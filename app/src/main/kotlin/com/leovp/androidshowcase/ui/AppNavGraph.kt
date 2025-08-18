@@ -34,6 +34,13 @@ import com.leovp.ui.theme.immersive_sys_ui
 
 private const val TAG = "NavGraph"
 
+private val slideUp = AnimatedContentTransitionScope.SlideDirection.Up
+private val slideDown = AnimatedContentTransitionScope.SlideDirection.Down
+private val tween = tween<IntOffset>(
+    durationMillis = SCREEN_TRANSITION_DURATION,
+    easing = LinearOutSlowInEasing,
+)
+
 fun NavGraphBuilder.addAppMainGraph(
     widthSizeClass: WindowWidthSizeClass,
     navigationActions: AppNavigationActions,
@@ -118,12 +125,6 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
         }
     }
 
-    val slideStart = AnimatedContentTransitionScope.SlideDirection.Up
-    val slideEnd = AnimatedContentTransitionScope.SlideDirection.Down
-    val tween = tween<IntOffset>(
-        durationMillis = SCREEN_TRANSITION_DURATION,
-        easing = LinearOutSlowInEasing,
-    )
     composable(
         route = Screen.PlayerScreen.route,
         arguments = listOf(
@@ -131,10 +132,10 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
             navArgument("artist") { type = NavType.StringType },
             navArgument("track") { type = NavType.StringType },
         ),
-        enterTransition = { slideIntoContainer(slideStart, tween) },
+        enterTransition = { slideIntoContainer(slideUp, tween) },
         exitTransition = { fadeOut() },
         popEnterTransition = { fadeIn() },
-        popExitTransition = { slideOutOfContainer(slideEnd, tween) },
+        popExitTransition = { slideOutOfContainer(slideDown, tween) },
     ) {
         val ctx = LocalContext.current
         // val artist = it.arguments?.getString("artist")

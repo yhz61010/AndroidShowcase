@@ -1,11 +1,13 @@
+@file:Suppress("unused")
+
 package com.leovp.androidshowcase.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
-import com.leovp.log.base.i
 import com.leovp.log.base.d
+import com.leovp.log.base.i
 
 /**
  * Author: Michael Leo
@@ -39,6 +41,10 @@ class AppNavigationActions(private val navController: NavHostController) {
     @Suppress("unused")
     val currentRoute: String? get() = navController.currentDestination?.route
 
+    fun popBackStack() {
+        navController.popBackStack()
+    }
+
     fun upPress() {
         navController.navigateUp()
     }
@@ -60,12 +66,18 @@ class AppNavigationActions(private val navController: NavHostController) {
     }
 }
 
-fun NavHostController.navigateToMain() = this.navigate(Screen.Main.route) {
+private fun NavHostController.navigateToMain() = this.navigate(Screen.Main.route) {
     // Pop up to the start destination of the graph to
     // avoid building up a large stack of destinations
     // on the back stack as users select items
     //
     // navController.graph.findStartDestination().id
+
+    // Clear the back stack up to the given route.
+    // `Screen.Splash.route`, meaning everything back to the `Splash` screen will be popped.
+    // `inclusive = true` ensures that `Splash` itself is also removed.
+    // Effect: Once the user reaches `Main`,
+    // pressing the back button won't return them to `Splash` — it will exit the app instead.
     popUpTo(Screen.Splash.route) { inclusive = true }
     // Avoid multiple copies of the same destination when re-selecting the same item
     launchSingleTop = true
@@ -73,16 +85,32 @@ fun NavHostController.navigateToMain() = this.navigate(Screen.Main.route) {
     restoreState = false
 }
 
-fun NavHostController.navigateSingleTopTo(route: String, arguments: String? = null) {
+private fun NavHostController.navigateSingleTopTo(route: String, arguments: String? = null) {
     val arg: String? = arguments?.trimStart('/')
     this.navigate(
         route.takeIf { arguments == null } ?: "$route/$arg") {
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destinations
         // on the back stack as users select items
+        //
+        // navController.graph.findStartDestination().id
+
+        // Clear the back stack up to the given route.
+        // `route`, meaning everything back to the `route` screen will be popped.
+        // `inclusive = false`(default value) ensures that `Main` itself is NOT removed.
+        // Effect: Once the user reaches `route`,
+        // pressing the back button will return to `Main` screen.
         popUpTo(Screen.Main.route) { saveState = true }
         // Avoid multiple copies of the same destination when re-selecting the same item
         launchSingleTop = true
+        // Whether to restore state when re-selecting a previously selected item
+        restoreState = true
+    }
+}
+
+private fun NavHostController.navigateTo(route: String, arguments: String? = null) {
+    val arg: String? = arguments?.trimStart('/')
+    this.navigate(route.takeIf { arguments == null } ?: "$route/$arg") {
         // Whether to restore state when re-selecting a previously selected item
         restoreState = true
     }

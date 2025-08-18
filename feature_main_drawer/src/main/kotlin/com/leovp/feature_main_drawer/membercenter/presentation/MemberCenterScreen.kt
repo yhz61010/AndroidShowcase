@@ -40,7 +40,8 @@ import com.leovp.feature_main_drawer.R
 @Composable
 fun MemberCenterScreen(
     // widthSize: WindowWidthSizeClass,
-    onMenuUpAction: () -> Unit, modifier: Modifier = Modifier
+    onMenuUpAction: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
