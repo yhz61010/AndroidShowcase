@@ -1,6 +1,7 @@
 package com.leovp.feature_discovery.presentation
 
 import androidx.annotation.Keep
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.domain.usecase.PlayerUseCase
@@ -16,19 +17,18 @@ import com.leovp.log.base.w
 import com.leovp.mvvm.viewmodel.BaseAction
 import com.leovp.mvvm.viewmodel.BaseState
 import com.leovp.mvvm.viewmodel.BaseViewModel
-import com.leovp.network.http.Result
 import com.leovp.network.http.exception.ResultException
 import com.leovp.network.http.exceptionOrNull
 import com.leovp.network.http.fold
 import com.leovp.network.http.getOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.net.URLDecoder
 import javax.inject.Inject
 
 /**
@@ -37,64 +37,67 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class PlayerViewModel @Inject constructor(private val useCase: PlayerUseCase) :
-    BaseViewModel<UiState, Action>(Content()) {
+class PlayerViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val useCase: PlayerUseCase
+) : BaseViewModel<UiState, Action>(Content()) {
 
     companion object {
         private const val TAG = "PlayerVM"
     }
+
+    val songId: Long = (savedStateHandle["id"] as? Long) ?: 0L
+    val songArtist: String = URLDecoder.decode(
+        (savedStateHandle["artist"] as? String) ?: "",
+        "UTF-8"
+    )
+    val songTrack: String = URLDecoder.decode(
+        (savedStateHandle["track"] as? String) ?: "",
+        "UTF-8"
+    )
 
     private val _playPositionState = MutableStateFlow(0f)
     val playPositionState: StateFlow<Float> = _playPositionState.asStateFlow()
 
     private var job: Job? = null
 
-    fun onEnter(ids: Array<Long>) {
-        i(TAG) { "Player -> getData() ids=${ids.toJsonString()}" }
+    fun onEnter(id: Long = songId) {
+        i(TAG) { "Player -> getData() id=$id}" }
         if (job != null) {
             job?.cancel()
             job = null
         }
 
-        val firstSongId = ids[0]
         job = viewModelScope.launch {
-            val songAvailableResult = useCase.checkMusic(firstSongId, 999000)
+            val songAvailableResult = useCase.checkMusic(id, 999000)
 
             songAvailableResult.fold(
                 onSuccess = { songAvailModel ->
                     if (songAvailModel.success) {
-                        var songCommentsDeferred: Deferred<Result<SongModel.CommentsModel>>? = null
-                        var songRedCountDeferred: Deferred<Result<SongModel.RedCountModel>>? = null
                         val songUrlDeferred =
-                            async { useCase.getSongUrlV1(firstSongId, SongModel.Quality.Standard) }
-                        val songInfoDeferred = async { useCase.getSongInfo(*ids.toLongArray()) }
-                        if (ids.isNotEmpty()) {
-                            songCommentsDeferred = async {
-                                useCase.getMusicComment(
-                                    id = firstSongId, limit = 20, offset = 0
-                                )
-                            }
-                            songRedCountDeferred = async {
-                                useCase.getSongRedCount(firstSongId)
-                            }
+                            async { useCase.getSongUrlV1(id, SongModel.Quality.Standard) }
+                        val songInfoDeferred = async { useCase.getSongInfo(id) }
+                        val songCommentsDeferred = async {
+                            useCase.getMusicComment(id = id, limit = 20, offset = 0)
                         }
+                        val songRedCountDeferred = async { useCase.getSongRedCount(id) }
                         val songUrlResult = songUrlDeferred.await()
                         val songInfoResult = songInfoDeferred.await()
-                        val songCommentsResult = songCommentsDeferred?.await()
-                        val songRedCountResult = songRedCountDeferred?.await()
+                        val songCommentsResult = songCommentsDeferred.await()
+                        val songRedCountResult = songRedCountDeferred.await()
 
                         val firstSong: SongModel? =
                             songInfoResult.getOrNull()?.firstOrNull()?.also { firstSongRef ->
-                                firstSongRef.commentsModel = songCommentsResult?.getOrNull()
-                                firstSongRef.redCountModel = songRedCountResult?.getOrNull()
+                                firstSongRef.commentsModel = songCommentsResult.getOrNull()
+                                firstSongRef.redCountModel = songRedCountResult.getOrNull()
                             }
                         firstSong?.urlModel = songUrlResult.getOrNull()?.firstOrNull()
                         d(TAG) { "---> UrlModel: ${firstSong?.toJsonString()}" }
 
                         var ex = songInfoResult.exceptionOrNull()
                             ?: songUrlResult.exceptionOrNull()
-                            ?: songCommentsResult?.exceptionOrNull()
-                            ?: songRedCountResult?.exceptionOrNull()
+                            ?: songCommentsResult.exceptionOrNull()
+                            ?: songRedCountResult.exceptionOrNull()
 
                         if (firstSong?.getUrlSuccess() != true) {
                             w(TAG) { "Failed to get song url.  code=${firstSong?.getUrlCode()}  url=${firstSong?.getUrl()}" }

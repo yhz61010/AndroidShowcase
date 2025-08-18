@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -22,7 +21,6 @@ import com.leovp.androidshowcase.presentation.SCREEN_TRANSITION_DURATION
 import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.feature_discovery.presentation.PlayerScreen
-import com.leovp.feature_discovery.presentation.PlayerViewModel
 import com.leovp.feature_discovery.presentation.SearchScreen
 import com.leovp.feature_main_drawer.membercenter.presentation.MemberCenterScreen
 import com.leovp.log.base.d
@@ -129,7 +127,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
     composable(
         route = Screen.PlayerScreen.route,
         arguments = listOf(
-            navArgument("ids") { type = NavType.LongArrayType },
+            navArgument("id") { type = NavType.LongType },
             navArgument("artist") { type = NavType.StringType },
             navArgument("track") { type = NavType.StringType },
         ),
@@ -139,24 +137,21 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
         popExitTransition = { slideOutOfContainer(slideEnd, tween) },
     ) {
         val ctx = LocalContext.current
-        val artist = it.arguments?.getString("artist")
-        val track = it.arguments?.getString("track")
-        requireNotNull(artist) { "artist can not be null for Player Screen." }
-        requireNotNull(track) { "track can not be null for Player Screen." }
+        // val artist = it.arguments?.getString("artist")
+        // val track = it.arguments?.getString("track")
+        // requireNotNull(artist) { "artist can not be null for Player Screen." }
+        // requireNotNull(track) { "track can not be null for Player Screen." }
 
-        val ids: Array<Long> =
-            it.arguments?.getLongArray("ids")?.toTypedArray() ?: emptyArray<Long>()
-        require(ids.isNotEmpty()) { "The parameter ids can't be empty." }
-        d(TAG) { "route: ${it.destination.route}  ids=$ids  artist=$artist  track=$track" }
+        // val ids: Array<Long> =
+        //     it.arguments?.getLongArray("ids")?.toTypedArray() ?: emptyArray<Long>()
+        // require(ids.isNotEmpty()) { "The parameter ids can't be empty." }
+        // d(TAG) { "route: ${it.destination.route}  ids=$ids  artist=$artist  track=$track" }
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
             dynamicColor = false,
             lightSystemBar = false,
         ) {
             PlayerScreen(
-                ids = ids,
-                artist = artist,
-                track = track,
                 // widthSize = widthSizeClass,
                 // onNavigationToDrawerItem = { drawerItemRoute: String ->
                 //     navigationActions.navigate(drawerItemRoute)

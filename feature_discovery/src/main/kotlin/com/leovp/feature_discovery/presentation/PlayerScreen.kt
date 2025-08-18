@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -72,7 +73,6 @@ import com.leovp.feature_discovery.domain.model.SongModel
 import com.leovp.feature_discovery.presentation.PlayerViewModel.UiState.Content
 import com.leovp.feature_discovery.testdata.PreviewPlayerModule
 import com.leovp.feature_discovery.ui.theme.mark_vip_bg2
-import com.leovp.json.toJsonString
 import com.leovp.kotlin.exts.formatTimestampShort
 import com.leovp.log.base.d
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
@@ -91,20 +91,17 @@ private const val TAG = "PlayerScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerScreen(
-    ids: Array<Long>,
-    artist: String,
-    track: String,
     onMenuUpAction: () -> Unit,
     onShareAction: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PlayerViewModel = hiltViewModel<PlayerViewModel>(),
 ) {
     SideEffect {
-        d(TAG) { "=> Enter PlayerScreen <= $artist-$track  ids=${ids.toJsonString()}" }
+        d(TAG) { "=> Enter PlayerScreen <= ${viewModel.songArtist}-${viewModel.songTrack} id=${viewModel.songId}" }
     }
     LaunchedEffect(Unit) {
         // d(TAG) { "=> Enter PlayerScreen <= -> LaunchedEffect" }
-        viewModel.onEnter(ids = ids)
+        viewModel.onEnter()
     }
 
     val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
@@ -131,8 +128,8 @@ fun PlayerScreen(
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
                 title = {
                     val songTitle = uiState.songInfo?.getSongFullName(
-                        defArtist = artist,
-                        defTrack = track
+                        defArtist = viewModel.songArtist,
+                        defTrack = viewModel.songTrack
                     ) ?: ""
                     d(TAG) { "AppBar title=$songTitle" }
 
@@ -173,8 +170,8 @@ fun PlayerScreen(
     ) { contentPadding ->
         PlayerScreenContent(
             viewModel = viewModel,
-            artist = artist,
-            track = track,
+            artist = viewModel.songArtist,
+            track = viewModel.songTrack,
             modifier = Modifier
                 // .nestedScroll(scrollBehavior.nestedScrollConnection)
                 // innerPadding takes into account the top and bottom bar
@@ -639,7 +636,14 @@ fun PreviewPlayerScreen() {
 
     val viewModel: PlayerViewModel = viewModel(
         factory = viewModelProviderFactoryOf {
-            PlayerViewModel(PreviewPlayerModule.previewPlayerUseCase)
+            PlayerViewModel(
+                savedStateHandle = SavedStateHandle().also {
+                    it["id"] = arrayOf(10712L)
+                    it["artist"] = "鄧麗君"
+                    it["track"] = "甜蜜蜜"
+                },
+                useCase = PreviewPlayerModule.previewPlayerUseCase,
+            )
         },
     )
 
@@ -650,9 +654,6 @@ fun PreviewPlayerScreen() {
         lightSystemBar = false,
     ) {
         PlayerScreen(
-            ids = arrayOf(123L),
-            artist = "鄧麗君",
-            track = "甜蜜蜜",
             onMenuUpAction = {},
             onShareAction = {},
             viewModel = viewModel,
