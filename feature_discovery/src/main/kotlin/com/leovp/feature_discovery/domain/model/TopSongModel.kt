@@ -23,8 +23,8 @@ data class TopSongModel(
     var markType: MarkType = MarkType.None
 
     fun getAlbumCoverUrl(
-        width: ImageThumb = ImageThumb.TRACK_SMALL_WIDTH,
-        height: ImageThumb = ImageThumb.TRACK_SMALL_HEIGHT
+        width: ImageThumb = ImageThumb.TRACK_THUMB_WIDTH,
+        height: ImageThumb = ImageThumb.TRACK_THUMB_HEIGHT
     ): String =
         this.album.picUrl + ("?param=${width.value}x${height.value}"
             .takeIf { width.value > 0 && height.value > 0 } ?: "")

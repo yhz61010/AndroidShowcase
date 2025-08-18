@@ -17,7 +17,7 @@ data class PlaylistModel(
     val name: String,
     val picUrl: String,
 ) {
-    fun getThumbPicUrl(
+    fun getPlayListPicUrl(
         width: ImageThumb = ImageThumb.PLAYLIST_WIDTH,
         height: ImageThumb = ImageThumb.PLAYLIST_HEIGHT
     ): String =

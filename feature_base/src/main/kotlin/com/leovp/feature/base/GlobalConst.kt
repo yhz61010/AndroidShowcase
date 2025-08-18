@@ -18,22 +18,22 @@ object GlobalConst {
     @JvmInline
     value class ImageThumb internal constructor(val value: Int) {
         companion object {
-            private const val BANNER_RATIO = 0.6F
+            private const val BANNER_RATIO = 0.55F
 
             val BANNER_WIDTH = ImageThumb((1080 * BANNER_RATIO).toInt())
             val BANNER_HEIGHT = ImageThumb((399 * BANNER_RATIO).toInt())
 
-            val PLAYLIST_WIDTH = ImageThumb(256)
-            val PLAYLIST_HEIGHT = ImageThumb(256)
-
-            val TRACK_SMALL_WIDTH = ImageThumb(128)
-            val TRACK_SMALL_HEIGHT = ImageThumb(128)
-
-            val TRACK_LARGE_WIDTH = ImageThumb(448)
-            val TRACK_LARGE_HEIGHT = ImageThumb(448)
-
             val ALBUM_WIDTH = ImageThumb(128)
             val ALBUM_HEIGHT = ImageThumb(128)
+
+            val PLAYLIST_WIDTH = ImageThumb(180)
+            val PLAYLIST_HEIGHT = ImageThumb(180)
+
+            val TRACK_THUMB_WIDTH = ImageThumb(56)
+            val TRACK_THUMB_HEIGHT = ImageThumb(56)
+
+            val TRACK_LARGE_WIDTH = ImageThumb(384)
+            val TRACK_LARGE_HEIGHT = ImageThumb(384)
         }
     }
 

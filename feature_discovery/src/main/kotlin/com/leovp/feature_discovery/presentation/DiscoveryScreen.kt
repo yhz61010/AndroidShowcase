@@ -41,7 +41,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -63,6 +62,7 @@ import com.leovp.android.exts.toast
 import com.leovp.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.compose.composable.pager.HorizontalAutoPager
 import com.leovp.compose.utils.previewInitLog
+import com.leovp.feature.base.GlobalConst.ImageThumb
 import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.enum.MarkType
 import com.leovp.feature_discovery.domain.model.PlaylistModel
@@ -252,11 +252,12 @@ fun RecommendsPlaylistContent(
                     modifier = Modifier
                         .clickable { onItemClick(playlist) }
                         .size(cardWidth),
-                    shape = MaterialTheme.shapes.large) {
+                    shape = MaterialTheme.shapes.large,
+                ) {
                     Box {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(playlist.getThumbPicUrl())
+                                .data(playlist.getPlayListPicUrl())
                                 .crossfade(true)
                                 .build(),
                             contentDescription = null,
@@ -502,7 +503,7 @@ fun ListItemImage(
         placeholder = ColorPainter(place_holder2_bg_color),
         error = ColorPainter(place_holder_err_bg_color),
         contentScale = ContentScale.Fit,
-        filterQuality = FilterQuality.Low,
+        // filterQuality = FilterQuality.Low,
         modifier = modifier
             .shadow(elevation)
             .clip(RoundedCornerShape(8.dp))
