@@ -36,6 +36,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -44,6 +45,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -57,6 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -66,14 +69,13 @@ import com.leovp.compose.utils.previewInitLog
 import com.leovp.compose.utils.toCounterBadgeText
 import com.leovp.feature_discovery.R
 import com.leovp.feature_discovery.domain.model.SongModel
+import com.leovp.feature_discovery.presentation.PlayerViewModel.UiState.Content
 import com.leovp.feature_discovery.testdata.PreviewPlayerModule
 import com.leovp.feature_discovery.ui.theme.mark_vip_bg2
-import com.leovp.feature_discovery.ui.theme.place_holder_bg_color
 import com.leovp.json.toJsonString
 import com.leovp.kotlin.exts.formatTimestampShort
 import com.leovp.log.base.d
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
-import com.leovp.network.http.exception.ResultException
 import com.leovp.ui.theme.ImmersiveTheme
 import com.smarttoolfactory.slider.ColorfulSlider
 import com.smarttoolfactory.slider.MaterialSliderDefaults
@@ -89,33 +91,29 @@ private const val TAG = "PlayerScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerScreen(
-    viewModel: PlayerViewModel,
     ids: Array<Long>,
     artist: String,
     track: String,
     onMenuUpAction: () -> Unit,
     onShareAction: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: PlayerViewModel = hiltViewModel<PlayerViewModel>(),
 ) {
     SideEffect {
-        d(TAG) { "=> Enter PlayerScreen <=  loading=${viewModel.loading}  $artist-$track  ids=${ids.toJsonString()}" }
+        d(TAG) { "=> Enter PlayerScreen <= $artist-$track  ids=${ids.toJsonString()}" }
     }
-    val ctx = LocalContext.current
-
     LaunchedEffect(Unit) {
         // d(TAG) { "=> Enter PlayerScreen <= -> LaunchedEffect" }
-        viewModel.getData(ids = ids)
+        viewModel.onEnter(ids = ids)
     }
 
-    val uiStateFlow = viewModel.uiState.collectAsStateWithLifecycle()
-    val uiState = uiStateFlow.value
-    uiState.exception?.let {
-        val resultException = it as ResultException
-        val message = resultException.cause?.cause?.message ?: resultException.message
-        ctx.toast(message, error = true, longDuration = true)
-    }
+    val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val uiState = uiStateFlow as Content
+    // uiState.exception?.let { resultException ->
+    //     val message = resultException.cause?.cause?.message ?: resultException.message
+    //     LocalContext.current.toast(message, error = true, longDuration = true)
+    // }
 
-    // val context = LocalContext.current
     val topAppBarState = rememberTopAppBarState()
     // val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
@@ -132,11 +130,14 @@ fun PlayerScreen(
                 // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
                 title = {
+                    val songTitle = uiState.songInfo?.getSongFullName(
+                        defArtist = artist,
+                        defTrack = track
+                    ) ?: ""
+                    d(TAG) { "AppBar title=$songTitle" }
+
                     Text(
-                        text = uiState.getSongFullName(
-                            defArtist = artist,
-                            defTrack = track
-                        ),
+                        text = songTitle,
                         color = MaterialTheme.colorScheme.onPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -211,7 +212,11 @@ fun TrackBadge(
 }
 
 @Composable
-fun CommentItem(commentsData: SongModel.Comment, onClick: () -> Unit) {
+fun CommentItem(
+    commentsData: SongModel.Comment,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val inlineMoreContentId = "more"
     val text = buildAnnotatedString {
         append(commentsData.comment)
@@ -234,7 +239,7 @@ fun CommentItem(commentsData: SongModel.Comment, onClick: () -> Unit) {
         }
     )
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp, 0.dp),
         horizontalArrangement = Arrangement.Center,
@@ -358,9 +363,9 @@ fun TrackArtistItem(
 }
 
 @Composable
-fun DurationItem(text: String, onClick: () -> Unit = {}) {
+fun DurationItem(text: String, onClick: (() -> Unit)? = null) {
     Text(
-        modifier = Modifier.clickable { onClick() },
+        modifier = onClick?.let { Modifier.clickable { it() } } ?: Modifier,
         text = text,
         color = MaterialTheme.colorScheme.onPrimary,
         style = MaterialTheme.typography.labelMedium,
@@ -380,10 +385,13 @@ fun SeekbarItem(
     onPositionChange: (Float) -> Unit,
     onQualityClick: () -> Unit,
 ) {
-    val ctx = LocalContext.current
-    val qualityIdx = quality.ordinal
-    val qualityName = ctx.resources.getStringArray(R.array.dis_player_song_quality_name)[qualityIdx]
     val position = positionState.collectAsStateWithLifecycle().value
+    SideEffect {
+        d(TAG) { "Play position=$position/$duration" }
+    }
+    val res = LocalResources.current
+    val qualityIdx = quality.ordinal
+    val qualityName = res.getStringArray(R.array.dis_player_song_quality_name)[qualityIdx]
 
     Column(
         modifier = Modifier
@@ -418,7 +426,7 @@ fun SeekbarItem(
                 ),
             ),
         ) // end of Slider
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -426,9 +434,9 @@ fun SeekbarItem(
                 .alpha(0.85f),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            DurationItem(position.toLong().formatTimestampShort())
+            DurationItem(text = position.toLong().formatTimestampShort())
             DurationItem(text = qualityName, onClick = onQualityClick)
-            DurationItem(duration.toLong().formatTimestampShort())
+            DurationItem(text = duration.toLong().formatTimestampShort())
         } // end of duration row
     }
 }
@@ -460,7 +468,7 @@ fun ControllerItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp, 24.dp)
+            .padding(8.dp, 8.dp)
             .alpha(0.9f),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -482,7 +490,7 @@ fun ExtraControllerItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp, 0.dp, 8.dp, 12.dp)
+            .padding(8.dp, 0.dp, 8.dp, 0.dp)
             .alpha(0.4f),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -500,13 +508,13 @@ fun PlayerScreenContent(
     modifier: Modifier = Modifier,
 ) {
     val ctx = LocalContext.current
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    val songInfo: SongModel? = (uiState as Content).songInfo
 
     SideEffect {
-        d(TAG) { "=> Enter PlayerScreenContent <=  songInfo=${uiState.songInfo?.name}" }
+        d(TAG) { "=> Enter PlayerScreenContent <=  songInfo=${songInfo?.name}" }
         d(TAG) {
-            "artist=$artist  track=$track  ${viewModel.playPosition.value}  " +
-                    "duration=${uiState.getSongDuration()}"
+            "artist=$artist track=$track duration=${songInfo?.duration}"
         }
     }
 
@@ -517,18 +525,34 @@ fun PlayerScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(420.dp)
-                .align(Alignment.TopCenter),
+                .height(360.dp),
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(ctx)
-                    .data(uiState.songInfo?.album?.getAlbumCoverUrl()).crossfade(true)
-                    .build(),
-                contentDescription = null,
-                placeholder = ColorPainter(place_holder_bg_color),
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize(),
-            )
+            Box {
+                AsyncImage(
+                    model = ImageRequest.Builder(ctx)
+                        .data(songInfo?.album?.getAlbumCoverUrl()).crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    placeholder = ColorPainter(MaterialTheme.colorScheme.onPrimaryContainer),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize(),
+                    alignment = Alignment.TopCenter,
+                )
+                val commentsData = songInfo?.commentsModel
+                val commentList: List<SongModel.Comment> = commentsData?.hotComments ?: emptyList()
+                if (commentList.isNotEmpty()) {
+                    CommentItem(
+                        commentsData = commentList.first(),
+                        onClick = {
+                            ctx.toast("You click on Hot Comment.")
+                            viewModel.onHotCommentClick()
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(0.dp, 10.dp),
+                    )
+                }
+            }
         }
         Column(
             modifier = Modifier
@@ -536,23 +560,13 @@ fun PlayerScreenContent(
                 .padding(8.dp, 0.dp)
                 .align(Alignment.BottomCenter)
         ) {
-            val commentsData = uiState.songInfo?.commentsModel
-            val commentList: List<SongModel.Comment> = commentsData?.hotComments ?: emptyList()
-            if (commentList.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                CommentItem(commentList.first()) {
-                    ctx.toast("You click on Hot Comment.")
-                    viewModel.onHotCommentClick()
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
             TrackArtistItem(
                 artist = artist,
                 track = track,
-                markText = uiState.songInfo?.markText,
-                favoriteCount = uiState.getSongRedCount(),
-                favoriteCountStr = uiState.getSongRedCountStr(),
-                commentCount = uiState.getSongCommentCount(),
+                markText = songInfo?.markText,
+                favoriteCount = songInfo?.getSongRedCount() ?: 0,
+                favoriteCountStr = songInfo?.getSongRedCountStr(),
+                commentCount = songInfo?.getSongCommentCount() ?: 0,
                 onArtistClick = {
                     ctx.toast("You click on Artist: $artist")
                     viewModel.onArtistClick(artist)
@@ -566,11 +580,11 @@ fun PlayerScreenContent(
                     viewModel.onCommentClick()
                 },
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             SeekbarItem(
-                positionState = viewModel.playPosition,
-                duration = uiState.getSongDuration().toFloat(),
-                quality = uiState.getSongQuality(),
+                positionState = viewModel.playPositionState,
+                duration = songInfo?.duration?.toFloat() ?: 0f,
+                quality = songInfo?.quality ?: SongModel.Quality.Standard,
                 onPositionChange = { pos -> viewModel.updatePlayPos(pos) },
                 onQualityClick = {
                     ctx.toast("You click on Quality.")
@@ -630,20 +644,18 @@ fun PreviewPlayerScreen() {
     )
 
     viewModel.updatePlayPos(80_000f)
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
-    d("PreviewPlayerScreen") { "---> data: ${uiState.songInfo}" }
     ImmersiveTheme(
         systemBarColor = Color.Transparent,
         dynamicColor = false,
         lightSystemBar = false,
     ) {
         PlayerScreen(
-            viewModel = viewModel,
             ids = arrayOf(123L),
             artist = "鄧麗君",
             track = "甜蜜蜜",
             onMenuUpAction = {},
             onShareAction = {},
+            viewModel = viewModel,
         )
     }
 }

@@ -18,20 +18,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.presentation.MainScreen
-import com.leovp.androidshowcase.presentation.MainViewModel
 import com.leovp.androidshowcase.presentation.SCREEN_TRANSITION_DURATION
 import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
-import com.leovp.feature_discovery.presentation.DiscoveryViewModel
 import com.leovp.feature_discovery.presentation.PlayerScreen
 import com.leovp.feature_discovery.presentation.PlayerViewModel
 import com.leovp.feature_discovery.presentation.SearchScreen
 import com.leovp.feature_main_drawer.membercenter.presentation.MemberCenterScreen
-import com.leovp.log.base.i
 import com.leovp.log.base.d
 import com.leovp.ui.theme.ImmersiveTheme
 import com.leovp.ui.theme.immersive_sys_ui
-import java.net.URLEncoder
 
 /**
  * Author: Michael Leo
@@ -148,7 +144,8 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
         requireNotNull(artist) { "artist can not be null for Player Screen." }
         requireNotNull(track) { "track can not be null for Player Screen." }
 
-        val ids: Array<Long> = it.arguments?.getLongArray("ids")?.toTypedArray() ?: emptyArray<Long>()
+        val ids: Array<Long> =
+            it.arguments?.getLongArray("ids")?.toTypedArray() ?: emptyArray<Long>()
         require(ids.isNotEmpty()) { "The parameter ids can't be empty." }
         d(TAG) { "route: ${it.destination.route}  ids=$ids  artist=$artist  track=$track" }
         ImmersiveTheme(
@@ -156,9 +153,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
             dynamicColor = false,
             lightSystemBar = false,
         ) {
-            val playerViewModel = hiltViewModel<PlayerViewModel>()
             PlayerScreen(
-                viewModel = playerViewModel,
                 ids = ids,
                 artist = artist,
                 track = track,

@@ -24,6 +24,6 @@ data class AlbumModel(
         width: ImageThumb = ImageThumb.TRACK_LARGE_WIDTH,
         height: ImageThumb = ImageThumb.TRACK_LARGE_HEIGHT
     ): String =
-        this.picUrl + ("?param=${width.value}y${height.value}"
+        this.picUrl + ("?param=${width.value}x${height.value}"
             .takeIf { width.value > 0 && height.value > 0 } ?: "")
 }

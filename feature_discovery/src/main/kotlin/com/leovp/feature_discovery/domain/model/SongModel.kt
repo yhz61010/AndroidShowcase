@@ -91,5 +91,14 @@ data class SongModel(
         Dolby(7),
         Jymaster(8),
     }
+
+    fun getSongArtist(def: String = ""): String = artists.firstOrNull()?.name ?: def
+
+    fun getSongRedCount(): Long = redCountModel?.count ?: 0
+    fun getSongRedCountStr(): String? = redCountModel?.countDesc
+    fun getSongCommentCount(): Long = commentsModel?.totalComments ?: 0
+
+    fun getSongFullName(defArtist: String = "", defTrack: String = ""): String =
+        "${getSongArtist(defArtist)}-$name"
 }
 

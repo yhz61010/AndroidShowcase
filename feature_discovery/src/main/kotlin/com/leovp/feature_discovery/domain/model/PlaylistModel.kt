@@ -21,6 +21,6 @@ data class PlaylistModel(
         width: ImageThumb = ImageThumb.PLAYLIST_WIDTH,
         height: ImageThumb = ImageThumb.PLAYLIST_HEIGHT
     ): String =
-        this.picUrl + ("?param=${width.value}y${height.value}"
+        this.picUrl + ("?param=${width.value}x${height.value}"
             .takeIf { width.value > 0 && height.value > 0 } ?: "")
 }

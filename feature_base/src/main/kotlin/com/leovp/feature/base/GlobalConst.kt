@@ -29,8 +29,8 @@ object GlobalConst {
             val TRACK_SMALL_WIDTH = ImageThumb(128)
             val TRACK_SMALL_HEIGHT = ImageThumb(128)
 
-            val TRACK_LARGE_WIDTH = ImageThumb(512)
-            val TRACK_LARGE_HEIGHT = ImageThumb(512)
+            val TRACK_LARGE_WIDTH = ImageThumb(448)
+            val TRACK_LARGE_HEIGHT = ImageThumb(448)
 
             val ALBUM_WIDTH = ImageThumb(128)
             val ALBUM_HEIGHT = ImageThumb(128)

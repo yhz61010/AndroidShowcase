@@ -82,8 +82,8 @@ class LocalPlayerDataSource @Inject constructor() : PlayerDataSource {
         br: Int
     ): SongModel.MusicAvailableModel {
         return SongModel.MusicAvailableModel(
-            success = false,
-            message = "亲爱的,暂无版权"
+            success = true,
+            // message = "亲爱的,暂无版权"
         )
     }
 }
