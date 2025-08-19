@@ -6,8 +6,8 @@
         <item name="windowNoTitle">true</item>
 
         <!-- Prevent the issue of briefly displaying a white background color when launching the application. -->
-        <item name="android:colorBackground">@color/app_windowBackground</item>
-        <item name="android:windowBackground">@color/app_windowBackground</item>
+        <item name="android:colorBackground">@color/app_splashWindowBackground</item>
+        <item name="android:windowBackground">@color/app_splashWindowBackground</item>
 
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/app_transparent_image</item>
     </style>

@@ -1,23 +1,20 @@
 package com.leovp.androidshowcase.ui
 
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.presentation.MainScreen
-import com.leovp.androidshowcase.presentation.SCREEN_TRANSITION_DURATION
 import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.feature_discovery.presentation.PlayerScreen
@@ -36,10 +33,7 @@ private const val TAG = "NavGraph"
 
 private val slideUp = AnimatedContentTransitionScope.SlideDirection.Up
 private val slideDown = AnimatedContentTransitionScope.SlideDirection.Down
-private val tween = tween<IntOffset>(
-    durationMillis = SCREEN_TRANSITION_DURATION,
-    easing = LinearOutSlowInEasing,
-)
+// private val tween = tween<IntOffset>(durationMillis = SCREEN_TRANSITION_DURATION)
 
 fun NavGraphBuilder.addAppMainGraph(
     widthSizeClass: WindowWidthSizeClass,
@@ -49,10 +43,10 @@ fun NavGraphBuilder.addAppMainGraph(
     d(TAG) { "=> Enter addAppMainGraph <=" }
     composable(
         route = Screen.Splash.route,
-        enterTransition = { fadeIn() },
-        exitTransition = { fadeOut() },
-        popEnterTransition = { fadeIn() },
-        popExitTransition = { fadeOut() },
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None },
     ) {
         SplashTheme {
             // AnimatedSplashScreen(navController = navController)
@@ -61,10 +55,10 @@ fun NavGraphBuilder.addAppMainGraph(
     }
     composable(
         route = Screen.Main.route,
-        enterTransition = { fadeIn() },
-        exitTransition = { fadeOut() },
-        popEnterTransition = { fadeIn() },
-        popExitTransition = { fadeOut() },
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None },
     ) {
         ImmersiveTheme(
             systemBarColor = Color.Transparent, dynamicColor = false, lightSystemBar = true
@@ -132,10 +126,12 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
             navArgument("artist") { type = NavType.StringType },
             navArgument("track") { type = NavType.StringType },
         ),
-        enterTransition = { slideIntoContainer(slideUp, tween) },
-        exitTransition = { fadeOut() },
-        popEnterTransition = { fadeIn() },
-        popExitTransition = { slideOutOfContainer(slideDown, tween) },
+        enterTransition = {
+            slideIntoContainer(towards = slideUp, animationSpec = tween(350))
+        },
+        popExitTransition = {
+            slideOutOfContainer(towards = slideDown, animationSpec = tween(800))
+        },
     ) {
         val ctx = LocalContext.current
         // val artist = it.arguments?.getString("artist")
@@ -159,7 +155,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
                 // },
                 // mainViewModel = mainViewModel,
                 // discoveryViewModel = discoveryViewModel
-                onMenuUpAction = { navigationActions.upPress() },
+                onMenuUpAction = { navigationActions.popBackStack() },
                 onShareAction = { ctx.toast("Click [Share] button") },
                 modifier = Modifier
             )

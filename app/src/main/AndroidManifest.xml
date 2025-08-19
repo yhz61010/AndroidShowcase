@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/app_Theme.AndroidShowcase"
         tools:targetApi="31">
+
+        <!-- It's best to separate the splash screen into its own Activity. -->
+
         <activity
             android:name=".presentation.MainActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize"

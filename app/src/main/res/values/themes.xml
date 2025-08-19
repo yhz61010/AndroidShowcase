@@ -4,21 +4,21 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-<!--        <item name="colorPrimary">@color/app_windowBackground</item>-->
-<!--        <item name="colorPrimaryDark">@color/app_windowBackground</item>-->
+<!--        <item name="colorPrimary">@color/app_splashWindowBackground</item>-->
+<!--        <item name="colorPrimaryDark">@color/app_splashWindowBackground</item>-->
 
         <!-- Prevent the issue of briefly displaying the default system bar color when launching the application. -->
         <!-- There color will be override when the custom theme is activated. -->
-        <item name="android:statusBarColor">@color/app_windowBackground</item>
-        <item name="android:navigationBarColor">@color/app_windowBackground</item>
+        <item name="android:statusBarColor">@color/app_splashWindowBackground</item>
+        <item name="android:navigationBarColor">@color/app_splashWindowBackground</item>
 
         <!-- Prevent the issue of briefly displaying a white status bar text when launching the application. -->
         <item name="android:windowLightStatusBar">false</item> <!-- tools:targetApi="23" -->
         <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
 
         <!-- Prevent the issue of briefly displaying a white background color when launching the application. -->
-        <item name="android:colorBackground">@color/app_windowBackground</item>
-        <item name="android:windowBackground">@color/app_windowBackground</item>
+        <item name="android:colorBackground">@color/app_splashWindowBackground</item>
+        <item name="android:windowBackground">@color/app_splashWindowBackground</item>
     </style>
 
     <!-- The actual theme we use. This varies for light theme (here), and values-night for dark theme. -->

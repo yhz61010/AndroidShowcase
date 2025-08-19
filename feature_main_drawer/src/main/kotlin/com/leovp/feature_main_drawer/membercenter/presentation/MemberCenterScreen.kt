@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -31,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.feature_main_drawer.R
+import com.leovp.ui.theme.ImmersiveTheme
 
 /**
  * Author: Michael Leo
@@ -48,7 +50,8 @@ fun MemberCenterScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
     Scaffold(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
             val title = stringResource(id = R.string.drawer_member_center)
             CenterAlignedTopAppBar(
                 // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -56,7 +59,8 @@ fun MemberCenterScreen(
                 // ),
                 // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-                title = { Text(title) }, navigationIcon = {
+                title = { Text(title) },
+                navigationIcon = {
                     IconButton(onClick = onMenuUpAction) {
                         Icon(
                             painter = painterResource(
@@ -66,24 +70,30 @@ fun MemberCenterScreen(
                             tint = MaterialTheme.colorScheme.primary,
                         )
                     }
-                }, scrollBehavior = scrollBehavior
+                },
+                scrollBehavior = scrollBehavior,
             )
-        }) { contentPadding ->
+        },
+    ) { contentPadding ->
         MemberCenterContent(
             modifier = Modifier
                 // .nestedScroll(scrollBehavior.nestedScrollConnection)
                 // innerPadding takes into account the top and bottom bar
-                .padding(contentPadding), state = rememberLazyListState()
+                .padding(contentPadding),
+            state = rememberLazyListState(),
         )
     }
 }
 
 @Composable
 fun MemberCenterContent(
-    modifier: Modifier = Modifier, state: LazyListState = rememberLazyListState()
+    modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(16.dp), modifier = modifier, state = state
+        contentPadding = PaddingValues(16.dp),
+        modifier = modifier,
+        state = state,
     ) {
         memberCenterScreenContentItems()
     }
@@ -105,7 +115,8 @@ fun LazyListScope.memberCenterScreenContentItems() {
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    modifier = Modifier.padding(2.dp, 16.dp), text = "item: $it"
+                    modifier = Modifier.padding(2.dp, 16.dp),
+                    text = "item: $it",
                 )
             }
         }
@@ -118,8 +129,14 @@ fun LazyListScope.memberCenterScreenContentItems() {
 fun PreviewMemberCenterScreen() {
     previewInitLog()
 
-    MemberCenterScreen(
-        // widthSize = WindowWidthSizeClass.Compact,
-        onMenuUpAction = {},
-    )
+    ImmersiveTheme(
+        systemBarColor = Color.Transparent,
+        dynamicColor = false,
+        lightSystemBar = false,
+    ) {
+        MemberCenterScreen(
+            // widthSize = WindowWidthSizeClass.Compact,
+            onMenuUpAction = {},
+        )
+    }
 }

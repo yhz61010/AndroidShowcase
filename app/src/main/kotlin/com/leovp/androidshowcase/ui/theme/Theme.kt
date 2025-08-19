@@ -16,7 +16,7 @@ import com.leovp.ui.theme.lightColorsTheme
 @Composable
 fun SplashTheme(content: @Composable () -> Unit) {
     val view = LocalView.current
-    val systemBarColor = colorResource(id = R.color.app_windowBackground)
+    val systemBarColor = colorResource(id = R.color.app_splashWindowBackground)
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window

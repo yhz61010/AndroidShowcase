@@ -76,11 +76,11 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     val navigationActions = rememberNavigationActions(navController = navController)
 
     /*
-     * Suppose we are moving from screen A to B:
-     * - Screen B will run enterTransition
+     * Suppose we are moving from screen A to B (navigate):
      * - Screen A will run exitTransition
+     * - Screen B will run enterTransition
      *
-     * Suppose we press the back button:
+     * Suppose we press the back button screen B to A (pop/back):
      * - Screen B will runs popExitTransition
      * - Screen A will run popEnterTransition
      */
@@ -91,18 +91,22 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
         easing = LinearOutSlowInEasing,
     )
     val enterTransition: EnterTransitionFunc = {
+        // Global navigation enter to current screen animation.
         // slideIntoContainer(slideStart, tween)
         slideInHorizontally(animationSpec = tween, initialOffsetX = { it })
     }
     val exitTransition: ExitTransitionFunc = {
+        // Global navigation exit current screen animation.
         // slideOutOfContainer(slideStart, tween)
         slideOutHorizontally(animationSpec = tween, targetOffsetX = { -it / 3 })
     }
     val popEnterTransition: EnterTransitionFunc = {
+        // Global back/pop to current screen enter animation.
         // slideIntoContainer(slideEnd, tween)
         slideInHorizontally(animationSpec = tween, initialOffsetX = { -it / 3 })
     }
     val popExitTransition: ExitTransitionFunc = {
+        // Global back/pop exit animation from current to other screen.
         // slideOutOfContainer(slideEnd, tween)
         slideOutHorizontally(animationSpec = tween, targetOffsetX = { it })
     }
