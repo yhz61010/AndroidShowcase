@@ -18,7 +18,7 @@ plugins {
 }
 
 android {
-    namespace = "com.leovp.feature_community"
+    namespace = "com.leovp.community"
 
     resourcePrefix = "comm_"
 

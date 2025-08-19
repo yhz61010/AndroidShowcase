@@ -37,7 +37,9 @@ object DrawerDestinations {
  * destination=Destination(0x88e673a4) route=app_main
  * ```
  */
-class AppNavigationActions(private val navController: NavHostController) {
+class AppNavigationActions(
+    private val navController: NavHostController,
+) {
     @Suppress("unused")
     val currentRoute: String? get() = navController.currentDestination?.route
 
@@ -49,7 +51,10 @@ class AppNavigationActions(private val navController: NavHostController) {
         navController.navigateUp()
     }
 
-    fun navigate(route: String, arguments: String? = null) {
+    fun navigate(
+        route: String,
+        arguments: String? = null,
+    ) {
         i(TAG) { "-> navigate to: $route" }
         d { block = { outputGraphInfo(route, navController) } }
         return when (route) {
@@ -59,36 +64,44 @@ class AppNavigationActions(private val navController: NavHostController) {
             Screen.SearchScreen.route,
             Screen.PlayerScreen.routeName,
             Screen.MessageScreen.route,
-            Screen.SettingScreen.route -> navController.navigateSingleTopTo(route, arguments)
+            Screen.SettingScreen.route,
+            ->
+                navController.navigateSingleTopTo(
+                    route,
+                    arguments,
+                )
 
             else -> error("Illegal route: $route")
         }
     }
 }
 
-private fun NavHostController.navigateToMain() = this.navigate(Screen.Main.route) {
-    // Pop up to the start destination of the graph to
-    // avoid building up a large stack of destinations
-    // on the back stack as users select items
-    //
-    // navController.graph.findStartDestination().id
+private fun NavHostController.navigateToMain() =
+    this.navigate(Screen.Main.route) {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destinations
+        // on the back stack as users select items
+        //
+        // navController.graph.findStartDestination().id
 
-    // Clear the back stack up to the given route.
-    // `Screen.Splash.route`, meaning everything back to the `Splash` screen will be popped.
-    // `inclusive = true` ensures that `Splash` itself is also removed.
-    // Effect: Once the user reaches `Main`,
-    // pressing the back button won't return them to `Splash` — it will exit the app instead.
-    popUpTo(Screen.Splash.route) { inclusive = true }
-    // Avoid multiple copies of the same destination when re-selecting the same item
-    launchSingleTop = true
-    // Whether to restore state when re-selecting a previously selected item
-    restoreState = false
-}
+        // Clear the back stack up to the given route.
+        // `Screen.Splash.route`, meaning everything back to the `Splash` screen will be popped.
+        // `inclusive = true` ensures that `Splash` itself is also removed.
+        // Effect: Once the user reaches `Main`,
+        // pressing the back button won't return them to `Splash` — it will exit the app instead.
+        popUpTo(Screen.Splash.route) { inclusive = true }
+        // Avoid multiple copies of the same destination when re-selecting the same item
+        launchSingleTop = true
+        // Whether to restore state when re-selecting a previously selected item
+        restoreState = false
+    }
 
-private fun NavHostController.navigateSingleTopTo(route: String, arguments: String? = null) {
+private fun NavHostController.navigateSingleTopTo(
+    route: String,
+    arguments: String? = null,
+) {
     val arg: String? = arguments?.trimStart('/')
-    this.navigate(
-        route.takeIf { arguments == null } ?: "$route/$arg") {
+    this.navigate(route.takeIf { arguments == null } ?: "$route/$arg") {
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destinations
         // on the back stack as users select items
@@ -108,7 +121,10 @@ private fun NavHostController.navigateSingleTopTo(route: String, arguments: Stri
     }
 }
 
-private fun NavHostController.navigateTo(route: String, arguments: String? = null) {
+private fun NavHostController.navigateTo(
+    route: String,
+    arguments: String? = null,
+) {
     val arg: String? = arguments?.trimStart('/')
     this.navigate(route.takeIf { arguments == null } ?: "$route/$arg") {
         // Whether to restore state when re-selecting a previously selected item
@@ -117,13 +133,17 @@ private fun NavHostController.navigateTo(route: String, arguments: String? = nul
 }
 
 @Composable
-fun rememberNavigationActions(navController: NavHostController): AppNavigationActions {
-    return remember { AppNavigationActions(navController) }
-}
+fun rememberNavigationActions(navController: NavHostController): AppNavigationActions =
+    remember { AppNavigationActions(navController) }
 
 @SuppressLint("RestrictedApi")
-private fun outputGraphInfo(route: String, navController: NavHostController) {
-    d(TAG) { "  current: $route  previous=${navController.currentDestination?.route}" }
+private fun outputGraphInfo(
+    route: String,
+    navController: NavHostController,
+) {
+    d(TAG) {
+        "  current: $route  previous=${navController.currentDestination?.route}"
+    }
     for ((i, dest) in navController.currentBackStack.value.withIndex()) {
         d(TAG) { "    Stack $i: ${dest.destination.route}" }
     }

@@ -12,12 +12,15 @@ import okhttp3.Response
  * See testing user agent: https://faisalman.github.io/ua-parser-js/
  */
 class UserAgentInterceptor : Interceptor {
-    private val userAgent = "leo_showcase/${GlobalConst.VERSION_NAME} ${System.getProperty("http.agent")}"
+    private val userAgent =
+        "leo_showcase/${GlobalConst.VERSION_NAME} " +
+            "${System.getProperty("http.agent")}"
 
-    override fun intercept(chain: Interceptor.Chain): Response = chain
-        .request()
-        .newBuilder()
-        .header("User-Agent", userAgent)
-        .build()
-        .let { chain.proceed(it) }
+    override fun intercept(chain: Interceptor.Chain): Response =
+        chain
+            .request()
+            .newBuilder()
+            .header("User-Agent", userAgent)
+            .build()
+            .let { chain.proceed(it) }
 }

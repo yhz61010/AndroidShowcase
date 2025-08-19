@@ -24,6 +24,7 @@ sealed class Screen(
     val routeName: String = route.substringBefore("/", route)
 
     data object Splash : Screen("app_splash")
+
     data object Main : Screen("app_main")
 
     // ============================
@@ -38,13 +39,13 @@ sealed class Screen(
     data object My : Screen(
         route = "app_my",
         nameResId = R.string.app_main_tab_my,
-        iconResId = R.drawable.app_music_note
+        iconResId = R.drawable.app_music_note,
     )
 
     data object Community : Screen(
         route = "app_community",
         nameResId = R.string.app_main_tab_community,
-        iconResId = R.drawable.app_speaker_notes
+        iconResId = R.drawable.app_speaker_notes,
     )
     // ==============================
 
@@ -53,29 +54,29 @@ sealed class Screen(
     // ===============================
     data object MemberCenterScreen : Screen(
         route = "drawer_member_center",
-        nameResId = com.leovp.feature_main_drawer.R.string.drawer_member_center,
-        iconResId = R.drawable.app_credit_card
+        nameResId = com.leovp.maindrawer.R.string.drawer_member_center,
+        iconResId = R.drawable.app_credit_card,
     )
 
     data object MessageScreen : Screen(
         "drawer_messages",
-        com.leovp.feature_main_drawer.R.string.drawer_message_label,
-        iconResId = R.drawable.app_mail
+        com.leovp.maindrawer.R.string.drawer_message_label,
+        iconResId = R.drawable.app_mail,
     )
 
     data object SettingScreen : Screen(
         "drawer_setting",
-        com.leovp.feature_main_drawer.R.string.drawer_settings_label,
-        iconResId = R.drawable.app_settings
+        com.leovp.maindrawer.R.string.drawer_settings_label,
+        iconResId = R.drawable.app_settings,
     )
     // ==============================
 
     data object SearchScreen : Screen(
         "search_screen",
-        com.leovp.feature_discovery.R.string.dis_search_screen_title,
+        com.leovp.discovery.R.string.dis_search_screen_title,
     )
 
     data object PlayerScreen : Screen(
-        "player_screen/{id}/{artist}/{track}"
+        "player_screen/{id}/{artist}/{track}",
     )
 }

@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-    namespace = "com.leovp.feature_main_drawer"
+    namespace = "com.leovp.maindrawer"
 
     resourcePrefix = "drawer_"
 

@@ -35,7 +35,7 @@ versionName = "1.0.5"
 versionCode = "105"
 
 # @keep
-leo-version = "5.12.80"
+leo-version = "5.12.83"
 
 #===================
 #===== Compile =====
@@ -176,7 +176,7 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 #lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
 #androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose-constraintlayout" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
-androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+#androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 
 #=======================
 #===== Third party =====
@@ -280,7 +280,7 @@ android-test = [
     #    "androidx-test-ext-junit-ktx",
     #    "androidx-test-monitor",
     #    "androidx-test-uiautomator",
-    "androidx-compose-ui-test-junit4",
+#    "androidx-compose-ui-test-junit4",
     "espresso-core",
     #    "espresso-contrib",
     #    "espresso-web",

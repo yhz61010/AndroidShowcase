@@ -25,7 +25,10 @@ import kotlinx.coroutines.delay
 private const val SPLASH_WAIT_TIME: Long = 1000
 
 @Composable
-fun SplashScreen(onTimeout: () -> Unit, modifier: Modifier = Modifier) {
+fun SplashScreen(
+    onTimeout: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     // Adds composition consistency. Use the value when LaunchedEffect is first called
     val currentOnTimeout by rememberUpdatedState(onTimeout)
 

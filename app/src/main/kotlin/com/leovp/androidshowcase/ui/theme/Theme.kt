@@ -34,6 +34,8 @@ fun SplashTheme(content: @Composable () -> Unit) {
     }
 
     MaterialTheme(
-        colorScheme = lightColorsTheme, typography = Typography, content = content
+        colorScheme = lightColorsTheme,
+        typography = Typography,
+        content = content,
     )
 }

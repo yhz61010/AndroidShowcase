@@ -19,9 +19,7 @@ open class ApiResponseResult(
     @SerialName("code") val code: Int = 0,
     @SerialName("message") val message: String? = null,
 ) {
-    open fun resultSuccess(): Boolean {
-        return code == 200
-    }
+    open fun resultSuccess(): Boolean = code == 200
 
     open fun isEmpty() = false
 }

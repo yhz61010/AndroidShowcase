@@ -23,7 +23,10 @@ object InitManager {
 
         LeoToast.getInstance(app).init(
             @Suppress("SENSELESS_COMPARISON")
-            LeoToast.ToastConfig(GlobalConst.DEBUG, R.mipmap.app_ic_launcher_round)
+            LeoToast.ToastConfig(
+                GlobalConst.DEBUG,
+                R.mipmap.app_ic_launcher_round,
+            ),
         )
 
         PrefContext.setPrefImpl(LPref(app))
@@ -41,8 +44,10 @@ object InitManager {
                 color = ContextCompat.getColor(app, R.color.app_colorPrimary)
             }
             alerting("default-notification") {
-                channelName = app.getString(R.string.app_notification_channel_name)
-                channelDescription = app.getString(R.string.app_notification_channel_name_desc)
+                channelName =
+                    app.getString(R.string.app_notification_channel_name)
+                channelDescription =
+                    app.getString(R.string.app_notification_channel_name_desc)
                 lockScreenVisibility = NotificationCompat.VISIBILITY_PRIVATE
                 channelImportance = Notify.IMPORTANCE_LOW
             }

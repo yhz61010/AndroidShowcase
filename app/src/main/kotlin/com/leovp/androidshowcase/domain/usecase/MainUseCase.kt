@@ -11,9 +11,12 @@ import javax.inject.Singleton
  * Date: 2023/9/12 13:36
  */
 @Singleton
-class MainUseCase @Inject constructor(
-    /*@MainRepositoryImplement*/ private val repository: MainRepository
-) {
-    suspend fun getUnreadList(uid: String): Result<List<UnreadModel>> =
-        repository.getUnreadList(uid)
-}
+class MainUseCase
+    @Inject
+    constructor(
+        // @MainRepositoryImplement
+        private val repository: MainRepository,
+    ) {
+        suspend fun getUnreadList(uid: String): Result<List<UnreadModel>> =
+            repository.getUnreadList(uid)
+    }

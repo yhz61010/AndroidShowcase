@@ -24,7 +24,7 @@ plugins {
 // }
 
 android {
-    namespace = "com.leovp.feature_discovery"
+    namespace = "com.leovp.discovery"
 
     resourcePrefix = "dis_"
 

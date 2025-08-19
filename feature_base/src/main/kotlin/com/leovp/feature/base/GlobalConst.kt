@@ -16,7 +16,9 @@ object GlobalConst {
     const val PLAYLIST_SONG_SIZE = 27
 
     @JvmInline
-    value class ImageThumb internal constructor(val value: Int) {
+    value class ImageThumb internal constructor(
+        val value: Int,
+    ) {
         companion object {
             private const val BANNER_RATIO = 0.55F
 
@@ -45,6 +47,7 @@ object GlobalConst {
     const val HTTP_GET_PRIVATE_CONTENT = "/personalized/privatecontent"
 
     // limit(option): Default 30
+
     /** 获取推荐歌单 */
     const val HTTP_GET_PERSONALIZED = "/personalized"
 
@@ -56,16 +59,19 @@ object GlobalConst {
     //      韩国: 16
     //
     // /top/song?type=7
+
     /** 新歌速递 */
     const val HTTP_GET_TOP_SONG = "/top/song"
 
     // refresh(option): false
     // cursor
+
     /** 首页-发现 */
     const val HTTP_GET_HOMEPAGE_BLOCK_PAGE = "/homepage/block/page"
 
     // ids=123
     // ids=123,456
+
     /** 获取歌曲详情 */
     const val HTTP_GET_SONG_DETAIL = "/song/detail"
 
@@ -73,10 +79,12 @@ object GlobalConst {
     // limit(option): Default value 20
     // offset(option): 偏移数量 , 用于分页 , 如 :( 评论页数 -1)*20, 其中 20 为 limit 的值
     // before(option): 分页参数,取上一页最后一项的 time 获取下一页数据(获取超过 5000 条评论的时候需要用到)
+
     /** 歌曲评论 */
     const val HTTP_GET_MUSIC_COMMENT = "/comment/music"
 
     // id
+
     /** 歌曲红心数量 */
     const val HTTP_GET_SONG_RED_COUNT = "/song/red/count"
 
@@ -91,11 +99,13 @@ object GlobalConst {
     //      sky      => 沉浸环绕声
     //      dolby    => 杜比全景声
     //      jymaster => 超清母带
+
     /** 获取音乐 url - 新版 */
     const val HTTP_GET_SONG_URL_V1 = "/song/url/v1"
 
     // id
     // br(option): Default 999000
+
     /** 音乐是否可用 */
     const val HTTP_GET_CHECK_MUSIC = "/check/music"
     // ===== Http request - End =====

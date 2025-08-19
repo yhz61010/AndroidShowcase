@@ -19,10 +19,16 @@ val customGroup = "com.leovp"
 val javaVersion: JavaVersion by extra {
     // JavaVersion.VERSION_17
     // We should use integer value for toVersion() in this case.
-    JavaVersion.toVersion(libs.versions.javaVersion.get().toInt())
+    JavaVersion.toVersion(
+        libs.versions.javaVersion
+            .get()
+            .toInt(),
+    )
 }
 val jvmTargetVersion by extra {
-    org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(libs.versions.jvmVersion.get())
+    org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(
+        libs.versions.jvmVersion.get(),
+    )
 }
 // val kotlinApiVersion by extra {
 //     // org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
@@ -89,24 +95,46 @@ plugins {
 // Fix the problem: "Unexpected SMAP line: *S KotlinDebug"
 // ********************
 jacoco {
-    toolVersion = rootProject.libs.versions.jacoco.get()
+    toolVersion =
+        rootProject.libs.versions.jacoco
+            .get()
 }
 
-val detektFormatting: Provider<MinimalExternalModuleDependency> = libs.detekt.formatting
+val detektFormatting: Provider<MinimalExternalModuleDependency> =
+    libs.detekt.formatting
 
 // all projects = root project + sub projects
 allprojects {
     group = customGroup
 
-    apply(plugin = rootProject.libs.plugins.kotlin.serialization.get().pluginId)
+    apply(
+        plugin =
+            rootProject.libs.plugins.kotlin.serialization
+                .get()
+                .pluginId,
+    )
 
     // We want to apply ktlint at all project level because it also checks Gradle config files (*.kts)
-    apply(plugin = rootProject.libs.plugins.ktlint.gradle.get().pluginId)
+    apply(
+        plugin =
+            rootProject.libs.plugins.ktlint.gradle
+                .get()
+                .pluginId,
+    )
     configure<KtlintExtension> {
-        version.set(rootProject.libs.versions.ktlint.asProvider().get())
+        version.set(
+            rootProject.libs.versions.ktlint
+                .asProvider()
+                .get(),
+        )
     }
 
-    apply(plugin = rootProject.libs.plugins.detekt.get().pluginId)
+    apply(
+        plugin =
+            rootProject.libs.plugins.detekt
+                .get()
+                .pluginId,
+    )
     // or
     // apply {
     //     plugin(rootProject.libs.plugins.detekt.get().pluginId)
@@ -125,8 +153,8 @@ allprojects {
                 "$rootDir/build.gradle.kts",
                 "$rootDir/settings.gradle.kts",
                 "src/main/kotlin",
-                "src/test/kotlin"
-            )
+                "src/test/kotlin",
+            ),
         )
     }
 
@@ -140,7 +168,9 @@ allprojects {
         // enableExperimentalRules.set(true)
 
         reporters {
-            reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+            reporter(
+                org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE,
+            )
         }
 
         filter {
@@ -149,7 +179,9 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+        maxParallelForks =
+            (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 }
+                ?: 1
         useJUnitPlatform()
     }
 
@@ -181,14 +213,29 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = rootProject.libs.plugins.kotlin.android.get().pluginId)
+    apply(
+        plugin =
+            rootProject.libs.plugins.kotlin.android
+                .get()
+                .pluginId,
+    )
 
-    plugins.withId(rootProject.libs.plugins.android.application.get().pluginId) {
+    plugins.withId(
+        rootProject.libs.plugins.android.application
+            .get()
+            .pluginId,
+    ) {
         // println("displayName=$displayName, name=$name, group=$group")
         configureApplication()
     }
 
-    plugins.withId(rootProject.libs.plugins.android.library.get().pluginId) { configureLibrary() }
+    plugins.withId(
+        rootProject.libs.plugins.android.library
+            .get()
+            .pluginId,
+    ) {
+        configureLibrary()
+    }
 }
 
 tasks.register<Delete>("clean") {
@@ -210,20 +257,22 @@ fun Project.configureCompileTasks() {
         options.compilerArgs.add("-Xlint:deprecation")
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(jvmTargetVersion)
-            // languageVersion.set(kotlinLanguageVersion)
-            // apiVersion.set(kotlinApiVersion)
+    tasks
+        .withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>()
+        .configureEach {
+            compilerOptions {
+                jvmTarget.set(jvmTargetVersion)
+                // languageVersion.set(kotlinLanguageVersion)
+                // apiVersion.set(kotlinApiVersion)
 
-            // Enable support for experimental features
-            // freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
-            optIn.add("kotlin.RequiresOptIn")
+                // Enable support for experimental features
+                // freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+                optIn.add("kotlin.RequiresOptIn")
+            }
+            // compilerOptions.jvmTarget.set(jvmTargetVersion)
+            // compilerOptions.apiVersion.set(kotlinVersion)
+            // compilerOptions.languageVersion.set(kotlinVersion)
         }
-        // compilerOptions.jvmTarget.set(jvmTargetVersion)
-        // compilerOptions.apiVersion.set(kotlinVersion)
-        // compilerOptions.languageVersion.set(kotlinVersion)
-    }
 }
 
 // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
@@ -234,14 +283,25 @@ fun Project.configureCompileTasks() {
 //     }
 // }
 
-fun Project.configureBase(): BaseExtension {
-    return extensions.getByName<BaseExtension>("android").apply {
-        compileSdkVersion(rootProject.libs.versions.compile.sdk.get().toInt())
+fun Project.configureBase(): BaseExtension =
+    extensions.getByName<BaseExtension>("android").apply {
+        compileSdkVersion(
+            rootProject.libs.versions.compile.sdk
+                .get()
+                .toInt(),
+        )
         defaultConfig {
-            minSdk = rootProject.libs.versions.min.sdk.get().toInt()
-            targetSdk = rootProject.libs.versions.target.sdk.get().toInt()
+            minSdk =
+                rootProject.libs.versions.min.sdk
+                    .get()
+                    .toInt()
+            targetSdk =
+                rootProject.libs.versions.target.sdk
+                    .get()
+                    .toInt()
 
-            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            testInstrumentationRunner =
+                "androidx.test.runner.AndroidJUnitRunner"
         }
         sourceSets.configureEach {
             // This `name` is just the name for each `source` in `sourceSets`.
@@ -265,7 +325,7 @@ fun Project.configureBase(): BaseExtension {
             getByName("release") {
                 proguardFiles(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                    "proguard-rules.pro",
                 )
             }
         }
@@ -276,46 +336,48 @@ fun Project.configureBase(): BaseExtension {
         // buildFeatures.buildConfig = true
 
         // Turn off checking the given issue id's
-        lintOptions.disable += setOf(
-            // "MissingTranslation",
-            // "GoogleAppIndexingWarning",
-            "RtlHardcoded",
-            "RtlCompat",
-            "RtlEnabled"
-        )
-        packagingOptions.resources.pickFirsts += setOf(
-            // kotlinx-coroutines-android
-            "META-INF/atomicfu.kotlin_module"
-        )
-        packagingOptions.resources.excludes += setOf(
-            "META-INF/licenses/**",
-            "META-INF/NOTICE*",
-            "META-INF/LICENSE*",
-            "META-INF/DEPENDENCIES*",
-            "META-INF/INDEX.LIST",
-            "META-INF/io.netty.versions.properties",
-            "META-INF/services/reactor.blockhound.integration.BlockHoundIntegration",
-            "META-INF/{AL2.0,LGPL2.1}",
-            "**/*.proto",
-            "**/*.bin",
-            "**/*.java"
-            // "**/*.properties",
-            // "**/*.version",
-            // ==============================
-            // ==============================
-            // Don't exclude [kotlin_module] file.
-            // Or else, you can't import kotlin extension methods in kotlin file.
-            // "**/*.*_module", // **/*.kotlin_module
-            // ==============================
-            // ==============================
-            // "*.txt",
-            // "kotlin/**",
-            // "kotlinx/**",
-            // "okhttp3/**",
-            // "META-INF/services/**",
-        )
+        lintOptions.disable +=
+            setOf(
+                // "MissingTranslation",
+                // "GoogleAppIndexingWarning",
+                "RtlHardcoded",
+                "RtlCompat",
+                "RtlEnabled",
+            )
+        packagingOptions.resources.pickFirsts +=
+            setOf(
+                // kotlinx-coroutines-android
+                "META-INF/atomicfu.kotlin_module",
+            )
+        packagingOptions.resources.excludes +=
+            setOf(
+                "META-INF/licenses/**",
+                "META-INF/NOTICE*",
+                "META-INF/LICENSE*",
+                "META-INF/DEPENDENCIES*",
+                "META-INF/INDEX.LIST",
+                "META-INF/io.netty.versions.properties",
+                "META-INF/services/reactor.blockhound.integration.BlockHoundIntegration",
+                "META-INF/{AL2.0,LGPL2.1}",
+                "**/*.proto",
+                "**/*.bin",
+                "**/*.java",
+                // "**/*.properties",
+                // "**/*.version",
+                // ==============================
+                // ==============================
+                // Don't exclude [kotlin_module] file.
+                // Or else, you can't import kotlin extension methods in kotlin file.
+                // "**/*.*_module", // **/*.kotlin_module
+                // ==============================
+                // ==============================
+                // "*.txt",
+                // "kotlin/**",
+                // "kotlinx/**",
+                // "okhttp3/**",
+                // "META-INF/services/**",
+            )
     }
-}
 
 /**
  * The application level default configurations.
@@ -324,42 +386,44 @@ fun Project.configureBase(): BaseExtension {
  * **Attention**:
  * The default value of `applicationId` is `namespace`.
  */
-fun Project.configureApplication(): BaseExtension = configureBase().apply {
-    defaultConfig {
-        applicationId = namespace
-        vectorDrawables.useSupportLibrary = true
-    }
-    buildTypes {
-        getByName("release") {
-            isShrinkResources = true
-            isMinifyEnabled = true
+fun Project.configureApplication(): BaseExtension =
+    configureBase().apply {
+        defaultConfig {
+            applicationId = namespace
+            vectorDrawables.useSupportLibrary = true
         }
+        buildTypes {
+            getByName("release") {
+                isShrinkResources = true
+                isMinifyEnabled = true
+            }
 
-        getByName("debug") {
-            isShrinkResources = false
-            isMinifyEnabled = false
+            getByName("debug") {
+                isShrinkResources = false
+                isMinifyEnabled = false
+            }
         }
     }
-}
 
 /**
  * All the submodules will have the hierarchy configurations.
  * You just need to add your custom properties as you wish.
  */
-fun Project.configureLibrary(): BaseExtension = configureBase().apply {
-    defaultConfig {
-        consumerProguardFiles("consumer-rules.pro")
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
+fun Project.configureLibrary(): BaseExtension =
+    configureBase().apply {
+        defaultConfig {
+            consumerProguardFiles("consumer-rules.pro")
         }
+        buildTypes {
+            getByName("release") {
+                isMinifyEnabled = false
+            }
 
-        getByName("debug") {
-            isMinifyEnabled = false
+            getByName("debug") {
+                isMinifyEnabled = false
+            }
         }
     }
-}
 
 // Target version of the generated JVM bytecode. It is used for type resolution.
 tasks.withType<Detekt>().configureEach {
@@ -394,12 +458,17 @@ tasks.register("staticCheck", fun Task.() {
 
         // Get modules with "testDebugUnitTest" task (app module does not have it)
         val testTasks =
-            subprojects.mapNotNull { "${it.name}:testDebugUnitTest" }
+            subprojects
+                .mapNotNull { "${it.name}:testDebugUnitTest" }
                 .filter { it != "app:testDebugUnitTest" }
 
         // All task dependencies
         val taskDependencies =
-            mutableListOf("app:assembleAndroidTest", "ktlintCheck", "detekt").also {
+            mutableListOf(
+                "app:assembleAndroidTest",
+                "ktlintCheck",
+                "detekt",
+            ).also {
                 it.addAll(lintTasks)
                 it.addAll(testTasks)
             }
@@ -418,7 +487,9 @@ tasks.withType<DependencyUpdatesTask> {
 
 fun isNonStable(version: String): Boolean {
     val stableKeyword =
-        listOf("RELEASE", "FINAL", "GA").any { version.uppercase(Locale.getDefault()).contains(it) }
+        listOf("RELEASE", "FINAL", "GA").any {
+            version.uppercase(Locale.getDefault()).contains(it)
+        }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()

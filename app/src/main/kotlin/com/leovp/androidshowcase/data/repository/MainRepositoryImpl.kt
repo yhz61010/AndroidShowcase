@@ -14,12 +14,13 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class MainRepositoryImpl @Inject constructor(
-    private val dataSource: MainDataSource
-) : MainRepository {
-
-    override suspend fun getUnreadList(uid: String): Result<List<UnreadModel>> {
-        delay(1000)
-        return Result.Success(dataSource.getUnreadList("1"))
+class MainRepositoryImpl
+    @Inject
+    constructor(
+        private val dataSource: MainDataSource,
+    ) : MainRepository {
+        override suspend fun getUnreadList(uid: String): Result<List<UnreadModel>> {
+            delay(1000)
+            return Result.Success(dataSource.getUnreadList("1"))
+        }
     }
-}

@@ -4,7 +4,7 @@ package com.leovp.androidshowcase.testdata
 
 import com.leovp.androidshowcase.data.datasource.MainDataSource
 import com.leovp.androidshowcase.domain.usecase.MainUseCase
-import com.leovp.androidshowcase.testdata.local_datasource.LocalMainDataSource
+import com.leovp.androidshowcase.testdata.local.datasource.LocalMainDataSource
 import com.leovp.androidshowcase.testdata.preview.PreviewMainRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -20,7 +20,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class PreviewMainModule {
-
     @Singleton
     @Binds
     abstract fun bindLocalDataSource(dataSource: LocalMainDataSource): MainDataSource

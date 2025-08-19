@@ -17,10 +17,10 @@ import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.presentation.MainScreen
 import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
-import com.leovp.feature_discovery.presentation.PlayerScreen
-import com.leovp.feature_discovery.presentation.SearchScreen
-import com.leovp.feature_main_drawer.membercenter.presentation.MemberCenterScreen
+import com.leovp.discovery.presentation.player.PlayerScreen
+import com.leovp.discovery.presentation.search.SearchScreen
 import com.leovp.log.base.d
+import com.leovp.maindrawer.membercenter.presentation.MemberCenterScreen
 import com.leovp.ui.theme.ImmersiveTheme
 import com.leovp.ui.theme.immersive_sys_ui
 
@@ -50,7 +50,9 @@ fun NavGraphBuilder.addAppMainGraph(
     ) {
         SplashTheme {
             // AnimatedSplashScreen(navController = navController)
-            SplashScreen(onTimeout = { navigationActions.navigate(Screen.Main.route) })
+            SplashScreen(
+                onTimeout = { navigationActions.navigate(Screen.Main.route) },
+            )
         }
     }
     composable(
@@ -61,13 +63,15 @@ fun NavGraphBuilder.addAppMainGraph(
         popExitTransition = { ExitTransition.None },
     ) {
         ImmersiveTheme(
-            systemBarColor = Color.Transparent, dynamicColor = false, lightSystemBar = true
+            systemBarColor = Color.Transparent,
+            dynamicColor = false,
+            lightSystemBar = true,
         ) {
             // val context = LocalContext.current
             MainScreen(
                 navigationActions = navigationActions,
                 widthSize = widthSizeClass,
-                modifier = modifier
+                modifier = modifier,
             )
         }
     }
@@ -83,11 +87,12 @@ fun NavGraphBuilder.addAppDrawerGraph(
         ImmersiveTheme(
             systemBarColor = immersive_sys_ui,
             lightSystemBar = !isSystemInDarkTheme(),
-            dynamicColor = false
+            dynamicColor = false,
         ) {
             MemberCenterScreen(
                 // widthSize = widthSizeClass,
-                onMenuUpAction = { navigationActions.upPress() }, modifier = modifier
+                onMenuUpAction = { navigationActions.upPress() },
+                modifier = modifier,
             )
         }
     }
@@ -114,18 +119,19 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
                 // },
                 // mainViewModel = mainViewModel,
                 // discoveryViewModel = discoveryViewModel
-                onMenuUpAction = { navigationActions.upPress() }
+                onMenuUpAction = { navigationActions.upPress() },
             )
         }
     }
 
     composable(
         route = Screen.PlayerScreen.route,
-        arguments = listOf(
-            navArgument("id") { type = NavType.LongType },
-            navArgument("artist") { type = NavType.StringType },
-            navArgument("track") { type = NavType.StringType },
-        ),
+        arguments =
+            listOf(
+                navArgument("id") { type = NavType.LongType },
+                navArgument("artist") { type = NavType.StringType },
+                navArgument("track") { type = NavType.StringType },
+            ),
         enterTransition = {
             slideIntoContainer(towards = slideUp, animationSpec = tween(350))
         },
@@ -157,7 +163,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
                 // discoveryViewModel = discoveryViewModel
                 onMenuUpAction = { navigationActions.popBackStack() },
                 onShareAction = { ctx.toast("Click [Share] button") },
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
     }

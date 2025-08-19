@@ -39,10 +39,10 @@ import dagger.hilt.android.AndroidEntryPoint
 private const val TAG = "MA"
 
 typealias EnterTransitionFunc =
-        AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition
+    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition
 
 typealias ExitTransitionFunc =
-        AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition
+    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition
 
 const val SCREEN_TRANSITION_DURATION = 300
 
@@ -73,7 +73,8 @@ class MainActivity : ComponentActivity() {
 fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     d(TAG) { "=> Enter ShowcaseApp <=" }
     val navController = rememberNavController()
-    val navigationActions = rememberNavigationActions(navController = navController)
+    val navigationActions =
+        rememberNavigationActions(navController = navController)
 
     /*
      * Suppose we are moving from screen A to B (navigate):
@@ -86,10 +87,11 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
      */
     // val slideStart = AnimatedContentTransitionScope.SlideDirection.Start
     // val slideEnd = AnimatedContentTransitionScope.SlideDirection.End
-    val tween = tween<IntOffset>(
-        durationMillis = SCREEN_TRANSITION_DURATION,
-        easing = LinearOutSlowInEasing,
-    )
+    val tween =
+        tween<IntOffset>(
+            durationMillis = SCREEN_TRANSITION_DURATION,
+            easing = LinearOutSlowInEasing,
+        )
     val enterTransition: EnterTransitionFunc = {
         // Global navigation enter to current screen animation.
         // slideIntoContainer(slideStart, tween)
@@ -124,7 +126,7 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
             widthSizeClass = widthSizeClass,
             navigationActions = navigationActions,
         )
-        /* widthSizeClass = widthSizeClass, */
+        // widthSizeClass = widthSizeClass,
         addAppDrawerGraph(navigationActions = navigationActions)
         addOtherGraph(navigationActions = navigationActions)
     }

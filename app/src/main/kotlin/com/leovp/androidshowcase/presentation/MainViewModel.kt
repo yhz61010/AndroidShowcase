@@ -23,8 +23,11 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val useCase: MainUseCase) :
-    BaseViewModel<UiState, BaseAction<UiState>>(Loading) {
+class MainViewModel
+@Inject
+constructor(
+    private val useCase: MainUseCase,
+) : BaseViewModel<UiState, BaseAction<UiState>>(Loading) {
     companion object {
         private const val TAG = "MainVM"
     }
@@ -38,14 +41,24 @@ class MainViewModel @Inject constructor(private val useCase: MainUseCase) :
 
         viewModelScope.launch {
             val unreadListDeferred = async { useCase.getUnreadList("1") }
-            val unreadList = unreadListDeferred.await().getOrDefault(emptyList())
+            val unreadList =
+                unreadListDeferred.await().getOrDefault(
+                    emptyList(),
+                )
             sendAction(Action.LoadSuccess(unreadList))
         }
     }
 
-    sealed interface Action : BaseAction<UiState> {
-        class LoadSuccess(val unreadList: List<UnreadModel>) : Action {
-            override fun execute(state: UiState): UiState = Content(unreadList)
+    sealed interface MainUiEvent {
+        data object NavigationClick : MainUiEvent
+        data object ActionClick : MainUiEvent
+    }
+
+    sealed interface Action : BaseAction.Simple<UiState> {
+        class LoadSuccess(
+            val unreadList: List<UnreadModel>,
+        ) : Action {
+            override fun reduce(state: UiState): UiState = Content(unreadList)
         }
 
         // object LoadFailure : Action {
@@ -56,7 +69,10 @@ class MainViewModel @Inject constructor(private val useCase: MainUseCase) :
     @Keep
     sealed interface UiState : BaseState {
         data object Loading : UiState
-        data class Content(val unreadList: List<UnreadModel> = emptyList()) : UiState
+
+        data class Content(
+            val unreadList: List<UnreadModel> = emptyList(),
+        ) : UiState
         // object Error : UiState
     }
 }

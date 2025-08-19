@@ -13,7 +13,7 @@ import com.leovp.androidshowcase.ui.Screen
 @Immutable
 data class UnreadModel(
     val key: String,
-    val value: Int
+    val value: Int,
 ) {
     companion object {
         val MESSAGE = Screen.MemberCenterScreen.route

@@ -42,7 +42,10 @@ android {
     defaultConfig {
         applicationId = namespace
 
-        versionCode = libs.versions.versionCode.get().toInt()
+        versionCode =
+            libs.versions.versionCode
+                .get()
+                .toInt()
         versionName = libs.versions.versionName.get()
 
         multiDexEnabled = true
@@ -124,7 +127,8 @@ android {
     }
 
     buildTypes {
-        debug /*getByName("debug")*/ {
+        debug {
+            // getByName("debug")
             signingConfig = signingConfigs.getByName("debug")
         }
 
@@ -134,7 +138,8 @@ android {
          *
          * See the global configurations in top-level `build.gradle.kts`.
          */
-        release /*getByName("release")*/ {
+        release {
+            // getByName("release")
             signingConfig = signingConfigs.getByName("release")
         }
 
@@ -172,14 +177,17 @@ android {
             variant.buildConfigField("boolean", "CONSOLE_LOG_OPEN", "true")
         }
         variant.outputs
-            .mapNotNull { it as? com.android.build.gradle.internal.api.ApkVariantOutputImpl }
-            .forEach { output ->
+            .mapNotNull {
+                it as? com.android.build.gradle.internal.api.ApkVariantOutputImpl
+            }.forEach { output ->
                 output.outputFileName =
-                    "${appName}${("-$flavorName").takeIf { it != "-" } ?: ""}-${buildType.name}" +
-                            "-v$versionName($versionCode)" +
-                            "-${gitVersionTag()}-${gitCommitCount()}" +
+                    "${appName}${("-$flavorName").takeIf {
+                        it != "-"
+                    } ?: ""}-${buildType.name}" +
+                    "-v$versionName($versionCode)" +
+                    "-${gitVersionTag()}-${gitCommitCount()}" +
 //                        ("-unaligned".takeIf { !output.zipAlign.enabled } ?: "") +
-                            ".apk"
+                    ".apk"
             }
     }
 }
@@ -215,9 +223,12 @@ fun gitCommitCount(): String {
 
     return runCatching {
         // You must trim() the result. Because the result of command has a suffix '\n'.
-        providers.exec {
-            commandLine = cmd.trim().split(' ')
-        }.standardOutput.asText.get().trim()
+        providers
+            .exec {
+                commandLine = cmd.trim().split(' ')
+            }.standardOutput.asText
+            .get()
+            .trim()
     }.getOrDefault("NA")
 }
 
@@ -240,27 +251,39 @@ fun gitVersionTag(): String {
 //    val cmd = "git describe --tags"
     val cmd = "git describe --always"
 
-    val versionTag = runCatching {
-        // You must trim() the result. Because the result of command has a suffix '\n'.
-        providers.exec {
-            commandLine = cmd.trim().split(' ')
-        }.standardOutput.asText.get().trim()
-    }.getOrDefault("NA")
+    val versionTag =
+        runCatching {
+            // You must trim() the result. Because the result of command has a suffix '\n'.
+            providers
+                .exec {
+                    commandLine = cmd.trim().split(' ')
+                }.standardOutput.asText
+                .get()
+                .trim()
+        }.getOrDefault("NA")
 
     val regex = "-(\\d+)-g".toRegex()
     val matcher: MatchResult? = regex.matchEntire(versionTag)
 
     val matcherGroup0: MatchGroup? = matcher?.groups?.get(0)
-    return if (matcher?.value?.isNotBlank() == true && matcherGroup0?.value?.isNotBlank() == true) {
-        versionTag.substring(0, matcherGroup0.range.first) + "." + matcherGroup0.value
+    return if (matcher?.value?.isNotBlank() == true &&
+        matcherGroup0?.value?.isNotBlank() == true
+    ) {
+        versionTag.substring(0, matcherGroup0.range.first) + "." +
+            matcherGroup0.value
     } else {
         versionTag
     }
 }
 
-fun Project.getSignProperty(key: String, path: String = "config/sign/keystore.properties"): String {
-    return Properties().apply { rootProject.file(path).inputStream().use(::load) }.getProperty(key)
-}
+fun Project.getSignProperty(
+    key: String,
+    path: String = "config/sign/keystore.properties",
+): String =
+    Properties()
+        .apply {
+            rootProject.file(path).inputStream().use(::load)
+        }.getProperty(key)
 
 dependencies {
     implementation(libs.androidx.multidex)

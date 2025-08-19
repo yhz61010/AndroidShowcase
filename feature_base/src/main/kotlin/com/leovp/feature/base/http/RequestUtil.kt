@@ -5,9 +5,9 @@ import com.drake.net.NetConfig
 import com.drake.net.interceptor.RetryInterceptor
 import com.drake.net.okhttp.setConverter
 import com.leovp.feature.base.http.interceptors.HeaderInterceptor
-import com.leovp.feature.base.http.interceptors.HttpLoggingInterceptor
 import com.leovp.feature.base.http.interceptors.UserAgentInterceptor
 import com.leovp.network.http.net.converters.SerializationConverter
+import com.leovp.network.interceptors.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
 /**
@@ -27,9 +27,11 @@ object RequestUtil {
             // addInterceptor(AuthenticationInterceptor(GlobalConst.API_TOKEN))
             addInterceptor(UserAgentInterceptor())
             addInterceptor(HeaderInterceptor(headerMap))
-            addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                },
+            )
             addInterceptor(RetryInterceptor(3))
             // setConverter(GsonConverter())
             setConverter(SerializationConverter())

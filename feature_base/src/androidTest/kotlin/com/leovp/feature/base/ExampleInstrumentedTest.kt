@@ -13,7 +13,13 @@ class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
         // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.leovp.feature.common.test", appContext.packageName)
+        val appContext =
+            InstrumentationRegistry
+                .getInstrumentation()
+                .targetContext
+        assertEquals(
+            "com.leovp.feature.common.test",
+            appContext.packageName,
+        )
     }
 }

@@ -1,4 +1,3 @@
-
 import com.android.build.api.dsl.LibraryDefaultConfig
 import java.util.Locale
 
@@ -44,7 +43,11 @@ android {
         buildConfigFieldFromGradleProperty("apiBaseUrl")
         // buildConfigFieldFromGradleProperty("apiToken")
 
-        buildConfigField("String", "VERSION_NAME", "\"${libs.versions.versionName.get()}\"")
+        buildConfigField(
+            "String",
+            "VERSION_NAME",
+            "\"${libs.versions.versionName.get()}\"",
+        )
     }
 
     // https://developer.android.com/reference/tools/gradle-api/7.1/com/android/build/api/dsl/Lint
@@ -58,11 +61,13 @@ android {
     }
 
     buildTypes {
-        debug /*getByName("debug")*/ {
+        debug {
+            // getByName("debug")
             buildConfigField("boolean", "DEBUG_MODE", "true")
         }
 
-        release /*getByName("release")*/ {
+        release {
+            // getByName("release")
             buildConfigField("boolean", "DEBUG_MODE", "false")
         }
     }
@@ -133,12 +138,18 @@ dependencies {
  */
 fun LibraryDefaultConfig.buildConfigFieldFromGradleProperty(gradlePropertyName: String) {
     val propertyValue = project.properties[gradlePropertyName] as? String
-    checkNotNull(propertyValue) { "Gradle property $gradlePropertyName is null" }
+    checkNotNull(
+        propertyValue,
+    ) { "Gradle property $gradlePropertyName is null" }
 
     val androidResourceName =
-        "GRADLE_${gradlePropertyName.toSnakeCase()}".uppercase(Locale.getDefault())
+        "GRADLE_${gradlePropertyName.toSnakeCase()}".uppercase(
+            Locale.getDefault(),
+        )
     buildConfigField("String", androidResourceName, propertyValue)
 }
 
 fun String.toSnakeCase() =
-    this.split(Regex("(?=[A-Z])")).joinToString("_") { it.lowercase(Locale.getDefault()) }
+    this.split(Regex("(?=[A-Z])")).joinToString("_") {
+        it.lowercase(Locale.getDefault())
+    }
