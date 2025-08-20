@@ -1,4 +1,9 @@
-@file:Suppress("MaxLineLength")
+@file:Suppress(
+    "ktlint:standard:max-line-length", // for ktlint
+    "MaximumLineLength", // for detekt
+    "MaxLineLength", // for detekt
+    "LongLine", // for detekt
+)
 
 package com.leovp.discovery.testdata.local.datasource
 

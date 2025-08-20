@@ -27,125 +27,133 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoveryViewModel
-@Inject
-constructor(
-    private val useCase: GetDiscoveryListUseCase,
-) : BaseViewModel<UiState, BaseAction<UiState>>(UiState.Content()) {
-    companion object {
-        private const val TAG = "DisVM"
-    }
-
-    private var job: Job? = null
-
-    init {
-        onEnter()
-    }
-
-    fun showLoading() {
-        sendAction(Action.ShowLoading)
-    }
-
-    fun onEnter() {
-        i(TAG) { "Discovery -> refreshAll()" }
-        if (job != null) {
-            job?.cancel()
-            job = null
+    @Inject
+    constructor(
+        private val useCase: GetDiscoveryListUseCase,
+    ) : BaseViewModel<UiState, BaseAction<UiState>>(UiState.Content()) {
+        companion object {
+            private const val TAG = "DisVM"
         }
 
-        job =
-            viewModelScope.launch {
-                val privateContentDeferred =
-                    async { useCase.getPrivateContent() }
-                val recommendPlaylistDeferred =
-                    async { useCase.getRecommendPlaylist() }
-                val topSongsDeferred = async { useCase.getTopSongs() }
+        private var job: Job? = null
 
-                val privateContentResult = privateContentDeferred.await()
-                val recommendPlaylistResult =
-                    recommendPlaylistDeferred
-                        .await()
-                val topSongsResult = topSongsDeferred.await()
+        init {
+            onEnter()
+        }
 
-                val ex =
-                    privateContentResult.exceptionOrNull()
-                        ?: recommendPlaylistResult.exceptionOrNull()
-                        ?: topSongsResult.exceptionOrNull()
+        fun showLoading() {
+            sendAction(Action.ShowLoading)
+        }
 
-                if (ex != null) {
-                    sendAction(Action.LoadFailure(ex))
-                } else {
-                    sendAction(
-                        Action.LoadSuccess(
-                            privateContent =
-                                privateContentResult.getOrDefault(
-                                    emptyList(),
-                                ),
-                            recommendPlaylist =
-                                recommendPlaylistResult
-                                    .getOrDefault(
-                                        emptyList(),
-                                    ),
-                            topSongs =
-                                topSongsResult.getOrDefault(
-                                    emptyList(),
-                                ),
-                        ),
+        fun onEnter() {
+            i(TAG) { "Discovery -> refreshAll()" }
+            if (job != null) {
+                job?.cancel()
+                job = null
+            }
+
+            job =
+                viewModelScope.launch {
+                    val privateContentDeferred =
+                        async { useCase.getPrivateContent() }
+                    val recommendPlaylistDeferred =
+                        async { useCase.getRecommendPlaylist() }
+                    val topSongsDeferred = async { useCase.getTopSongs() }
+
+                    val privateContentResult = privateContentDeferred.await()
+                    val recommendPlaylistResult =
+                        recommendPlaylistDeferred
+                            .await()
+                    val topSongsResult = topSongsDeferred.await()
+
+                    val ex =
+                        privateContentResult.exceptionOrNull()
+                            ?: recommendPlaylistResult.exceptionOrNull()
+                            ?: topSongsResult.exceptionOrNull()
+
+                    if (ex != null) {
+                        sendAction(Action.LoadFailure(ex))
+                    } else {
+                        sendAction(
+                            Action.LoadSuccess(
+                                privateContent =
+                                    privateContentResult.getOrDefault(emptyList()),
+                                recommendPlaylist =
+                                    recommendPlaylistResult.getOrDefault(emptyList()),
+                                topSongs = topSongsResult.getOrDefault(emptyList()),
+                            ),
+                        )
+                    }
+                }
+        }
+
+        sealed interface DiscoveryUiEvent {
+            data class CarouselItemClick(
+                val data: PrivateContentModel,
+            ) : DiscoveryUiEvent
+
+            data class RecommendsItemClick(
+                val data: PlaylistModel,
+            ) : DiscoveryUiEvent
+
+            data class PersonalItemClick(
+                val data: TopSongModel,
+            ) : DiscoveryUiEvent
+        }
+
+        sealed interface Action : BaseAction.Simple<UiState> {
+            object ShowLoading : Action {
+                override fun reduce(state: UiState): UiState {
+                    val uiState = state as UiState.Content
+                    return UiState.Content(
+                        privateContent = uiState.privateContent,
+                        recommendPlaylist = uiState.recommendPlaylist,
+                        topSongs = uiState.topSongs,
+                        isLoading = true,
+                        exception = uiState.exception,
                     )
                 }
             }
-    }
 
-    sealed interface Action : BaseAction.Simple<UiState> {
-        object ShowLoading : Action {
-            override fun reduce(state: UiState): UiState {
-                val uiState = state as UiState.Content
-                return UiState.Content(
-                    privateContent = uiState.privateContent,
-                    recommendPlaylist = uiState.recommendPlaylist,
-                    topSongs = uiState.topSongs,
-                    isLoading = true,
-                    exception = uiState.exception,
-                )
+            class LoadSuccess(
+                val privateContent: List<PrivateContentModel> = emptyList(),
+                val recommendPlaylist: List<PlaylistModel> = emptyList(),
+                val topSongs: List<TopSongModel> = emptyList(),
+            ) : Action {
+                override fun reduce(state: UiState): UiState =
+                    UiState.Content(
+                        privateContent = privateContent,
+                        recommendPlaylist = recommendPlaylist,
+                        topSongs = topSongs,
+                        isLoading = false,
+                        exception = null,
+                    )
+            }
+
+            class LoadFailure(
+                private val err: ResultException,
+            ) : Action {
+                override fun reduce(state: UiState): UiState {
+                    val uiState = state as UiState.Content
+                    return UiState.Content(
+                        privateContent = uiState.privateContent,
+                        recommendPlaylist = uiState.recommendPlaylist,
+                        topSongs = uiState.topSongs,
+                        isLoading = false,
+                        exception = err,
+                    )
+                }
             }
         }
 
-        class LoadSuccess(
-            val privateContent: List<PrivateContentModel> = emptyList(),
-            val recommendPlaylist: List<PlaylistModel> = emptyList(),
-            val topSongs: List<TopSongModel> = emptyList(),
-        ) : Action {
-            override fun reduce(state: UiState): UiState =
-                UiState.Content(
-                    privateContent = privateContent,
-                    recommendPlaylist = recommendPlaylist,
-                    topSongs = topSongs,
-                    isLoading = false,
-                    exception = null,
-                )
-        }
-
-        class LoadFailure(private val err: ResultException) : Action {
-            override fun reduce(state: UiState): UiState {
-                val uiState = state as UiState.Content
-                return UiState.Content(
-                    privateContent = uiState.privateContent,
-                    recommendPlaylist = uiState.recommendPlaylist,
-                    topSongs = uiState.topSongs,
-                    isLoading = false,
-                    exception = err,
-                )
-            }
+        @Keep
+        sealed interface UiState : BaseState {
+            data class Content(
+                val privateContent: List<PrivateContentModel> = emptyList(),
+                val recommendPlaylist: List<PlaylistModel> = emptyList(),
+                val topSongs: List<TopSongModel> = emptyList(),
+                val isLoading: Boolean = false,
+                val exception: ResultException? = null,
+            ) : UiState
         }
     }
-
-    @Keep
-    sealed interface UiState : BaseState {
-        data class Content(
-            val privateContent: List<PrivateContentModel> = emptyList(),
-            val recommendPlaylist: List<PlaylistModel> = emptyList(),
-            val topSongs: List<TopSongModel> = emptyList(),
-            val isLoading: Boolean = false,
-            val exception: ResultException? = null,
-        ) : UiState
-    }
-}

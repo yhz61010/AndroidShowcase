@@ -36,7 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * Date: 2023/7/14 13:07
  */
 
-private const val TAG = "MA"
+internal const val TAG = "MA"
 
 typealias EnterTransitionFunc =
     AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition

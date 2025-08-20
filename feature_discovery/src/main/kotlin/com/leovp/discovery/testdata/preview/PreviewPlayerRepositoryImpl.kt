@@ -37,10 +37,12 @@ class PreviewPlayerRepositoryImpl
         override suspend fun getSongUrlV1(
             id: Long,
             level: SongModel.Quality,
-        ): Result<List<SongModel.UrlModel>> = Result.Success(dataSource.getSongUrlV1(id, level))
+        ): Result<List<SongModel.UrlModel>> =
+            Result.Success(dataSource.getSongUrlV1(id, level))
 
         override suspend fun checkMusic(
             id: Long,
             br: Int,
-        ): Result<SongModel.MusicAvailableModel> = Result.Success(dataSource.checkMusic(id, br))
+        ): Result<SongModel.MusicAvailableModel> =
+            Result.Success(dataSource.checkMusic(id, br))
     }

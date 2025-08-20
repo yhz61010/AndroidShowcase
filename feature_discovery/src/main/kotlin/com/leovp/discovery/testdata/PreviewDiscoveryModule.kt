@@ -22,7 +22,9 @@ import javax.inject.Singleton
 abstract class PreviewDiscoveryModule {
     @Singleton
     @Binds
-    abstract fun bindLocalDataSource(dataSource: LocalDiscoveryDataSource): DiscoveryDataSource
+    abstract fun bindLocalDataSource(
+        dataSource: LocalDiscoveryDataSource,
+    ): DiscoveryDataSource
 
     companion object {
         val previewDiscoveryListUseCase by lazy {

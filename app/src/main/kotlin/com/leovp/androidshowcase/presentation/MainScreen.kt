@@ -4,24 +4,19 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -40,20 +35,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -67,7 +56,8 @@ import androidx.navigation.compose.rememberNavController
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.domain.model.UnreadModel
-import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent
+import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.SearchEvent
+import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.TopAppBarEvent
 import com.leovp.androidshowcase.testdata.PreviewMainModule
 import com.leovp.androidshowcase.ui.AppBottomNavigationItems
 import com.leovp.androidshowcase.ui.AppDrawer
@@ -84,6 +74,7 @@ import com.leovp.compose.utils.previewInitLog
 import com.leovp.compose.utils.toCounterBadgeText
 import com.leovp.discovery.presentation.discovery.DiscoveryScreen
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel
+import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryUiEvent
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.log.LogContext
 import com.leovp.log.base.d
@@ -91,10 +82,6 @@ import com.leovp.log.base.i
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 import com.leovp.my.presentation.MyScreen
 import com.leovp.ui.theme.AppTheme
-import com.leovp.ui.theme.discovery_top_section_end_color
-import com.leovp.ui.theme.discovery_top_section_middle2_color
-import com.leovp.ui.theme.discovery_top_section_middle3_color
-import com.leovp.ui.theme.discovery_top_section_start_color
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -104,7 +91,6 @@ import java.net.URLEncoder
  * Date: 2023/8/17 14:33
  */
 
-private const val TAG = "MS"
 private const val TAB_SWITCH_ANIM_DURATION = 300
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -113,9 +99,18 @@ fun MainScreen(
     widthSize: WindowWidthSizeClass,
     navigationActions: AppNavigationActions,
     modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel = hiltViewModel<MainViewModel>(),
+    viewModel: MainViewModel = hiltViewModel<MainViewModel>(),
 ) {
     d(TAG) { "=> Enter MainScreen <=" }
+    val context = LocalContext.current
+    val toastUiState by viewModel.toastState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(toastUiState.toastMessage) {
+        toastUiState.toastMessage?.let { message ->
+            context.toast(message)
+            viewModel.clearToast()
+        }
+    }
 
     val coroutineScope = rememberCoroutineScope()
     val isExpandedScreen by remember {
@@ -139,10 +134,10 @@ fun MainScreen(
         gesturesEnabled = !isExpandedScreen,
     ) {
         MainContent(
-            navigationActions,
-            sizeAwareDrawerState,
-            modifier,
-            mainViewModel
+            navigationActions = navigationActions,
+            sizeAwareDrawerState = sizeAwareDrawerState,
+            modifier = modifier,
+            viewModel = viewModel,
         )
     }
 }
@@ -152,9 +147,9 @@ fun MainContent(
     navigationActions: AppNavigationActions,
     sizeAwareDrawerState: DrawerState,
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel<MainViewModel>()
+    viewModel: MainViewModel = hiltViewModel<MainViewModel>(),
 ) {
-    val context = LocalContext.current
+    // val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val pagerScreenValues = AppBottomNavigationItems.entries.toTypedArray()
     val pagerState =
@@ -163,6 +158,24 @@ fun MainContent(
             initialPageOffsetFraction = 0f,
             pageCount = { pagerScreenValues.size },
         )
+
+    // val topAppBarEventHandler =
+    //     remember(coroutineScope, sizeAwareDrawerState, context, navigationActions) {
+    //         createHomeTopAppBarEventHandler(
+    //             coroutineScope = coroutineScope,
+    //             drawerState = sizeAwareDrawerState,
+    //             context = context,
+    //             navigationActions = navigationActions
+    //         )
+    //     }
+
+    // val topAppBarContentEventHandler = remember(context, navigationActions) {
+    //     createHomeTopAppBarContentEventHandler(
+    //         context = context,
+    //         navigationActions = navigationActions
+    //     )
+    // }
+
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         val mainUiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
         var unreadList: List<UnreadModel>
@@ -185,34 +198,32 @@ fun MainContent(
             topBar = {
                 HomeTopAppBar(
                     modifier = modifier,
-                    unread = unreadList.firstOrNull { it.key == UnreadModel.MESSAGE }?.value,
+                    unread =
+                        unreadList
+                            .firstOrNull { it.key == UnreadModel.MESSAGE }
+                            ?.value,
                     pagerState = pagerState,
                     onEvent = { event ->
-                        when (event) {
-                            MainUiEvent.ActionClick -> {
-                                context.toast("Recording is not yet implemented.")
-                            }
-
-                            MainUiEvent.NavigationClick -> {
-                                coroutineScope.launch { sizeAwareDrawerState.open() }
-                            }
-                        }
+                        viewModel.handleTopAppBarEvent(
+                            coroutineScope,
+                            event,
+                            sizeAwareDrawerState,
+                        )
                     },
                 ) {
                     HomeTopAppBarContent(
                         // listState = listState,
                         pagerState = pagerState,
-                        onClick = {
-                            navigationActions.navigate(
-                                Screen.SearchScreen.route,
+                        onEvent = { event ->
+                            viewModel.handleTopAppBarContentEvent(
+                                navigationActions,
+                                event,
                             )
                         },
                     )
                 }
             },
-            bottomBar = {
-                CustomBottomBar(pagerState, coroutineScope, unreadList)
-            },
+            bottomBar = { CustomBottomBar(pagerState, coroutineScope, unreadList) },
         ) { contentPadding ->
             val newModifier = modifier.padding(contentPadding)
             MainScreenContent(
@@ -234,10 +245,9 @@ fun MainContent(
 fun HomeTopAppBarContent(
     // listState: LazyListState,
     pagerState: PagerState,
-    onClick: () -> Unit = {},
+    onEvent: (SearchEvent) -> Unit,
 ) {
     d(TAG) { "=> Enter HomeTopAppBarContent <=" }
-    val context = LocalContext.current
 
     // val firstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     // val firstVisibleItemScrollOffset by remember {
@@ -249,27 +259,16 @@ fun HomeTopAppBarContent(
         AppBottomNavigationItems.DISCOVERY.ordinal -> {
             SearchBar(
                 searchText = "Wellerman Nathan Evans",
-                border =
-                    BorderStroke(
-                        width = 0.5.dp,
-                        brush = defaultLinearGradient,
-                    ),
+                border = BorderStroke(width = 0.5.dp, brush = defaultLinearGradient),
                 backgroundBrush = defaultLinearGradient,
                 modifier =
                     Modifier
                         .height(48.dp)
                         .padding(vertical = 6.dp),
-                searchIndicatorIcon =
-                    painterResource(
-                        id = R.drawable.app_search,
-                    ),
+                searchIndicatorIcon = painterResource(id = R.drawable.app_search),
                 actionIcon = painterResource(id = R.drawable.app_qr_code),
-                onClick = onClick,
-                onActionClick = {
-                    context.toast(
-                        "Click scan button on search bar.",
-                    )
-                },
+                onClick = { onEvent(SearchEvent.SearchClick) },
+                onActionClick = { onEvent(SearchEvent.ScanClick) },
             )
         }
     }
@@ -284,15 +283,9 @@ fun CustomBottomBar(
 ) {
     d(TAG) { "=> Enter CustomBottomBar <=" }
     NavigationBar {
-        AppBottomNavigationItems.entries.forEachIndexed {
-                index,
-                bottomItemData,
-            ->
+        AppBottomNavigationItems.entries.forEachIndexed { index, bottomItemData ->
             val badgeNum =
-                unreadList
-                    .firstOrNull {
-                        it.key == bottomItemData.screen.route
-                    }?.value
+                unreadList.firstOrNull { it.key == bottomItemData.screen.route }?.value
                     ?: 0
             NavigationBarItem(
                 icon = {
@@ -347,14 +340,6 @@ fun CustomBottomBar(
     } // end NavigationBar
 }
 
-@Composable
-private fun TabIcon(screen: Screen) {
-    Icon(
-        painter = painterResource(id = screen.iconResId),
-        contentDescription = stringResource(screen.nameResId),
-    )
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreenContent(
@@ -365,6 +350,7 @@ fun MainScreenContent(
     modifier: Modifier = Modifier,
 ) {
     d(TAG) { "=> Enter MainScreenContent <=" }
+    val ctx = LocalContext.current
     HorizontalPager(
         state = pagerState,
         modifier = modifier,
@@ -374,22 +360,32 @@ fun MainScreenContent(
             AppBottomNavigationItems.DISCOVERY ->
                 DiscoveryScreen(
                     onRefresh = onMainRefresh,
-                    onPersonalItemClick = { data ->
-                        val artist =
-                            URLEncoder.encode(
-                                data.getDefaultArtistName(),
-                                "UTF-8",
-                            )
-                        val track = URLEncoder.encode(data.name, "UTF-8")
-                        i(
-                            TAG,
-                        ) {
-                            "Click [Personal Item] artist=$artist  track=$track"
+                    onEvent = { event ->
+                        when (event) {
+                            is DiscoveryUiEvent.CarouselItemClick -> {
+                                ctx.toast("Carousel recommend clickedItem: ${event.data}")
+                            }
+
+                            is DiscoveryUiEvent.PersonalItemClick -> {
+                                val artist =
+                                    URLEncoder.encode(
+                                        event.data.getDefaultArtistName(),
+                                        "UTF-8",
+                                    )
+                                val track = URLEncoder.encode(event.data.name, "UTF-8")
+                                i(
+                                    TAG,
+                                ) { "Click [Personal Item] artist=$artist  track=$track" }
+                                navigationActions.navigate(
+                                    Screen.PlayerScreen.routeName,
+                                    "${event.data.id}/$artist/$track",
+                                )
+                            }
+
+                            is DiscoveryUiEvent.RecommendsItemClick -> {
+                                ctx.toast("Everyday recommend clickedItem: ${event.data}")
+                            }
                         }
-                        navigationActions.navigate(
-                            Screen.PlayerScreen.routeName,
-                            "${data.id}/$artist/$track",
-                        )
                     },
                 )
 
@@ -399,82 +395,13 @@ fun MainScreenContent(
     }
 }
 
-@Suppress("unused")
-@Composable
-fun LinearGradientBox(scrollState: LazyListState) {
-    d(TAG) { "=> Enter LinearGradientBox <=" }
-    val statusBarHeight =
-        WindowInsets.statusBars
-            .asPaddingValues()
-            .calculateTopPadding()
-            .value
-    val targetHeight =
-        LocalDensity.current.run {
-            // (56 + 150 + 2 * 8 + statusBarHeight).dp.toPx()
-            (56 + 2 * 8 + statusBarHeight).dp.toPx()
-        }
-
-    val firstVisibleItemIndex by remember {
-        derivedStateOf { scrollState.firstVisibleItemIndex }
-    }
-    val firstVisibleItemScrollOffset by remember {
-        derivedStateOf { scrollState.firstVisibleItemScrollOffset }
-    }
-    val scrollPercent: Float =
-        if (firstVisibleItemIndex >
-            0
-        ) {
-            1f
-        } else {
-            firstVisibleItemScrollOffset / targetHeight
-        }
-
-    Box(
-        modifier =
-            Modifier
-                .testTag("linear-gradient-box")
-                .fillMaxSize()
-                .alpha(1 - scrollPercent),
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush =
-                            Brush.linearGradient(
-                                listOf(
-                                    discovery_top_section_start_color,
-                                    discovery_top_section_middle2_color,
-                                    discovery_top_section_middle3_color,
-                                    discovery_top_section_end_color,
-                                ),
-                                start = Offset(Float.POSITIVE_INFINITY, 0f),
-                                end = Offset(0f, Float.POSITIVE_INFINITY),
-                                tileMode = TileMode.Clamp,
-                            ),
-                    ),
-        ) {
-            Spacer(modifier = Modifier.statusBarsPadding())
-            Spacer(modifier = Modifier.height(64.dp))
-        }
-    }
-}
-
-@Composable
-fun HomeTopMenu(onClick: () -> Unit) {
-    IconButton(onClick = onClick) {
-        Icon(painterResource(R.drawable.app_menu), null)
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeTopAppBar(
     modifier: Modifier = Modifier,
     unread: Int? = 0,
     pagerState: PagerState,
-    onEvent: (MainUiEvent) -> Unit,
+    onEvent: (TopAppBarEvent) -> Unit,
     content: @Composable () -> Unit,
 ) {
     d(TAG) { "=> Enter HomeTopAppBar <=" }
@@ -500,7 +427,7 @@ fun HomeTopAppBar(
             val badgeNum = unread ?: 0
             if (badgeNum > 0) {
                 Box {
-                    HomeTopMenu(onClick = { onEvent(MainUiEvent.NavigationClick) })
+                    HomeTopMenu(onClick = { onEvent(TopAppBarEvent.MenuClick) })
                     Badge(
                         modifier =
                             Modifier
@@ -516,15 +443,13 @@ fun HomeTopAppBar(
                     }
                 }
             } else {
-                HomeTopMenu(onClick = { onEvent(MainUiEvent.NavigationClick) })
+                HomeTopMenu(onClick = { onEvent(TopAppBarEvent.MenuClick) })
             }
             Row(modifier = modifier.weight(1f)) {
                 content()
             }
-            if (pagerState.currentPage ==
-                AppBottomNavigationItems.DISCOVERY.ordinal
-            ) {
-                IconButton(onClick = { onEvent(MainUiEvent.ActionClick) }) {
+            if (pagerState.currentPage == AppBottomNavigationItems.DISCOVERY.ordinal) {
+                IconButton(onClick = { onEvent(TopAppBarEvent.RecordingClick) }) {
                     Icon(
                         painter = painterResource(id = R.drawable.app_mic),
                         contentDescription = null,
@@ -544,29 +469,28 @@ fun PreviewMainScreen() {
         viewModel(
             factory =
                 viewModelProviderFactoryOf {
-                    MainViewModel(PreviewMainModule.previewMainUseCase)
+                    MainViewModel(
+                        PreviewMainModule.previewMainUseCase,
+                    )
                 },
         )
 
     viewModel<DiscoveryViewModel>(
         factory =
             viewModelProviderFactoryOf {
-                DiscoveryViewModel(
-                    PreviewDiscoveryModule.previewDiscoveryListUseCase,
-                )
+                DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
             },
     )
 
     AppTheme(dynamicColor = false) {
         val navController = rememberNavController()
-        val navigationActions =
-            rememberNavigationActions(navController = navController)
+        val navigationActions = rememberNavigationActions(navController = navController)
 
         MainScreen(
             widthSize = WindowWidthSizeClass.Compact,
             navigationActions = navigationActions,
             modifier = Modifier,
-            mainViewModel = mainViewModel,
+            viewModel = mainViewModel,
         )
     }
 }
@@ -578,9 +502,7 @@ fun PreviewMainScreenLoading() {
 
     AppTheme(dynamicColor = false) {
         Box(
-            modifier =
-                Modifier
-                    .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             ProgressIndicator(

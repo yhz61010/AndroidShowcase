@@ -7,7 +7,7 @@ ktlint_function_naming_ignore_when_annotated_with = Composable
 # 基础缩进 4 个空格
 indent_size = 4
 # Use "off" (or -1) to ignore max line length or a positive number to set max line length
-max_line_length = 100
+max_line_length = 90
 ktlint_standard_no-consecutive-comments = disabled
 # ktlint 缩进设置
 ktlint_standard_indent = enabled

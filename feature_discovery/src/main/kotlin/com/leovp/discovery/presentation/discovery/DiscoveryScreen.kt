@@ -67,6 +67,7 @@ import com.leovp.discovery.domain.enum.MarkType
 import com.leovp.discovery.domain.model.PlaylistModel
 import com.leovp.discovery.domain.model.PrivateContentModel
 import com.leovp.discovery.domain.model.TopSongModel
+import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryUiEvent
 import com.leovp.discovery.presentation.discovery.composable.supportingBackground
 import com.leovp.discovery.presentation.discovery.composable.supportingBorder
 import com.leovp.discovery.presentation.discovery.composable.supportingPadding
@@ -95,14 +96,15 @@ private const val TAG = "Discovery"
 @Composable
 fun DiscoveryScreen(
     onRefresh: () -> Unit,
-    onPersonalItemClick: (data: TopSongModel) -> Unit,
+    onEvent: (DiscoveryUiEvent) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DiscoveryViewModel = hiltViewModel<DiscoveryViewModel>(),
     listState: LazyListState = rememberLazyListState(),
 ) {
     val ctx = LocalContext.current
     val uiState =
-        viewModel.uiStateFlow.collectAsStateWithLifecycle().value as DiscoveryViewModel.UiState.Content
+        viewModel.uiStateFlow.collectAsStateWithLifecycle().value as
+            DiscoveryViewModel.UiState.Content
 
     SideEffect {
         i(TAG) {
@@ -143,8 +145,8 @@ fun DiscoveryScreen(
         DiscoveryContent(
             uiState = uiState,
             listState = listState,
-            onPersonalItemClick = onPersonalItemClick,
-            modifier = modifier
+            onEvent = onEvent,
+            modifier = modifier,
         )
     } // end PullToRefreshBox
 }
@@ -153,10 +155,9 @@ fun DiscoveryScreen(
 fun DiscoveryContent(
     uiState: DiscoveryViewModel.UiState.Content,
     listState: LazyListState,
-    onPersonalItemClick: (data: TopSongModel) -> Unit,
+    onEvent: (DiscoveryUiEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val ctx = LocalContext.current
     LazyColumn(
         // contentPadding = PaddingValues(horizontal = 0.dp, vertical = 6.dp),
         modifier = modifier.fillMaxSize(),
@@ -164,13 +165,7 @@ fun DiscoveryContent(
     ) {
         if (uiState.privateContent.isNotEmpty()) {
             item {
-                CarouselContent(
-                    uiState.privateContent,
-                ) { clickedItem ->
-                    ctx.toast(
-                        "Carousel recommend clickedItem: $clickedItem",
-                    )
-                }
+                CarouselContent(uiState.privateContent, onEvent)
             }
         }
         if (uiState.recommendPlaylist.isNotEmpty()) {
@@ -178,11 +173,8 @@ fun DiscoveryContent(
                 RecommendsPlaylistHeader()
                 RecommendsPlaylistContent(
                     uiState.recommendPlaylist,
-                ) { clickedItem ->
-                    ctx.toast(
-                        "Everyday recommend clickedItem: $clickedItem",
-                    )
-                }
+                    onEvent,
+                )
             }
         }
         if (uiState.topSongs.isNotEmpty()) {
@@ -193,7 +185,7 @@ fun DiscoveryContent(
                 items = uiState.topSongs,
                 key = { it.id },
             ) { data ->
-                TopSongsItem(data, onPersonalItemClick)
+                TopSongsItem(data, onEvent)
             }
         }
     } // end LazyColumn
@@ -273,7 +265,7 @@ fun RecommendsPlaylistHeader() {
 @Composable
 fun RecommendsPlaylistContent(
     list: List<PlaylistModel>,
-    onItemClick: (PlaylistModel) -> Unit,
+    onItemClick: (DiscoveryUiEvent) -> Unit,
 ) {
     // d(TAG) { "=> Enter EverydayRecommendsContent <=" }
     val cardWidth = 120.dp
@@ -291,8 +283,11 @@ fun RecommendsPlaylistContent(
                 Card(
                     modifier =
                         Modifier
-                            .clickable { onItemClick(playlist) }
-                            .size(cardWidth),
+                            .clickable {
+                                onItemClick(
+                                    DiscoveryUiEvent.RecommendsItemClick(playlist),
+                                )
+                            }.size(cardWidth),
                     shape = MaterialTheme.shapes.large,
                 ) {
                     Box {
@@ -310,11 +305,7 @@ fun RecommendsPlaylistContent(
                         )
                         if (playlist.type > 0) {
                             Row(
-                                modifier =
-                                    Modifier.padding(
-                                        start = 8.dp,
-                                        top = 5.dp,
-                                    ),
+                                modifier = Modifier.padding(start = 8.dp, top = 5.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 // topSong.icon?.let { icon ->
@@ -334,9 +325,7 @@ fun RecommendsPlaylistContent(
                                     textAlign = TextAlign.Center,
                                     style =
                                         MaterialTheme.typography.bodyMedium
-                                            .copy(
-                                                fontWeight = FontWeight.Black,
-                                            ),
+                                            .copy(fontWeight = FontWeight.Black),
                                 )
                             }
                         }
@@ -363,7 +352,7 @@ fun RecommendsPlaylistContent(
 @Composable
 fun CarouselContent(
     list: List<PrivateContentModel>,
-    onItemClick: (PrivateContentModel) -> Unit,
+    onItemClick: (DiscoveryUiEvent) -> Unit,
 ) {
     SideEffect { d(TAG) { "=> Enter CarouselContent <=  size=${list.size}" } }
     // The display items count
@@ -386,7 +375,7 @@ fun CarouselContent(
 @Composable
 fun CarouselItem(
     currentItem: PrivateContentModel,
-    onItemClick: (PrivateContentModel) -> Unit,
+    onItemClick: (DiscoveryUiEvent) -> Unit,
 ) {
     d(TAG) { "=> Enter CarouselItem <=  image=${currentItem.getThumbPicUrl()}" }
     Card(
@@ -398,7 +387,11 @@ fun CarouselItem(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable { onItemClick(currentItem) },
+                .clickable {
+                    onItemClick(
+                        DiscoveryUiEvent.CarouselItemClick(currentItem),
+                    )
+                },
     ) {
         Box {
             AsyncImage(
@@ -429,8 +422,7 @@ fun CarouselItem(
                                 .background(
                                     Color.White,
                                     RoundedCornerShape(4.dp),
-                                )
-                                .padding(4.dp, 2.dp),
+                                ).padding(4.dp, 2.dp),
                         text = currentItem.typeName,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,
@@ -447,11 +439,16 @@ fun CarouselItem(
 @Composable
 fun TopSongsItem(
     data: TopSongModel,
-    onItemClick: (data: TopSongModel) -> Unit,
+    onItemClick: (DiscoveryUiEvent) -> Unit,
 ) {
     // d(TAG) { "=> Enter PersonalRecommendsItem <=" }
     ListItem(
-        modifier = Modifier.clickable { onItemClick(data) },
+        modifier =
+            Modifier.clickable {
+                onItemClick(
+                    DiscoveryUiEvent.PersonalItemClick(data),
+                )
+            },
         headlineContent = {
             Text(
                 text = data.name,
@@ -488,22 +485,29 @@ fun TopSongsItem(
 fun SupportingContent(data: TopSongModel) {
     val supportBorderWidth = 0.4.dp
     val supportSmallRounded = MaterialTheme.shapes.small
-    val hotModifier = Modifier.border(supportBorderWidth, mark_hot_bg, supportSmallRounded)
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        val borderModifier = Modifier.supportingBorder(
-            data = data,
-            defModifier = hotModifier,
-            border = supportBorderWidth,
-            shape = supportSmallRounded,
+    val hotModifier =
+        Modifier.border(
+            supportBorderWidth,
+            mark_hot_bg,
+            supportSmallRounded,
         )
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        val borderModifier =
+            Modifier.supportingBorder(
+                data = data,
+                defModifier = hotModifier,
+                border = supportBorderWidth,
+                shape = supportSmallRounded,
+            )
         val backgroundModifier = Modifier.supportingBackground(data, supportSmallRounded)
         val paddingModifier = Modifier.supportingPadding(data)
-        val textColor = when (data.markType) {
-            MarkType.HiRes, MarkType.Hot -> mark_hot_text_color
-            MarkType.Special -> mark_quality_text_color
-            MarkType.Vip -> mark_vip_text_color
-            else -> mark_hot_text_color
-        }
+        val textColor =
+            when (data.markType) {
+                MarkType.HiRes, MarkType.Hot -> mark_hot_text_color
+                MarkType.Special -> mark_quality_text_color
+                MarkType.Vip -> mark_vip_text_color
+                else -> mark_hot_text_color
+            }
         if (data.markType != MarkType.None) {
             Text(
                 modifier =
@@ -513,15 +517,17 @@ fun SupportingContent(data: TopSongModel) {
                         .then(paddingModifier),
                 text = data.markType.text,
                 color = textColor,
-                fontSize = when (data.markType) {
-                    MarkType.Vip -> 8.sp
-                    else -> 9.sp
-                },
+                fontSize =
+                    when (data.markType) {
+                        MarkType.Vip -> 8.sp
+                        else -> 9.sp
+                    },
                 fontWeight = FontWeight.Black,
-                fontFamily = when (data.markType) {
-                    MarkType.HiRes, MarkType.Vip -> FontFamily.SansSerif
-                    else -> null
-                },
+                fontFamily =
+                    when (data.markType) {
+                        MarkType.HiRes, MarkType.Vip -> FontFamily.SansSerif
+                        else -> null
+                    },
                 lineHeight = 14.sp,
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -572,15 +578,13 @@ fun PreviewDiscoveryScreen() {
         viewModel(
             factory =
                 viewModelProviderFactoryOf {
-                    DiscoveryViewModel(
-                        PreviewDiscoveryModule.previewDiscoveryListUseCase,
-                    )
+                    DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
                 },
         )
     DiscoveryScreen(
         listState = rememberLazyListState(),
         viewModel = discoveryViewModel,
         onRefresh = {},
-        onPersonalItemClick = {},
+        onEvent = {},
     )
 }

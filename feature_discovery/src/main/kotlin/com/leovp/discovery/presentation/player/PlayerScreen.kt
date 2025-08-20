@@ -234,8 +234,7 @@ fun CommentItem(
                     .background(
                         color = mark_vip_bg2,
                         shape = MaterialTheme.shapes.extraLarge,
-                    )
-                    .clickable(onClick = onClick)
+                    ).clickable(onClick = onClick)
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .alpha(0.6f),
             color = MaterialTheme.colorScheme.onPrimary,
@@ -267,7 +266,12 @@ fun TrackArtistItem(
                 .padding(16.dp, 0.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TrackInfoItem(markText = markText, artist = artist, track = track, onEvent = onEvent)
+        TrackInfoItem(
+            markText = markText,
+            artist = artist,
+            track = track,
+            onEvent = onEvent,
+        )
         Row(
             modifier = Modifier.weight(0.45f),
             horizontalArrangement = Arrangement.End,
@@ -319,8 +323,7 @@ fun RowScope.TrackInfoItem(
                             .background(
                                 color = mark_vip_bg2,
                                 shape = smallRounded,
-                            )
-                            .padding(horizontal = 4.dp, vertical = 0.dp)
+                            ).padding(horizontal = 4.dp, vertical = 0.dp)
                             .alpha(0.6f),
                     text = it,
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -335,7 +338,9 @@ fun RowScope.TrackInfoItem(
             modifier =
                 Modifier
                     .alpha(0.8f)
-                    .clickable(onClick = { onEvent(PlayerUiEvent.SongEvent.ArtistClick) }),
+                    .clickable(
+                        onClick = { onEvent(PlayerUiEvent.SongEvent.ArtistClick) },
+                    ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(

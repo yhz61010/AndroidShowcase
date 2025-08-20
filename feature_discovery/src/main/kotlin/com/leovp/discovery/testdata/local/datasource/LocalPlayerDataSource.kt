@@ -1,4 +1,9 @@
-@file:Suppress("MaxLineLength")
+@file:Suppress(
+    "ktlint:standard:max-line-length", // for ktlint
+    "MaximumLineLength", // for detekt
+    "MaxLineLength", // for detekt
+    "LongLine", // for detekt
+)
 
 package com.leovp.discovery.testdata.local.datasource
 
@@ -65,11 +70,7 @@ class LocalPlayerDataSource
                 SongModel.UrlModel(
                     id = 2627103194,
                     br = 128000,
-                    url =
-                        "http://m701.music.126.net/20240923110059/f769e180" +
-                            "f6a62f6aea52ed2c62404552/jdymusic/obj/wo3DlMOGwrbDj" +
-                            "j7DisKw/45913450048/2320/06c6/a30c/e2c13e2158a9d9ad" +
-                            "8e8f1f5c8c82c3a2.mp3",
+                    url = "http://m701.music.126.net/20240923110059/f769e180f6a62f6aea52ed2c62404552/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/45913450048/2320/06c6/a30c/e2c13e2158a9d9ad8e8f1f5c8c82c3a2.mp3",
                     size = 11309805,
                     md5 = "e2c13e2158a9d9ad8e8f1f5c8c82c3a2",
                     type = "mp3",
