@@ -7,14 +7,14 @@ import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.domain.usecase.PlayerUseCase
 import com.leovp.discovery.presentation.player.PlayerViewModel.Action
 import com.leovp.discovery.presentation.player.PlayerViewModel.UiState
+import com.leovp.feature.base.framework.BaseAction
+import com.leovp.feature.base.framework.BaseState
+import com.leovp.feature.base.framework.BaseViewModel
 import com.leovp.json.toJsonString
 import com.leovp.log.base.d
 import com.leovp.log.base.e
 import com.leovp.log.base.i
 import com.leovp.log.base.w
-import com.leovp.mvvm.viewmodel.BaseAction
-import com.leovp.mvvm.viewmodel.BaseState
-import com.leovp.mvvm.viewmodel.BaseViewModel
 import com.leovp.network.http.exception.ResultException
 import com.leovp.network.http.exceptionOrNull
 import com.leovp.network.http.fold

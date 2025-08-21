@@ -10,8 +10,8 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.kotlin.parcelize) // id("kotlin-parcelize")
 
-    // Add ksp only if you use ksp() in dependencies {}
-    // alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 
     alias(libs.plugins.android.junit5)
 
@@ -92,6 +92,12 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // ----------
+
+    // hilt - start
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.compiler)
+    // hilt - end
 
     api(libs.bundles.kotlin)
     api(libs.androidx.lifecycle.runtime.compose)

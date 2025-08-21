@@ -71,7 +71,6 @@ fun NavGraphBuilder.addAppMainGraph(
             MainScreen(
                 navigationActions = navigationActions,
                 widthSize = widthSizeClass,
-                modifier = modifier,
             )
         }
     }

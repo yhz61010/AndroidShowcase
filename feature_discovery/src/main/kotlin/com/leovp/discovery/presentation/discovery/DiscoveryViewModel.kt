@@ -7,10 +7,10 @@ import com.leovp.discovery.domain.model.PrivateContentModel
 import com.leovp.discovery.domain.model.TopSongModel
 import com.leovp.discovery.domain.usecase.GetDiscoveryListUseCase
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.UiState
+import com.leovp.feature.base.framework.BaseAction
+import com.leovp.feature.base.framework.BaseState
+import com.leovp.feature.base.framework.BaseViewModel
 import com.leovp.log.base.i
-import com.leovp.mvvm.viewmodel.BaseAction
-import com.leovp.mvvm.viewmodel.BaseState
-import com.leovp.mvvm.viewmodel.BaseViewModel
 import com.leovp.network.http.exception.ResultException
 import com.leovp.network.http.exceptionOrNull
 import com.leovp.network.http.getOrDefault
@@ -30,23 +30,21 @@ class DiscoveryViewModel
     @Inject
     constructor(
         private val useCase: GetDiscoveryListUseCase,
-    ) : BaseViewModel<UiState, BaseAction<UiState>>(UiState.Content()) {
+    ) : BaseViewModel<UiState, BaseAction<UiState>>(
+            UiState.Content(isLoading = true),
+        ) {
         companion object {
             private const val TAG = "DisVM"
         }
 
         private var job: Job? = null
 
-        init {
-            onEnter()
-        }
-
-        fun showLoading() {
+        fun startLoading() {
             sendAction(Action.ShowLoading)
         }
 
         fun onEnter() {
-            i(TAG) { "Discovery -> refreshAll()" }
+            i(TAG) { "Discovery -> onEnter()" }
             if (job != null) {
                 job?.cancel()
                 job = null
@@ -61,9 +59,7 @@ class DiscoveryViewModel
                     val topSongsDeferred = async { useCase.getTopSongs() }
 
                     val privateContentResult = privateContentDeferred.await()
-                    val recommendPlaylistResult =
-                        recommendPlaylistDeferred
-                            .await()
+                    val recommendPlaylistResult = recommendPlaylistDeferred.await()
                     val topSongsResult = topSongsDeferred.await()
 
                     val ex =
@@ -105,13 +101,7 @@ class DiscoveryViewModel
             object ShowLoading : Action {
                 override fun reduce(state: UiState): UiState {
                     val uiState = state as UiState.Content
-                    return UiState.Content(
-                        privateContent = uiState.privateContent,
-                        recommendPlaylist = uiState.recommendPlaylist,
-                        topSongs = uiState.topSongs,
-                        isLoading = true,
-                        exception = uiState.exception,
-                    )
+                    return uiState.copy(isLoading = true)
                 }
             }
 
@@ -120,14 +110,16 @@ class DiscoveryViewModel
                 val recommendPlaylist: List<PlaylistModel> = emptyList(),
                 val topSongs: List<TopSongModel> = emptyList(),
             ) : Action {
-                override fun reduce(state: UiState): UiState =
-                    UiState.Content(
+                override fun reduce(state: UiState): UiState {
+                    val uiState = state as UiState.Content
+                    return uiState.copy(
                         privateContent = privateContent,
                         recommendPlaylist = recommendPlaylist,
                         topSongs = topSongs,
                         isLoading = false,
                         exception = null,
                     )
+                }
             }
 
             class LoadFailure(
@@ -135,13 +127,7 @@ class DiscoveryViewModel
             ) : Action {
                 override fun reduce(state: UiState): UiState {
                     val uiState = state as UiState.Content
-                    return UiState.Content(
-                        privateContent = uiState.privateContent,
-                        recommendPlaylist = uiState.recommendPlaylist,
-                        topSongs = uiState.topSongs,
-                        isLoading = false,
-                        exception = err,
-                    )
+                    return uiState.copy(isLoading = false, exception = err)
                 }
             }
         }

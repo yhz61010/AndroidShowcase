@@ -23,7 +23,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +31,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -56,6 +56,7 @@ import androidx.navigation.compose.rememberNavController
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.domain.model.UnreadModel
+import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent
 import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.SearchEvent
 import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.TopAppBarEvent
 import com.leovp.androidshowcase.testdata.PreviewMainModule
@@ -76,6 +77,8 @@ import com.leovp.discovery.presentation.discovery.DiscoveryScreen
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryUiEvent
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
+import com.leovp.feature.base.event.UiEventManager
+import com.leovp.feature.base.event.composable.EventHandler
 import com.leovp.log.LogContext
 import com.leovp.log.base.d
 import com.leovp.log.base.i
@@ -98,18 +101,11 @@ private const val TAB_SWITCH_ANIM_DURATION = 300
 fun MainScreen(
     widthSize: WindowWidthSizeClass,
     navigationActions: AppNavigationActions,
-    modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel<MainViewModel>(),
 ) {
     d(TAG) { "=> Enter MainScreen <=" }
-    val context = LocalContext.current
-    val toastUiState by viewModel.toastState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(toastUiState.toastMessage) {
-        toastUiState.toastMessage?.let { message ->
-            context.toast(message)
-            viewModel.clearToast()
-        }
+    LaunchedEffect(Unit) {
+        viewModel.onEnter()
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -133,23 +129,62 @@ fun MainScreen(
         // Only enable opening the drawer via gestures if the screen is not expanded
         gesturesEnabled = !isExpandedScreen,
     ) {
-        MainContent(
-            navigationActions = navigationActions,
-            sizeAwareDrawerState = sizeAwareDrawerState,
-            modifier = modifier,
-            viewModel = viewModel,
+        val snackbarHostState = remember { SnackbarHostState() }
+        EventHandler(
+            events = viewModel.requireUiEvents,
+            navController = null,
+            snackbarHostState = snackbarHostState,
         )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val mainUiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+            var unreadList: List<UnreadModel>
+            mainUiState.let {
+                when (it) {
+                    is MainViewModel.UiState.Content -> unreadList = it.unreadList
+
+                    MainViewModel.UiState.Loading -> {
+                        ProgressIndicator(
+                            bgColor = MaterialTheme.colorScheme.background,
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.primaryContainer,
+                        )
+                        return@Box
+                    }
+                }
+            }
+            MainContentScaffold(
+                navigationActions = navigationActions,
+                unreadList = unreadList,
+                onEvent = { event ->
+                    when (event) {
+                        MainUiEvent.Refresh -> viewModel.onEnter()
+                        is SearchEvent -> {
+                            viewModel.handleTopAppBarContentEvent(
+                                navigationActions,
+                                event,
+                            )
+                        }
+
+                        TopAppBarEvent.MenuClick -> {
+                            coroutineScope.launch { sizeAwareDrawerState.open() }
+                        }
+
+                        is TopAppBarEvent -> {
+                            viewModel.handleTopAppBarEvent(event)
+                        }
+                    }
+                },
+            )
+        }
     }
 }
 
 @Composable
-fun MainContent(
+private fun MainContentScaffold(
     navigationActions: AppNavigationActions,
-    sizeAwareDrawerState: DrawerState,
-    modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel<MainViewModel>(),
+    unreadList: List<UnreadModel>,
+    onEvent: (MainUiEvent) -> Unit,
 ) {
-    // val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val pagerScreenValues = AppBottomNavigationItems.entries.toTypedArray()
     val pagerState =
@@ -158,87 +193,36 @@ fun MainContent(
             initialPageOffsetFraction = 0f,
             pageCount = { pagerScreenValues.size },
         )
-
-    // val topAppBarEventHandler =
-    //     remember(coroutineScope, sizeAwareDrawerState, context, navigationActions) {
-    //         createHomeTopAppBarEventHandler(
-    //             coroutineScope = coroutineScope,
-    //             drawerState = sizeAwareDrawerState,
-    //             context = context,
-    //             navigationActions = navigationActions
-    //         )
-    //     }
-
-    // val topAppBarContentEventHandler = remember(context, navigationActions) {
-    //     createHomeTopAppBarContentEventHandler(
-    //         context = context,
-    //         navigationActions = navigationActions
-    //     )
-    // }
-
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        val mainUiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-        var unreadList: List<UnreadModel>
-        mainUiState.let {
-            when (it) {
-                is MainViewModel.UiState.Content -> unreadList = it.unreadList
-
-                MainViewModel.UiState.Loading -> {
-                    ProgressIndicator(
-                        bgColor = MaterialTheme.colorScheme.background,
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = MaterialTheme.colorScheme.primaryContainer,
-                    )
-                    return@Box
-                }
-            }
-        }
-        Scaffold(
-            modifier = modifier,
-            topBar = {
-                HomeTopAppBar(
-                    modifier = modifier,
-                    unread =
-                        unreadList
-                            .firstOrNull { it.key == UnreadModel.MESSAGE }
-                            ?.value,
-                    pagerState = pagerState,
-                    onEvent = { event ->
-                        viewModel.handleTopAppBarEvent(
-                            coroutineScope,
-                            event,
-                            sizeAwareDrawerState,
-                        )
-                    },
-                ) {
-                    HomeTopAppBarContent(
-                        // listState = listState,
-                        pagerState = pagerState,
-                        onEvent = { event ->
-                            viewModel.handleTopAppBarContentEvent(
-                                navigationActions,
-                                event,
-                            )
-                        },
-                    )
-                }
-            },
-            bottomBar = { CustomBottomBar(pagerState, coroutineScope, unreadList) },
-        ) { contentPadding ->
-            val newModifier = modifier.padding(contentPadding)
-            MainScreenContent(
-                navigationActions = navigationActions,
+    Scaffold(
+        topBar = {
+            HomeTopAppBar(
+                unread =
+                    unreadList
+                        .firstOrNull { it.key == UnreadModel.MESSAGE }
+                        ?.value,
                 pagerState = pagerState,
-                pagerScreenValues = pagerScreenValues,
-                onMainRefresh = { viewModel.onEnter() },
-                modifier = newModifier,
-            )
-        } // end of Scaffold
-
-        // // The gradient box will significantly impact display performance.
-        // LinearGradientBox(listState)
-    } // end of Box
-}
+                onEvent = onEvent,
+            ) {
+                HomeTopAppBarContent(
+                    // listState = listState,
+                    pagerState = pagerState,
+                    onEvent = onEvent,
+                )
+            }
+        },
+        bottomBar = { CustomBottomBar(pagerState, coroutineScope, unreadList) },
+    ) { contentPadding ->
+        MainScreenContent(
+            navigationActions = navigationActions,
+            pagerState = pagerState,
+            pagerScreenValues = pagerScreenValues,
+            onMainRefresh = { onEvent(MainUiEvent.Refresh) },
+            modifier = Modifier.padding(contentPadding),
+        )
+    } // end of Scaffold
+    // // The gradient box will significantly impact display performance.
+    // LinearGradientBox(listState)
+} // end of Box
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -471,6 +455,7 @@ fun PreviewMainScreen() {
                 viewModelProviderFactoryOf {
                     MainViewModel(
                         PreviewMainModule.previewMainUseCase,
+                        UiEventManager(),
                     )
                 },
         )
@@ -489,7 +474,6 @@ fun PreviewMainScreen() {
         MainScreen(
             widthSize = WindowWidthSizeClass.Compact,
             navigationActions = navigationActions,
-            modifier = Modifier,
             viewModel = mainViewModel,
         )
     }

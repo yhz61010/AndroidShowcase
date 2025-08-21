@@ -4,4 +4,7 @@
     <string name="bas_listeners_listening">人正在收听</string>
 
     <string name="bas_load_failed">数据加载失败</string>
+
+    <string name="bas_dlg_loading_title">加载中</string>
+    <string name="bas_dlg_loading_text">请稍候&#8230;</string>
 </resources>
