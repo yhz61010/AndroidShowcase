@@ -287,7 +287,6 @@ fun Project.getSignProperty(
 
 dependencies {
     implementation(libs.androidx.multidex)
-    implementation(libs.androidx.navigation.compose)
     // hilt - start
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)

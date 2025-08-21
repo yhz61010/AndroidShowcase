@@ -1,9 +1,9 @@
-package com.leovp.androidshowcase.ui
+package com.leovp.feature.base.ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.leovp.androidshowcase.R
+import com.leovp.feature.base.R
 
 /**
  * Author: Michael Leo
@@ -32,20 +32,20 @@ sealed class Screen(
     // ============================
     data object Discovery : Screen(
         route = "app_discovery",
-        nameResId = R.string.app_main_tab_discovery,
-        iconResId = R.drawable.app_library_music,
+        nameResId = R.string.bas_main_tab_discovery,
+        iconResId = R.drawable.bas_library_music,
     )
 
     data object My : Screen(
         route = "app_my",
-        nameResId = R.string.app_main_tab_my,
-        iconResId = R.drawable.app_music_note,
+        nameResId = R.string.bas_main_tab_my,
+        iconResId = R.drawable.bas_music_note,
     )
 
     data object Community : Screen(
         route = "app_community",
-        nameResId = R.string.app_main_tab_community,
-        iconResId = R.drawable.app_speaker_notes,
+        nameResId = R.string.bas_main_tab_community,
+        iconResId = R.drawable.bas_speaker_notes,
     )
     // ==============================
 
@@ -54,26 +54,26 @@ sealed class Screen(
     // ===============================
     data object MemberCenterScreen : Screen(
         route = "drawer_member_center",
-        nameResId = com.leovp.maindrawer.R.string.drawer_member_center,
-        iconResId = R.drawable.app_credit_card,
+        nameResId = R.string.bas_drawer_member_center,
+        iconResId = R.drawable.bas_credit_card,
     )
 
     data object MessageScreen : Screen(
         "drawer_messages",
-        com.leovp.maindrawer.R.string.drawer_message_label,
-        iconResId = R.drawable.app_mail,
+        R.string.bas_drawer_message_label,
+        iconResId = R.drawable.bas_mail,
     )
 
     data object SettingScreen : Screen(
         "drawer_setting",
-        com.leovp.maindrawer.R.string.drawer_settings_label,
-        iconResId = R.drawable.app_settings,
+        R.string.bas_drawer_settings_label,
+        iconResId = R.drawable.bas_settings,
     )
     // ==============================
 
     data object SearchScreen : Screen(
         "search_screen",
-        com.leovp.discovery.R.string.dis_search_screen_title,
+        R.string.bas_dis_search_screen_title,
     )
 
     data object PlayerScreen : Screen(

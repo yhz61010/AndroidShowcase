@@ -19,6 +19,8 @@ import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.discovery.presentation.player.PlayerScreen
 import com.leovp.discovery.presentation.search.SearchScreen
+import com.leovp.feature.base.ui.AppNavigationActions
+import com.leovp.feature.base.ui.Screen
 import com.leovp.log.base.d
 import com.leovp.maindrawer.membercenter.presentation.MemberCenterScreen
 import com.leovp.ui.theme.ImmersiveTheme
@@ -37,10 +39,8 @@ private val slideDown = AnimatedContentTransitionScope.SlideDirection.Down
 
 fun NavGraphBuilder.addAppMainGraph(
     widthSizeClass: WindowWidthSizeClass,
-    navigationActions: AppNavigationActions,
-    modifier: Modifier = Modifier,
+    navController: AppNavigationActions,
 ) {
-    d(TAG) { "=> Enter addAppMainGraph <=" }
     composable(
         route = Screen.Splash.route,
         enterTransition = { EnterTransition.None },
@@ -48,10 +48,11 @@ fun NavGraphBuilder.addAppMainGraph(
         popEnterTransition = { EnterTransition.None },
         popExitTransition = { ExitTransition.None },
     ) {
+        d(TAG) { "=> Enter Splash Composable <=" }
         SplashTheme {
             // AnimatedSplashScreen(navController = navController)
             SplashScreen(
-                onTimeout = { navigationActions.navigate(Screen.Main.route) },
+                onTimeout = { navController.navigate(Screen.Main.route) },
             )
         }
     }
@@ -62,6 +63,7 @@ fun NavGraphBuilder.addAppMainGraph(
         popEnterTransition = { EnterTransition.None },
         popExitTransition = { ExitTransition.None },
     ) {
+        d(TAG) { "=> Enter Main Composable <=" }
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
             dynamicColor = false,
@@ -69,7 +71,7 @@ fun NavGraphBuilder.addAppMainGraph(
         ) {
             // val context = LocalContext.current
             MainScreen(
-                navigationActions = navigationActions,
+                navController = navController,
                 widthSize = widthSizeClass,
             )
         }
@@ -78,11 +80,12 @@ fun NavGraphBuilder.addAppMainGraph(
 
 fun NavGraphBuilder.addAppDrawerGraph(
     // widthSizeClass: WindowWidthSizeClass,
-    navigationActions: AppNavigationActions,
+    navController: AppNavigationActions,
     modifier: Modifier = Modifier,
 ) {
     d(TAG) { "=> Enter addAppDrawerGraph <=" }
     composable(route = Screen.MemberCenterScreen.route) {
+        d(TAG) { "=> Enter MemberCenterScreen Composable <=" }
         ImmersiveTheme(
             systemBarColor = immersive_sys_ui,
             lightSystemBar = !isSystemInDarkTheme(),
@@ -90,19 +93,24 @@ fun NavGraphBuilder.addAppDrawerGraph(
         ) {
             MemberCenterScreen(
                 // widthSize = widthSizeClass,
-                onMenuUpAction = { navigationActions.upPress() },
+                onMenuUpAction = { navController.upPress() },
                 modifier = modifier,
             )
         }
     }
-    composable(route = Screen.MessageScreen.route) {}
-    composable(route = Screen.SettingScreen.route) {}
+    composable(route = Screen.MessageScreen.route) {
+        d(TAG) { "=> Enter MessageScreen Composable <=" }
+    }
+    composable(route = Screen.SettingScreen.route) {
+        d(TAG) { "=> Enter SettingScreen Composable <=" }
+    }
 }
 
-fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
+fun NavGraphBuilder.addOtherGraph(navController: AppNavigationActions) {
     d(TAG) { "=> Enter addOtherGraph <=" }
 
     composable(route = Screen.SearchScreen.route) {
+        d(TAG) { "=> Enter SearchScreen Composable <=" }
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
             dynamicColor = false,
@@ -118,7 +126,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
                 // },
                 // mainViewModel = mainViewModel,
                 // discoveryViewModel = discoveryViewModel
-                onMenuUpAction = { navigationActions.upPress() },
+                onMenuUpAction = { navController.upPress() },
             )
         }
     }
@@ -138,6 +146,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
             slideOutOfContainer(towards = slideDown, animationSpec = tween(800))
         },
     ) {
+        d(TAG) { "=> Enter PlayerScreen Composable <=" }
         val ctx = LocalContext.current
         // val artist = it.arguments?.getString("artist")
         // val track = it.arguments?.getString("track")
@@ -160,7 +169,7 @@ fun NavGraphBuilder.addOtherGraph(navigationActions: AppNavigationActions) {
                 // },
                 // mainViewModel = mainViewModel,
                 // discoveryViewModel = discoveryViewModel
-                onMenuUpAction = { navigationActions.popBackStack() },
+                onMenuUpAction = { navController.popBackStack() },
                 onShareAction = { ctx.toast("Click [Share] button") },
                 modifier = Modifier,
             )

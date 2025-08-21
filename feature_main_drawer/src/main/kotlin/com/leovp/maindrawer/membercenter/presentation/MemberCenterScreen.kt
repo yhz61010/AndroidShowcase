@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.maindrawer.R
 import com.leovp.ui.theme.ImmersiveTheme
+import com.leovp.feature.base.R as BaseR
 
 /**
  * Author: Michael Leo
@@ -55,7 +56,7 @@ fun MemberCenterScreen(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            val title = stringResource(id = R.string.drawer_member_center)
+            val title = stringResource(id = BaseR.string.bas_drawer_member_center)
             CenterAlignedTopAppBar(
                 // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 //     containerColor = Color.Cyan
@@ -66,10 +67,7 @@ fun MemberCenterScreen(
                 navigationIcon = {
                     IconButton(onClick = onMenuUpAction) {
                         Icon(
-                            painter =
-                                painterResource(
-                                    id = com.leovp.feature.base.R.drawable.bas_arrow_back,
-                                ),
+                            painter = painterResource(id = BaseR.drawable.bas_arrow_back),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                         )

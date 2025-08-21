@@ -20,14 +20,14 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.leovp.androidshowcase.ui.Screen
 import com.leovp.androidshowcase.ui.addAppDrawerGraph
 import com.leovp.androidshowcase.ui.addAppMainGraph
 import com.leovp.androidshowcase.ui.addOtherGraph
-import com.leovp.androidshowcase.ui.rememberNavigationActions
 import com.leovp.androidshowcase.utils.InitManager
 import com.leovp.feature.base.GlobalConst
 import com.leovp.feature.base.http.RequestUtil
+import com.leovp.feature.base.ui.Screen
+import com.leovp.feature.base.ui.rememberNavigationActions
 import com.leovp.log.base.d
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -124,10 +124,10 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     ) {
         addAppMainGraph(
             widthSizeClass = widthSizeClass,
-            navigationActions = navigationActions,
+            navController = navigationActions,
         )
         // widthSizeClass = widthSizeClass,
-        addAppDrawerGraph(navigationActions = navigationActions)
-        addOtherGraph(navigationActions = navigationActions)
+        addAppDrawerGraph(navController = navigationActions)
+        addOtherGraph(navController = navigationActions)
     }
 }

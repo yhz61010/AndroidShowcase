@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="drawer_member_center">Member Center</string>
-    <string name="drawer_message_label">Messages</string>
-    <string name="drawer_settings_label">Settings</string>
-    <string name="drawer_exit_label">Exit</string>
+
 </resources>

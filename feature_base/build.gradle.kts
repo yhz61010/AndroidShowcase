@@ -91,6 +91,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    api(libs.androidx.navigation.compose)
     // ----------
 
     // hilt - start

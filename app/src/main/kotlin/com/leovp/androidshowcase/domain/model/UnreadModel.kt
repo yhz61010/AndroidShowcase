@@ -2,7 +2,7 @@ package com.leovp.androidshowcase.domain.model
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
-import com.leovp.androidshowcase.ui.Screen
+import com.leovp.feature.base.ui.Screen
 
 /**
  * Author: Michael Leo

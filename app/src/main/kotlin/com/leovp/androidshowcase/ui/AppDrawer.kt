@@ -27,8 +27,11 @@ import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.feature.base.res.Dimen
+import com.leovp.feature.base.ui.DrawerDestinations
+import com.leovp.feature.base.ui.Screen
 import com.leovp.log.base.d
 import com.leovp.ui.theme.AppTheme
+import com.leovp.feature.base.R as BaseR
 
 /**
  * Author: Michael Leo
@@ -98,7 +101,7 @@ fun AppDrawer(
         )
         DrawerItem(
             iconResId = R.drawable.app_exit_to_app,
-            nameResId = com.leovp.maindrawer.R.string.drawer_exit_label,
+            nameResId = BaseR.string.bas_drawer_exit_label,
             selected = false,
             onClick = {},
         )

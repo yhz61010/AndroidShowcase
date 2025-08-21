@@ -28,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
-import com.leovp.androidshowcase.ui.Screen
+import com.leovp.feature.base.ui.Screen
 import com.leovp.log.base.d
 import com.leovp.ui.theme.discovery_top_section_end_color
 import com.leovp.ui.theme.discovery_top_section_middle2_color

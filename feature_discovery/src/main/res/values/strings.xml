@@ -3,8 +3,6 @@
     <string name="dis_discovery_tab_recommends_playlist">甄选歌单</string>
     <string name="dis_discovery_tab_new_songs">新歌新碟</string>
 
-    <string name="dis_search_screen_title">音乐搜索</string>
-
     <string-array name="dis_player_song_quality_id">
         <item>standard</item>
         <item>higher</item>

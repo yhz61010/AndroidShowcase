@@ -24,8 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.compose.utils.previewInitLog
-import com.leovp.discovery.R
+import com.leovp.feature.base.ui.Screen
 import com.leovp.ui.theme.AppTheme
+import com.leovp.feature.base.R as BaseR
 
 /**
  * Author: Michael Leo
@@ -49,7 +50,7 @@ fun SearchScreen(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            val title = stringResource(id = R.string.dis_search_screen_title)
+            val title = stringResource(id = Screen.SearchScreen.nameResId)
             CenterAlignedTopAppBar(
                 // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 //     containerColor = Color.Cyan
@@ -64,7 +65,7 @@ fun SearchScreen(
                         Icon(
                             painter =
                                 painterResource(
-                                    id = com.leovp.feature.base.R.drawable.bas_arrow_back,
+                                    id = BaseR.drawable.bas_arrow_back,
                                 ),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,

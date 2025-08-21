@@ -34,7 +34,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
@@ -80,6 +80,10 @@ import com.leovp.discovery.ui.theme.mark_vip_text_color
 import com.leovp.discovery.ui.theme.place_holder2_bg_color
 import com.leovp.discovery.ui.theme.place_holder_bg_color
 import com.leovp.discovery.ui.theme.place_holder_err_bg_color
+import com.leovp.feature.base.event.UiEventManager
+import com.leovp.feature.base.event.composable.EventHandler
+import com.leovp.feature.base.ui.AppNavigationActions
+import com.leovp.feature.base.ui.rememberNavigationActions
 import com.leovp.log.base.d
 import com.leovp.log.base.e
 import com.leovp.log.base.i
@@ -96,16 +100,13 @@ private const val TAG = "Discovery"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoveryScreen(
+    navController: AppNavigationActions,
     onRefresh: () -> Unit,
-    onEvent: (DiscoveryUiEvent) -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: DiscoveryViewModel = hiltViewModel<DiscoveryViewModel>(),
     listState: LazyListState = rememberLazyListState(),
 ) {
     val ctx = LocalContext.current
-    LaunchedEffect(Unit) {
-        viewModel.onEnter()
-    }
+    EventHandler(events = viewModel.requireUiEvents)
     val uiState =
         viewModel.uiStateFlow.collectAsStateWithLifecycle().value as
             DiscoveryViewModel.UiState.Content
@@ -137,8 +138,7 @@ fun DiscoveryScreen(
         isRefreshing = uiState.isLoading,
         onRefresh = {
             d(TAG) { "Refreshing..." }
-            viewModel.startLoading()
-            viewModel.onEnter()
+            viewModel.onEvent(DiscoveryUiEvent.Refresh)
             onRefresh()
         },
         modifier =
@@ -148,24 +148,22 @@ fun DiscoveryScreen(
         contentAlignment = Alignment.TopCenter,
     ) {
         DiscoveryContent(
-            uiState = uiState,
             listState = listState,
-            onEvent = onEvent,
-            modifier = modifier,
+            uiState = uiState,
+            onEvent = { viewModel.onEvent(it, navController) },
         )
     } // end PullToRefreshBox
 }
 
 @Composable
 fun DiscoveryContent(
-    uiState: DiscoveryViewModel.UiState.Content,
     listState: LazyListState,
+    uiState: DiscoveryViewModel.UiState.Content,
     onEvent: (DiscoveryUiEvent) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         // contentPadding = PaddingValues(horizontal = 0.dp, vertical = 6.dp),
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         state = listState,
     ) {
         if (uiState.privateContent.isNotEmpty()) {
@@ -292,7 +290,8 @@ fun RecommendsPlaylistContent(
                                 onItemClick(
                                     DiscoveryUiEvent.RecommendsItemClick(playlist),
                                 )
-                            }.size(cardWidth),
+                            }
+                            .size(cardWidth),
                     shape = MaterialTheme.shapes.large,
                 ) {
                     Box {
@@ -427,7 +426,8 @@ fun CarouselItem(
                                 .background(
                                     Color.White,
                                     RoundedCornerShape(4.dp),
-                                ).padding(4.dp, 2.dp),
+                                )
+                                .padding(4.dp, 2.dp),
                         text = currentItem.typeName,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,
@@ -579,17 +579,23 @@ fun ListItemImage(
 @Composable
 fun PreviewDiscoveryScreen() {
     previewInitLog()
-    val discoveryViewModel: DiscoveryViewModel =
+    val viewModel: DiscoveryViewModel =
         viewModel(
             factory =
                 viewModelProviderFactoryOf {
-                    DiscoveryViewModel(PreviewDiscoveryModule.previewDiscoveryListUseCase)
+                    DiscoveryViewModel(
+                        PreviewDiscoveryModule.previewDiscoveryListUseCase,
+                        UiEventManager(),
+                    )
                 },
         )
+
+    val navController = rememberNavController()
+    val navigationActions = rememberNavigationActions(navController = navController)
     DiscoveryScreen(
+        navController = navigationActions,
         listState = rememberLazyListState(),
-        viewModel = discoveryViewModel,
+        viewModel = viewModel,
         onRefresh = {},
-        onEvent = {},
     )
 }

@@ -1,11 +1,13 @@
 @file:Suppress("unused")
 
-package com.leovp.androidshowcase.ui
+package com.leovp.feature.base.ui
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
+import com.leovp.compose.utils.navigateSingleTopTo
+import com.leovp.compose.utils.navigateTo
+import com.leovp.compose.utils.outputGraphInfo
 import com.leovp.log.base.d
 import com.leovp.log.base.i
 
@@ -26,7 +28,7 @@ object DrawerDestinations {
 /**
  * Models the navigation actions in the app.
  *
- * DO NOT use this class directly, use [rememberNavigationActions] instead.
+ * DO NOT use this class directly, use [com.leovp.feature.base.ui.nav.rememberNavigationActions] instead.
  *
  * Attention:
  * This class can't be singleton. Otherwise, it will cause the following exception
@@ -64,8 +66,7 @@ class AppNavigationActions(
             Screen.SearchScreen.route,
             Screen.PlayerScreen.routeName,
             Screen.MessageScreen.route,
-            Screen.SettingScreen.route,
-            ->
+            Screen.SettingScreen.route ->
                 navController.navigateSingleTopTo(
                     route,
                     arguments,
@@ -76,8 +77,12 @@ class AppNavigationActions(
     }
 }
 
+@Composable
+fun rememberNavigationActions(navController: NavHostController): AppNavigationActions =
+    remember { AppNavigationActions(navController) }
+
 private fun NavHostController.navigateToMain() =
-    this.navigate(Screen.Main.route) {
+    navigate(Screen.Main.route) {
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destinations
         // on the back stack as users select items
@@ -96,12 +101,11 @@ private fun NavHostController.navigateToMain() =
         restoreState = false
     }
 
-private fun NavHostController.navigateSingleTopTo(
+fun NavHostController.navigateSingleTopPopUpToMain(
     route: String,
     arguments: String? = null,
 ) {
-    val arg: String? = arguments?.trimStart('/')
-    this.navigate(route.takeIf { arguments == null } ?: "$route/$arg") {
+    navigateTo(route, arguments) {
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destinations
         // on the back stack as users select items
@@ -118,33 +122,5 @@ private fun NavHostController.navigateSingleTopTo(
         launchSingleTop = true
         // Whether to restore state when re-selecting a previously selected item
         restoreState = true
-    }
-}
-
-private fun NavHostController.navigateTo(
-    route: String,
-    arguments: String? = null,
-) {
-    val arg: String? = arguments?.trimStart('/')
-    this.navigate(route.takeIf { arguments == null } ?: "$route/$arg") {
-        // Whether to restore state when re-selecting a previously selected item
-        restoreState = true
-    }
-}
-
-@Composable
-fun rememberNavigationActions(navController: NavHostController): AppNavigationActions =
-    remember { AppNavigationActions(navController) }
-
-@SuppressLint("RestrictedApi")
-private fun outputGraphInfo(
-    route: String,
-    navController: NavHostController,
-) {
-    d(TAG) {
-        "  current: $route  previous=${navController.currentDestination?.route}"
-    }
-    for ((i, dest) in navController.currentBackStack.value.withIndex()) {
-        d(TAG) { "    Stack $i: ${dest.destination.route}" }
     }
 }
