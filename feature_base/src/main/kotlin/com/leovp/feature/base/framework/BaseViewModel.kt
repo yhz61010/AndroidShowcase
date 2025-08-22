@@ -5,7 +5,6 @@ package com.leovp.feature.base.framework
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leovp.feature.base.BuildConfig
-import com.leovp.feature.base.event.ToastDuration
 import com.leovp.feature.base.event.UiEvent
 import com.leovp.feature.base.event.UiEventManager
 import com.leovp.mvvm.viewmodel.lifecycle.LifecycleAware
@@ -37,10 +36,17 @@ abstract class BaseViewModel<State : BaseState, Action : BaseAction<State>>(
 
     protected fun showToast(
         message: String,
-        duration: ToastDuration = ToastDuration.SHORT,
+        isError: Boolean = false,
+        longDuration: Boolean = false,
     ) {
         viewModelScope.launch {
-            uiEventManager?.sendEvent(UiEvent.ShowToast(message, duration))
+            uiEventManager?.sendEvent(
+                UiEvent.ShowToast(
+                    message = message,
+                    isError = isError,
+                    longDuration = longDuration,
+                ),
+            )
         }
     }
 
@@ -56,9 +62,12 @@ abstract class BaseViewModel<State : BaseState, Action : BaseAction<State>>(
         }
     }
 
-    protected fun navigate(route: String) {
+    protected fun navigate(
+        route: String,
+        arguments: String? = null,
+    ) {
         viewModelScope.launch {
-            uiEventManager?.sendEvent(UiEvent.Navigate(route))
+            uiEventManager?.sendEvent(UiEvent.Navigate(route, arguments))
         }
     }
 

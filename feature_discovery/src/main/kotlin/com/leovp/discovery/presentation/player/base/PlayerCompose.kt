@@ -1,4 +1,4 @@
-package com.leovp.discovery.presentation.player.composable
+package com.leovp.discovery.presentation.player.base
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background

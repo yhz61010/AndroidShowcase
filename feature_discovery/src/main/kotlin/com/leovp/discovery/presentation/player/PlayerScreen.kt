@@ -64,8 +64,13 @@ import com.leovp.android.exts.toast
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.discovery.R
 import com.leovp.discovery.domain.model.SongModel
-import com.leovp.discovery.presentation.player.composable.SeekbarItem
-import com.leovp.discovery.presentation.player.composable.TrackBadge
+import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiEvent
+import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiState
+import com.leovp.discovery.presentation.player.base.PlayerDelegate
+import com.leovp.discovery.presentation.player.base.PlayerExtraDelegate
+import com.leovp.discovery.presentation.player.base.SeekbarItem
+import com.leovp.discovery.presentation.player.base.SongEventDelegate
+import com.leovp.discovery.presentation.player.base.TrackBadge
 import com.leovp.discovery.testdata.PreviewPlayerModule
 import com.leovp.discovery.ui.theme.mark_vip_bg2
 import com.leovp.log.base.d
@@ -96,7 +101,7 @@ fun PlayerScreen(
     // EventHandler(events = viewModel.requireUiEvents)
 
     val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val uiState = uiStateFlow as PlayerViewModel.PlayerUiState.Content
+    val uiState = uiStateFlow as PlayerUiState.Content
     uiState.exception?.let { resultException ->
         val message = resultException.cause?.cause?.message ?: resultException.message
         LocalContext.current.toast(message, error = true, longDuration = true)
@@ -167,7 +172,7 @@ fun PlayerScreen(
 
 @Composable
 fun TitleContent(
-    uiState: PlayerViewModel.PlayerUiState.Content,
+    uiState: PlayerUiState.Content,
     defArtist: String,
     defTrack: String,
 ) {
@@ -232,8 +237,7 @@ fun CommentItem(
                     .background(
                         color = mark_vip_bg2,
                         shape = MaterialTheme.shapes.extraLarge,
-                    )
-                    .clickable(onClick = onClick)
+                    ).clickable(onClick = onClick)
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .alpha(0.6f),
             color = MaterialTheme.colorScheme.onPrimary,
@@ -322,8 +326,7 @@ fun RowScope.TrackInfoItem(
                             .background(
                                 color = mark_vip_bg2,
                                 shape = smallRounded,
-                            )
-                            .padding(horizontal = 4.dp, vertical = 0.dp)
+                            ).padding(horizontal = 4.dp, vertical = 0.dp)
                             .alpha(0.6f),
                     text = it,
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -449,7 +452,7 @@ fun PlayerScreenContent(
 ) {
     val ctx = LocalContext.current
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val songInfo: SongModel? = (uiState as PlayerViewModel.PlayerUiState.Content).songInfo
+    val songInfo: SongModel? = (uiState as PlayerUiState.Content).songInfo
     SideEffect {
         d(TAG) { "=> Enter PlayerScreenContent <=  songInfo=${songInfo?.name}" }
         d(TAG) { "duration=${songInfo?.duration}" }

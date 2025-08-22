@@ -16,10 +16,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
 import com.leovp.android.exts.toast
-import com.leovp.feature.base.event.ToastDuration
 import com.leovp.feature.base.event.UiEvent
+import com.leovp.feature.base.ui.AppNavigationActions
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -29,16 +28,16 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun GenericEventHandler(
     events: Flow<UiEvent>,
-    navController: NavController? = null,
+    navController: AppNavigationActions? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     showLoadingContent: @Composable (() -> Unit)? = null,
     hideLoadingContent: @Composable (() -> Unit)? = null,
     dialogContent: @Composable (
         (
-        dialogState: MutableState<UiEvent.ShowDialog?>,
-        dialog: UiEvent.ShowDialog,
-    ) -> Unit
-    )? = null
+            dialogState: MutableState<UiEvent.ShowDialog?>,
+            dialog: UiEvent.ShowDialog,
+        ) -> Unit
+    )? = null,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -51,8 +50,11 @@ fun GenericEventHandler(
             events.collect { event ->
                 when (event) {
                     is UiEvent.ShowToast -> {
-                        val longDuration = ToastDuration.LONG == event.duration
-                        context.toast(msg = event.message, longDuration = longDuration)
+                        context.toast(
+                            msg = event.message,
+                            error = event.isError,
+                            longDuration = event.longDuration,
+                        )
                     }
 
                     is UiEvent.ShowSnackbar -> {
@@ -69,7 +71,7 @@ fun GenericEventHandler(
                     }
 
                     is UiEvent.Navigate -> {
-                        navController?.navigate(event.route)
+                        navController?.navigate(event.route, event.arguments)
                     }
 
                     UiEvent.NavigateBack -> {

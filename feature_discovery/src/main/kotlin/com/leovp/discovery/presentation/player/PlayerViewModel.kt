@@ -1,14 +1,16 @@
 package com.leovp.discovery.presentation.player
 
-import androidx.annotation.Keep
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.domain.usecase.PlayerUseCase
 import com.leovp.discovery.presentation.player.PlayerViewModel.PlayerAction
-import com.leovp.discovery.presentation.player.PlayerViewModel.PlayerUiState
+import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiEvent
+import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiState
+import com.leovp.discovery.presentation.player.base.PlayerDelegate
+import com.leovp.discovery.presentation.player.base.PlayerExtraDelegate
+import com.leovp.discovery.presentation.player.base.SongEventDelegate
 import com.leovp.feature.base.framework.BaseAction
-import com.leovp.feature.base.framework.BaseState
 import com.leovp.feature.base.framework.BaseViewModel
 import com.leovp.json.toJsonString
 import com.leovp.log.base.d
@@ -21,7 +23,6 @@ import com.leovp.network.http.fold
 import com.leovp.network.http.getOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,52 +38,51 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel
-@Inject
-constructor(
-    savedStateHandle: SavedStateHandle,
-    // uiEventManager: UiEventManager,
-    private val useCase: PlayerUseCase,
-    private val songEventDelegate: SongEventDelegate,
-    private val playerDelegate: PlayerDelegate,
-    private val playerExtraDelegate: PlayerExtraDelegate,
-) : BaseViewModel<PlayerUiState, PlayerAction>(PlayerUiState.Content()) {
-    companion object {
-        private const val TAG = "PlayerVM"
-    }
+    @Inject
+    constructor(
+        savedStateHandle: SavedStateHandle,
+        // uiEventManager: UiEventManager,
+        private val useCase: PlayerUseCase,
+        private val songEventDelegate: SongEventDelegate,
+        private val playerDelegate: PlayerDelegate,
+        private val playerExtraDelegate: PlayerExtraDelegate,
+    ) : BaseViewModel<PlayerUiState, PlayerAction>(PlayerUiState.Content()) {
+        companion object {
+            private const val TAG = "PlayerVM"
+        }
 
-    val songId: Long = (savedStateHandle["id"] as? Long) ?: 0L
-    val songArtist: String =
-        URLDecoder.decode((savedStateHandle["artist"] as? String) ?: "", "UTF-8")
-    val songTrack: String =
-        URLDecoder.decode((savedStateHandle["track"] as? String) ?: "", "UTF-8")
+        val songId: Long = (savedStateHandle["id"] as? Long) ?: 0L
+        val songArtist: String =
+            URLDecoder.decode(
+                (savedStateHandle["artist"] as? String) ?: "",
+                Charsets.UTF_8.name(),
+            )
+        val songTrack: String =
+            URLDecoder.decode(
+                (savedStateHandle["track"] as? String) ?: "",
+                Charsets.UTF_8.name(),
+            )
 
-    private val _playPositionState = MutableStateFlow(0f)
-    val playPositionState: StateFlow<Float> = _playPositionState.asStateFlow()
+        private val _playPositionState = MutableStateFlow(0f)
+        val playPositionState: StateFlow<Float> = _playPositionState.asStateFlow()
 
-    private var job: Job? = null
+        init {
+            loadData(id = songId)
+        }
 
-    init {
-        loadData(id = songId)
-    }
-
-    fun onEvent(event: PlayerUiEvent) {
-        viewModelScope.launch {
-            when (event) {
-                is PlayerUiEvent.SongEvent -> songEventDelegate.handle(event)
-                is PlayerUiEvent.PlayerEvent -> playerDelegate.handle(event)
-                is PlayerUiEvent.ExtraEvent -> playerExtraDelegate.handle(event)
+        fun onEvent(event: PlayerUiEvent) {
+            viewModelScope.launch {
+                when (event) {
+                    is PlayerUiEvent.SongEvent -> songEventDelegate.handle(event)
+                    is PlayerUiEvent.PlayerEvent -> playerDelegate.handle(event)
+                    is PlayerUiEvent.ExtraEvent -> playerExtraDelegate.handle(event)
+                }
             }
         }
-    }
 
-    fun loadData(id: Long) {
-        i(TAG) { "Player -> getData() id=$id" }
-        if (job != null) {
-            job?.cancel()
-            job = null
-        }
+        fun loadData(id: Long) {
+            i(TAG) { "Player -> getData() id=$id" }
 
-        job =
             viewModelScope.launch {
                 val songAvailableResult = useCase.checkMusic(id, 999000)
 
@@ -98,86 +98,78 @@ constructor(
                         sendAction(
                             PlayerAction.LoadContent(
                                 songInfo = null,
-                                exception = e
-                            )
+                                exception = e,
+                            ),
                         )
                     },
                 )
             }
-    }
-
-    private suspend fun CoroutineScope.onSongAvailableSuccess(
-        id: Long,
-        songAvailModel: SongModel.MusicAvailableModel,
-    ) {
-        if (!songAvailModel.success) {
-            val ex = ResultException(message = songAvailModel.message)
-            e(TAG, ex) { "Song check business error.  msg=${ex.message}" }
-            sendAction(PlayerAction.LoadContent(songInfo = null, exception = ex))
-            return
         }
 
-        val songUrlDeferred =
-            async { useCase.getSongUrlV1(id, SongModel.Quality.Standard) }
-        val songInfoDeferred = async { useCase.getSongInfo(id) }
-        val songCommentsDeferred =
-            async { useCase.getMusicComment(id = id, limit = 20, offset = 0) }
-        val songRedCountDeferred = async { useCase.getSongRedCount(id) }
-        val songUrlResult = songUrlDeferred.await()
-        val songInfoResult = songInfoDeferred.await()
-        val songCommentsResult = songCommentsDeferred.await()
-        val songRedCountResult = songRedCountDeferred.await()
-
-        val firstSong: SongModel? =
-            songInfoResult
-                .getOrNull()
-                ?.firstOrNull()
-                ?.also { firstSongRef ->
-                    firstSongRef.commentsModel = songCommentsResult.getOrNull()
-                    firstSongRef.redCountModel = songRedCountResult.getOrNull()
-                }
-        firstSong?.urlModel = songUrlResult.getOrNull()?.firstOrNull()
-        d(TAG) { "---> UrlModel: ${firstSong?.toJsonString()}" }
-
-        var ex =
-            songInfoResult.exceptionOrNull()
-                ?: songUrlResult.exceptionOrNull()
-                ?: songCommentsResult.exceptionOrNull()
-                ?: songRedCountResult.exceptionOrNull()
-
-        if (firstSong?.getUrlSuccess() != true) {
-            w(TAG) {
-                "Failed to get song url. " +
-                    "code=${firstSong?.getUrlCode()} " +
-                    "url=${firstSong?.getUrl()}"
+        private suspend fun CoroutineScope.onSongAvailableSuccess(
+            id: Long,
+            songAvailModel: SongModel.MusicAvailableModel,
+        ) {
+            if (!songAvailModel.success) {
+                val ex = ResultException(message = songAvailModel.message)
+                e(TAG, ex) { "Song check business error.  msg=${ex.message}" }
+                sendAction(PlayerAction.LoadContent(songInfo = null, exception = ex))
+                return
             }
-            ex = ResultException(message = "Failed to get song url.", cause = ex)
+
+            val songUrlDeferred =
+                async { useCase.getSongUrlV1(id, SongModel.Quality.Standard) }
+            val songInfoDeferred = async { useCase.getSongInfo(id) }
+            val songCommentsDeferred =
+                async { useCase.getMusicComment(id = id, limit = 20, offset = 0) }
+            val songRedCountDeferred = async { useCase.getSongRedCount(id) }
+            val songUrlResult = songUrlDeferred.await()
+            val songInfoResult = songInfoDeferred.await()
+            val songCommentsResult = songCommentsDeferred.await()
+            val songRedCountResult = songRedCountDeferred.await()
+
+            val firstSong: SongModel? =
+                songInfoResult
+                    .getOrNull()
+                    ?.firstOrNull()
+                    ?.also { firstSongRef ->
+                        firstSongRef.commentsModel = songCommentsResult.getOrNull()
+                        firstSongRef.redCountModel = songRedCountResult.getOrNull()
+                    }
+            firstSong?.urlModel = songUrlResult.getOrNull()?.firstOrNull()
+            d(TAG) { "---> UrlModel: ${firstSong?.toJsonString()}" }
+
+            var ex =
+                songInfoResult.exceptionOrNull()
+                    ?: songUrlResult.exceptionOrNull()
+                    ?: songCommentsResult.exceptionOrNull()
+                    ?: songRedCountResult.exceptionOrNull()
+
+            if (firstSong?.getUrlSuccess() != true) {
+                w(TAG) {
+                    "Failed to get song url. " +
+                        "code=${firstSong?.getUrlCode()} " +
+                        "url=${firstSong?.getUrl()}"
+                }
+                ex = ResultException(message = "Failed to get song url.", cause = ex)
+            }
+            sendAction(PlayerAction.LoadContent(songInfo = firstSong, exception = ex))
         }
-        sendAction(PlayerAction.LoadContent(songInfo = firstSong, exception = ex))
-    }
 
-    fun updatePlayPos(pos: Float) {
-        _playPositionState.value = pos
-    }
+        fun updatePlayPos(pos: Float) {
+            _playPositionState.value = pos
+        }
 
-    sealed interface PlayerAction : BaseAction.Simple<PlayerUiState> {
-        class LoadContent(
-            val songInfo: SongModel? = null,
-            val exception: ResultException? = null,
-        ) : PlayerAction {
-            override fun reduce(state: PlayerUiState): PlayerUiState =
-                PlayerUiState.Content(
-                    songInfo = songInfo,
-                    exception = exception,
-                )
+        sealed interface PlayerAction : BaseAction.Simple<PlayerUiState> {
+            class LoadContent(
+                val songInfo: SongModel? = null,
+                val exception: ResultException? = null,
+            ) : PlayerAction {
+                override fun reduce(state: PlayerUiState): PlayerUiState =
+                    PlayerUiState.Content(
+                        songInfo = songInfo,
+                        exception = exception,
+                    )
+            }
         }
     }
-
-    @Keep
-    sealed interface PlayerUiState : BaseState {
-        data class Content(
-            val songInfo: SongModel? = null,
-            val exception: ResultException? = null,
-        ) : PlayerUiState
-    }
-}

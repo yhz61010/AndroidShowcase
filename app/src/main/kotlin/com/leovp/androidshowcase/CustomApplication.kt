@@ -6,6 +6,8 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.compose.AsyncImage
 import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import coil.request.CachePolicy
 import com.leovp.feature.base.log.MarsXLog
 import com.leovp.log.LogContext
 import dagger.hilt.android.HiltAndroidApp
@@ -48,11 +50,12 @@ class CustomApplication :
             // .components {
             //     add(UnsplashSizingInterceptor)
             // }
-            // .memoryCache {
-            //     MemoryCache.Builder(this)
-            //         .maxSizePercent(0.25)
-            //         .build()
-            // }
+            .memoryCache {
+                MemoryCache
+                    .Builder(this)
+                    .maxSizePercent(0.25)
+                    .build()
+            }.memoryCachePolicy(CachePolicy.ENABLED)
             .diskCache {
                 DiskCache
                     .Builder()

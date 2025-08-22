@@ -122,7 +122,7 @@ fun MainScreen(
         val snackbarHostState = remember { SnackbarHostState() }
         EventHandler(
             events = viewModel.requireUiEvents,
-            navController = null,
+            navController = navController,
             snackbarHostState = snackbarHostState,
         )
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -139,11 +139,12 @@ fun MainScreen(
                 unreadList = unreadList,
                 onEvent = { event ->
                     when (event) {
-                        TopAppBarEvent.MenuClick -> coroutineScope.launch {
-                            sizeAwareDrawerState.open()
-                        }
+                        TopAppBarEvent.MenuClick ->
+                            coroutineScope.launch {
+                                sizeAwareDrawerState.open()
+                            }
 
-                        else -> viewModel.onEvent(event, navController)
+                        else -> viewModel.onEvent(event)
                     }
                 },
             )

@@ -66,7 +66,8 @@ class AppNavigationActions(
             Screen.SearchScreen.route,
             Screen.PlayerScreen.routeName,
             Screen.MessageScreen.route,
-            Screen.SettingScreen.route ->
+            Screen.SettingScreen.route,
+            ->
                 navController.navigateSingleTopTo(
                     route,
                     arguments,

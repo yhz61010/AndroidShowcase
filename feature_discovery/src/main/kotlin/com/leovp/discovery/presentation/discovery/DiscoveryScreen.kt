@@ -1,21 +1,17 @@
 package com.leovp.discovery.presentation.discovery
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -35,22 +31,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,25 +57,18 @@ import com.leovp.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.compose.composable.pager.HorizontalAutoPager
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.discovery.R
-import com.leovp.discovery.domain.enum.MarkType
 import com.leovp.discovery.domain.model.PlaylistModel
 import com.leovp.discovery.domain.model.PrivateContentModel
 import com.leovp.discovery.domain.model.TopSongModel
-import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryUiEvent
-import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryUiState
-import com.leovp.discovery.presentation.discovery.composable.supportingBackground
-import com.leovp.discovery.presentation.discovery.composable.supportingBorder
-import com.leovp.discovery.presentation.discovery.composable.supportingPadding
+import com.leovp.discovery.presentation.discovery.base.DiscoveryContract.DiscoveryUiEvent
+import com.leovp.discovery.presentation.discovery.base.DiscoveryContract.DiscoveryUiState
+import com.leovp.discovery.presentation.discovery.base.ListItemImage
+import com.leovp.discovery.presentation.discovery.base.SupportingContent
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
-import com.leovp.discovery.ui.theme.mark_hot_bg
-import com.leovp.discovery.ui.theme.mark_hot_text_color
-import com.leovp.discovery.ui.theme.mark_quality_text_color
-import com.leovp.discovery.ui.theme.mark_vip_text_color
-import com.leovp.discovery.ui.theme.place_holder2_bg_color
+import com.leovp.discovery.ui.theme.Dimens
 import com.leovp.discovery.ui.theme.place_holder_bg_color
-import com.leovp.discovery.ui.theme.place_holder_err_bg_color
 import com.leovp.feature.base.event.UiEventManager
-import com.leovp.feature.base.event.composable.EventHandler
+import com.leovp.feature.base.event.composable.GenericEventHandler
 import com.leovp.feature.base.ui.AppNavigationActions
 import com.leovp.feature.base.ui.rememberNavigationActions
 import com.leovp.log.base.d
@@ -107,7 +93,10 @@ fun DiscoveryScreen(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val ctx = LocalContext.current
-    EventHandler(events = viewModel.requireUiEvents)
+    GenericEventHandler(
+        events = viewModel.requireUiEvents,
+        navController = navController,
+    )
     val uiState =
         viewModel.uiStateFlow.collectAsStateWithLifecycle().value as
             DiscoveryUiState.Content
@@ -151,7 +140,7 @@ fun DiscoveryScreen(
         DiscoveryContent(
             listState = listState,
             uiState = uiState,
-            onEvent = { viewModel.onEvent(it, navController) },
+            onEvent = { viewModel.onEvent(it) },
         )
     } // end PullToRefreshBox
 }
@@ -272,10 +261,10 @@ fun RecommendsPlaylistContent(
     onItemClick: (DiscoveryUiEvent) -> Unit,
 ) {
     // d(TAG) { "=> Enter EverydayRecommendsContent <=" }
-    val cardWidth = 120.dp
+    val cardWidth = Dimens.DiscoveryConstants.CardWidth
 
     LazyRow(
-        contentPadding = PaddingValues(16.dp, 8.dp),
+        contentPadding = Dimens.DiscoveryConstants.ContentPadding,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -291,8 +280,7 @@ fun RecommendsPlaylistContent(
                                 onItemClick(
                                     DiscoveryUiEvent.RecommendsItemClick(playlist),
                                 )
-                            }
-                            .size(cardWidth),
+                            }.size(cardWidth),
                     shape = MaterialTheme.shapes.large,
                 ) {
                     Box {
@@ -412,7 +400,7 @@ fun CarouselItem(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(140.dp),
+                        .height(Dimens.DiscoveryConstants.CarouselHeight),
             )
             if (currentItem.typeName.isNotEmpty()) {
                 Box(
@@ -427,8 +415,7 @@ fun CarouselItem(
                                 .background(
                                     Color.White,
                                     RoundedCornerShape(4.dp),
-                                )
-                                .padding(4.dp, 2.dp),
+                                ).padding(4.dp, 2.dp),
                         text = currentItem.typeName,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,
@@ -448,13 +435,14 @@ fun TopSongsItem(
     onItemClick: (DiscoveryUiEvent) -> Unit,
 ) {
     // d(TAG) { "=> Enter PersonalRecommendsItem <=" }
+    val onClick =
+        remember(data) {
+            {
+                onItemClick(DiscoveryUiEvent.PersonalItemClick(data))
+            }
+        }
     ListItem(
-        modifier =
-            Modifier.clickable {
-                onItemClick(
-                    DiscoveryUiEvent.PersonalItemClick(data),
-                )
-            },
+        modifier = Modifier.clickable(onClick = onClick),
         headlineContent = {
             Text(
                 text = data.name,
@@ -481,98 +469,9 @@ fun TopSongsItem(
             ListItemImage(
                 imageUrl = data.getSongThumbUrl(),
                 contentDescription = null,
-                modifier = Modifier.size(56.dp),
+                modifier = Modifier.size(Dimens.DiscoveryConstants.ItemImageSize),
             )
         },
-    )
-}
-
-@Composable
-fun SupportingContent(data: TopSongModel) {
-    val supportBorderWidth = 0.4.dp
-    val supportSmallRounded = MaterialTheme.shapes.small
-    val hotModifier =
-        Modifier.border(
-            supportBorderWidth,
-            mark_hot_bg,
-            supportSmallRounded,
-        )
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        val borderModifier =
-            Modifier.supportingBorder(
-                data = data,
-                defModifier = hotModifier,
-                border = supportBorderWidth,
-                shape = supportSmallRounded,
-            )
-        val backgroundModifier = Modifier.supportingBackground(data, supportSmallRounded)
-        val paddingModifier = Modifier.supportingPadding(data)
-        val textColor =
-            when (data.markType) {
-                MarkType.HiRes, MarkType.Hot -> mark_hot_text_color
-                MarkType.Special -> mark_quality_text_color
-                MarkType.Vip -> mark_vip_text_color
-                else -> mark_hot_text_color
-            }
-        if (data.markType != MarkType.None) {
-            Text(
-                modifier =
-                    Modifier
-                        .then(borderModifier)
-                        .then(backgroundModifier)
-                        .then(paddingModifier),
-                text = data.markType.text,
-                color = textColor,
-                fontSize =
-                    when (data.markType) {
-                        MarkType.Vip -> 8.sp
-                        else -> 9.sp
-                    },
-                fontWeight = FontWeight.Black,
-                fontFamily =
-                    when (data.markType) {
-                        MarkType.HiRes, MarkType.Vip -> FontFamily.SansSerif
-                        else -> null
-                    },
-                lineHeight = 14.sp,
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-        }
-        Text(
-            text = data.getDefaultArtistName(),
-            style = MaterialTheme.typography.labelMedium,
-            color = Color.Gray,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-@Composable
-fun ListItemImage(
-    imageUrl: String?,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    elevation: Dp = 0.dp,
-) {
-    d(TAG) { "=> Enter ListItemImage <=  image=$imageUrl" }
-    AsyncImage(
-        model =
-            ImageRequest
-                .Builder(
-                    LocalContext.current,
-                ).data(imageUrl)
-                .crossfade(true)
-                .build(),
-        contentDescription = contentDescription,
-        placeholder = ColorPainter(place_holder2_bg_color),
-        error = ColorPainter(place_holder_err_bg_color),
-        contentScale = ContentScale.Fit,
-        // filterQuality = FilterQuality.Low,
-        modifier =
-            modifier
-                .shadow(elevation)
-                .clip(RoundedCornerShape(8.dp)),
     )
 }
 

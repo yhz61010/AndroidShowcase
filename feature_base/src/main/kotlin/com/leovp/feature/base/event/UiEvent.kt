@@ -8,7 +8,8 @@ package com.leovp.feature.base.event
 sealed interface UiEvent {
     data class ShowToast(
         val message: String,
-        val duration: ToastDuration = ToastDuration.SHORT,
+        val isError: Boolean = false,
+        val longDuration: Boolean = false,
     ) : UiEvent
 
     data class ShowSnackbar(
@@ -19,6 +20,7 @@ sealed interface UiEvent {
 
     data class Navigate(
         val route: String,
+        val arguments: String? = null,
     ) : UiEvent
 
     object NavigateBack : UiEvent
@@ -37,7 +39,7 @@ sealed interface UiEvent {
     ) : UiEvent
 }
 
-enum class ToastDuration {
-    SHORT,
-    LONG,
-}
+// enum class ToastDuration {
+//     SHORT,
+//     LONG,
+// }
