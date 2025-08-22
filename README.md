@@ -8,6 +8,7 @@
 [![Compatibility Java Version](https://img.shields.io/badge/Compatibility_Java_-17-green)](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
 [![NDK](https://img.shields.io/badge/NDK-25.2.9519653-green)](https://developer.android.com/ndk/downloads)
 
+[![CodeFactor](https://www.codefactor.io/repository/github/yhz61010/androidshowcase/badge)](https://www.codefactor.io/repository/github/yhz61010/androidshowcase)
 
 An Android kotlin showcase project by using Jetpack Compose UI.
 
