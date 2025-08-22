@@ -22,7 +22,7 @@ data class TopSongModel(
 
     var markType: MarkType = MarkType.None
 
-    fun getAlbumCoverUrl(
+    fun getSongThumbUrl(
         width: ImageThumb = ImageThumb.TRACK_THUMB_WIDTH,
         height: ImageThumb = ImageThumb.TRACK_THUMB_HEIGHT,
     ): String =
@@ -32,8 +32,8 @@ data class TopSongModel(
         )
 
     fun getDefaultArtistUrl(
-        width: ImageThumb = ImageThumb.ALBUM_WIDTH,
-        height: ImageThumb = ImageThumb.ALBUM_HEIGHT,
+        width: ImageThumb = ImageThumb.ARTIST_WIDTH,
+        height: ImageThumb = ImageThumb.ARTIST_HEIGHT,
     ): String =
         this.artists.first().picUrl + (
             "?param=${width.value}x${height.value}"

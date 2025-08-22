@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
 import com.leovp.compose.utils.previewInitLog
+import com.leovp.log.base.d
 import kotlinx.coroutines.delay
 
 /**
@@ -29,6 +30,7 @@ fun SplashScreen(
     onTimeout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    d(TAG) { "=> Enter SplashScreen <=" }
     // Adds composition consistency. Use the value when LaunchedEffect is first called
     val currentOnTimeout by rememberUpdatedState(onTimeout)
 

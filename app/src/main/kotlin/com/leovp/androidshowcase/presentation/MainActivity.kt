@@ -50,10 +50,10 @@ const val SCREEN_TRANSITION_DURATION = 300
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        d(TAG) { "=> Enter MainActivity <=" }
         super.onCreate(savedInstanceState)
 
         InitManager.init(application)
-        d(TAG) { "=> Enter MainActivity <=" }
 
         RequestUtil.initNetEngine(baseUrl = GlobalConst.API_BASE_URL)
 

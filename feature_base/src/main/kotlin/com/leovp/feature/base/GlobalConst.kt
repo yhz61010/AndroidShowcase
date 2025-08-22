@@ -25,8 +25,8 @@ object GlobalConst {
             val BANNER_WIDTH = ImageThumb((1080 * BANNER_RATIO).toInt())
             val BANNER_HEIGHT = ImageThumb((399 * BANNER_RATIO).toInt())
 
-            val ALBUM_WIDTH = ImageThumb(128)
-            val ALBUM_HEIGHT = ImageThumb(128)
+            val ARTIST_WIDTH = ImageThumb(128)
+            val ARTIST_HEIGHT = ImageThumb(128)
 
             val PLAYLIST_WIDTH = ImageThumb(180)
             val PLAYLIST_HEIGHT = ImageThumb(180)
@@ -34,8 +34,8 @@ object GlobalConst {
             val TRACK_THUMB_WIDTH = ImageThumb(56)
             val TRACK_THUMB_HEIGHT = ImageThumb(56)
 
-            val TRACK_LARGE_WIDTH = ImageThumb(384)
-            val TRACK_LARGE_HEIGHT = ImageThumb(384)
+            val TRACK_LARGE_WIDTH = ImageThumb(512)
+            val TRACK_LARGE_HEIGHT = ImageThumb(512)
         }
     }
 

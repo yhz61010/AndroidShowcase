@@ -479,7 +479,7 @@ fun TopSongsItem(
         },
         leadingContent = {
             ListItemImage(
-                imageUrl = data.getAlbumCoverUrl(),
+                imageUrl = data.getSongThumbUrl(),
                 contentDescription = null,
                 modifier = Modifier.size(56.dp),
             )
