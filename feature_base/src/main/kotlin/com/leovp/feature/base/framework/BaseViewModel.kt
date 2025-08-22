@@ -32,7 +32,7 @@ abstract class BaseViewModel<State : BaseState, Action : BaseAction<State>>(
     // ===== UI Event - Start ==========
     val uiEvents: Flow<UiEvent>? = uiEventManager?.events
     val requireUiEvents: Flow<UiEvent> by lazy {
-        uiEventManager?.events ?: throw NullPointerException("uiEventManager is null")
+        uiEvents ?: throw NullPointerException("uiEventManager is null")
     }
 
     protected fun showToast(

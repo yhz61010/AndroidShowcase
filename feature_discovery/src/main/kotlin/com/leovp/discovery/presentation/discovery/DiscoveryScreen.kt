@@ -69,6 +69,7 @@ import com.leovp.discovery.domain.model.PlaylistModel
 import com.leovp.discovery.domain.model.PrivateContentModel
 import com.leovp.discovery.domain.model.TopSongModel
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryUiEvent
+import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryUiState
 import com.leovp.discovery.presentation.discovery.composable.supportingBackground
 import com.leovp.discovery.presentation.discovery.composable.supportingBorder
 import com.leovp.discovery.presentation.discovery.composable.supportingPadding
@@ -109,7 +110,7 @@ fun DiscoveryScreen(
     EventHandler(events = viewModel.requireUiEvents)
     val uiState =
         viewModel.uiStateFlow.collectAsStateWithLifecycle().value as
-            DiscoveryViewModel.UiState.Content
+            DiscoveryUiState.Content
 
     SideEffect {
         i(TAG) {
@@ -158,7 +159,7 @@ fun DiscoveryScreen(
 @Composable
 fun DiscoveryContent(
     listState: LazyListState,
-    uiState: DiscoveryViewModel.UiState.Content,
+    uiState: DiscoveryUiState.Content,
     onEvent: (DiscoveryUiEvent) -> Unit,
 ) {
     LazyColumn(

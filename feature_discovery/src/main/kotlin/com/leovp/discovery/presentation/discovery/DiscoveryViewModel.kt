@@ -6,7 +6,8 @@ import com.leovp.discovery.domain.model.PlaylistModel
 import com.leovp.discovery.domain.model.PrivateContentModel
 import com.leovp.discovery.domain.model.TopSongModel
 import com.leovp.discovery.domain.usecase.GetDiscoveryListUseCase
-import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.UiState
+import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryAction
+import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryUiState
 import com.leovp.feature.base.event.UiEventManager
 import com.leovp.feature.base.framework.BaseAction
 import com.leovp.feature.base.framework.BaseState
@@ -36,8 +37,8 @@ class DiscoveryViewModel
 constructor(
     private val useCase: GetDiscoveryListUseCase,
     uiEventManager: UiEventManager,
-) : BaseViewModel<UiState, BaseAction<UiState>>(
-    initialState = UiState.Content(),
+) : BaseViewModel<DiscoveryUiState, DiscoveryAction>(
+    initialState = DiscoveryUiState.Content(),
     uiEventManager = uiEventManager,
 ) {
     companion object {
@@ -88,16 +89,16 @@ constructor(
     }
 
     private fun loadData(forceRefresh: Boolean = false) {
-        val uiState = uiStateFlow.value as UiState.Content
+        val uiState = uiStateFlow.value as DiscoveryUiState.Content
         i(TAG) {
             "loadData(forceRefresh=$forceRefresh) uiState.isLoading=${uiState.isLoading}"
         }
-        if (uiState.isLoading && !forceRefresh) {
+        if (!forceRefresh && uiState.isLoading) {
             w(TAG) { "The data is loading now. Ignore loading." }
             return
         }
 
-        sendAction(Action.ShowLoading)
+        sendAction(DiscoveryAction.ShowLoading)
         if (job != null) {
             job?.cancel()
             job = null
@@ -121,10 +122,10 @@ constructor(
                         ?: topSongsResult.exceptionOrNull()
 
                 if (ex != null) {
-                    sendAction(Action.LoadFailure(ex))
+                    sendAction(DiscoveryAction.LoadFailure(ex))
                 } else {
                     sendAction(
-                        Action.LoadSuccess(
+                        DiscoveryAction.LoadSuccess(
                             privateContent =
                                 privateContentResult.getOrDefault(emptyList()),
                             recommendPlaylist =
@@ -133,6 +134,7 @@ constructor(
                         ),
                     )
                 }
+                hideLoading()
             }
     }
 
@@ -152,10 +154,10 @@ constructor(
         data object Refresh : DiscoveryUiEvent
     }
 
-    sealed interface Action : BaseAction.Simple<UiState> {
-        object ShowLoading : Action {
-            override fun reduce(state: UiState): UiState {
-                val uiState = state as UiState.Content
+    sealed interface DiscoveryAction : BaseAction.Simple<DiscoveryUiState> {
+        object ShowLoading : DiscoveryAction {
+            override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
+                val uiState = state as DiscoveryUiState.Content
                 return uiState.copy(isLoading = true)
             }
         }
@@ -164,9 +166,9 @@ constructor(
             val privateContent: List<PrivateContentModel> = emptyList(),
             val recommendPlaylist: List<PlaylistModel> = emptyList(),
             val topSongs: List<TopSongModel> = emptyList(),
-        ) : Action {
-            override fun reduce(state: UiState): UiState {
-                val uiState = state as UiState.Content
+        ) : DiscoveryAction {
+            override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
+                val uiState = state as DiscoveryUiState.Content
                 return uiState.copy(
                     privateContent = privateContent,
                     recommendPlaylist = recommendPlaylist,
@@ -179,22 +181,22 @@ constructor(
 
         class LoadFailure(
             private val err: ResultException,
-        ) : Action {
-            override fun reduce(state: UiState): UiState {
-                val uiState = state as UiState.Content
-                return uiState.copy(isLoading = false, exception = err)
+        ) : DiscoveryAction {
+            override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
+                val discoveryUiState = state as DiscoveryUiState.Content
+                return discoveryUiState.copy(isLoading = false, exception = err)
             }
         }
     }
 
     @Keep
-    sealed interface UiState : BaseState {
+    sealed interface DiscoveryUiState : BaseState {
         data class Content(
             val privateContent: List<PrivateContentModel> = emptyList(),
             val recommendPlaylist: List<PlaylistModel> = emptyList(),
             val topSongs: List<TopSongModel> = emptyList(),
             val isLoading: Boolean = false,
             val exception: ResultException? = null,
-        ) : UiState
+        ) : DiscoveryUiState
     }
 }

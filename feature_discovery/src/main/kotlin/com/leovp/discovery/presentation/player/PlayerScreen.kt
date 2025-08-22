@@ -33,7 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -89,16 +88,15 @@ fun PlayerScreen(
 ) {
     SideEffect {
         d(TAG) {
-            "=> Enter PlayerScreen <= ${viewModel.songArtist}-${viewModel.songTrack} id=${viewModel.songId}"
+            "=> Enter PlayerScreen <= " +
+                "${viewModel.songArtist}-${viewModel.songTrack} " +
+                "id=${viewModel.songId}"
         }
     }
-    LaunchedEffect(Unit) {
-        // d(TAG) { "=> Enter PlayerScreen <= -> LaunchedEffect" }
-        viewModel.onEnter()
-    }
+    // EventHandler(events = viewModel.requireUiEvents)
 
     val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val uiState = uiStateFlow as PlayerViewModel.UiState.Content
+    val uiState = uiStateFlow as PlayerViewModel.PlayerUiState.Content
     uiState.exception?.let { resultException ->
         val message = resultException.cause?.cause?.message ?: resultException.message
         LocalContext.current.toast(message, error = true, longDuration = true)
@@ -169,7 +167,7 @@ fun PlayerScreen(
 
 @Composable
 fun TitleContent(
-    uiState: PlayerViewModel.UiState.Content,
+    uiState: PlayerViewModel.PlayerUiState.Content,
     defArtist: String,
     defTrack: String,
 ) {
@@ -234,7 +232,8 @@ fun CommentItem(
                     .background(
                         color = mark_vip_bg2,
                         shape = MaterialTheme.shapes.extraLarge,
-                    ).clickable(onClick = onClick)
+                    )
+                    .clickable(onClick = onClick)
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .alpha(0.6f),
             color = MaterialTheme.colorScheme.onPrimary,
@@ -323,7 +322,8 @@ fun RowScope.TrackInfoItem(
                             .background(
                                 color = mark_vip_bg2,
                                 shape = smallRounded,
-                            ).padding(horizontal = 4.dp, vertical = 0.dp)
+                            )
+                            .padding(horizontal = 4.dp, vertical = 0.dp)
                             .alpha(0.6f),
                     text = it,
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -449,7 +449,7 @@ fun PlayerScreenContent(
 ) {
     val ctx = LocalContext.current
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
-    val songInfo: SongModel? = (uiState as PlayerViewModel.UiState.Content).songInfo
+    val songInfo: SongModel? = (uiState as PlayerViewModel.PlayerUiState.Content).songInfo
     SideEffect {
         d(TAG) { "=> Enter PlayerScreenContent <=  songInfo=${songInfo?.name}" }
         d(TAG) { "duration=${songInfo?.duration}" }
@@ -602,6 +602,7 @@ fun PreviewPlayerScreen() {
                                 it["artist"] = "鄧麗君"
                                 it["track"] = "甜蜜蜜"
                             },
+                        // uiEventManager = UiEventManager(),
                         useCase = PreviewPlayerModule.previewPlayerUseCase,
                         songEventDelegate = SongEventDelegate(),
                         playerDelegate = PlayerDelegate(),
