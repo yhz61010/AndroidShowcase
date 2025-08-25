@@ -140,14 +140,14 @@ constructor(
     }
 
     sealed interface DiscoveryAction : BaseAction.Simple<DiscoveryUiState> {
-        object ShowLoading : DiscoveryAction {
+        data object ShowLoading : DiscoveryAction {
             override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
                 val uiState = state as DiscoveryUiState.Content
                 return uiState.copy(isLoading = true)
             }
         }
 
-        class LoadSuccess(
+        data class LoadSuccess(
             val privateContent: List<PrivateContentModel> = emptyList(),
             val recommendPlaylist: List<PlaylistModel> = emptyList(),
             val topSongs: List<TopSongModel> = emptyList(),
@@ -164,7 +164,7 @@ constructor(
             }
         }
 
-        class LoadFailure(
+        data class LoadFailure(
             private val err: ResultException,
         ) : DiscoveryAction {
             override fun reduce(state: DiscoveryUiState): DiscoveryUiState {

@@ -49,14 +49,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
 import com.leovp.compose.composable.event.UiEventManager
 import com.leovp.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.compose.composable.pager.HorizontalAutoPager
-import com.leovp.compose.utils.previewInitLog
 import com.leovp.discovery.R
 import com.leovp.discovery.domain.model.PlaylistModel
 import com.leovp.discovery.domain.model.PrivateContentModel
@@ -69,8 +67,8 @@ import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.discovery.ui.theme.Dimens
 import com.leovp.discovery.ui.theme.place_holder_bg_color
 import com.leovp.feature.base.event.composable.GenericEventHandler
-import com.leovp.feature.base.ui.AppNavigationActions
-import com.leovp.feature.base.ui.rememberNavigationActions
+import com.leovp.feature.base.ui.LocalNavigationActions
+import com.leovp.feature.base.ui.PreviewWrapper
 import com.leovp.log.base.d
 import com.leovp.log.base.e
 import com.leovp.log.base.i
@@ -87,7 +85,6 @@ private const val TAG = "Discovery"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoveryScreen(
-    navController: AppNavigationActions,
     onRefresh: () -> Unit,
     viewModel: DiscoveryViewModel = hiltViewModel<DiscoveryViewModel>(),
     listState: LazyListState = rememberLazyListState(),
@@ -95,7 +92,7 @@ fun DiscoveryScreen(
     val ctx = LocalContext.current
     GenericEventHandler(
         events = viewModel.requireUiEvents,
-        navController = navController,
+        navController = LocalNavigationActions.current,
     )
     val uiState =
         viewModel.uiStateFlow.collectAsStateWithLifecycle().value as
@@ -280,7 +277,8 @@ fun RecommendsPlaylistContent(
                                 onItemClick(
                                     DiscoveryUiEvent.RecommendsItemClick(playlist),
                                 )
-                            }.size(cardWidth),
+                            }
+                            .size(cardWidth),
                     shape = MaterialTheme.shapes.large,
                 ) {
                     Box {
@@ -415,7 +413,8 @@ fun CarouselItem(
                                 .background(
                                     Color.White,
                                     RoundedCornerShape(4.dp),
-                                ).padding(4.dp, 2.dp),
+                                )
+                                .padding(4.dp, 2.dp),
                         text = currentItem.typeName,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,
@@ -478,24 +477,21 @@ fun TopSongsItem(
 @Preview
 @Composable
 fun PreviewDiscoveryScreen() {
-    previewInitLog()
-    val viewModel: DiscoveryViewModel =
-        viewModel(
-            factory =
-                viewModelProviderFactoryOf {
-                    DiscoveryViewModel(
-                        PreviewDiscoveryModule.previewDiscoveryListUseCase,
-                        UiEventManager(),
-                    )
-                },
+    PreviewWrapper {
+        val viewModel: DiscoveryViewModel =
+            viewModel(
+                factory =
+                    viewModelProviderFactoryOf {
+                        DiscoveryViewModel(
+                            PreviewDiscoveryModule.previewDiscoveryListUseCase,
+                            UiEventManager(),
+                        )
+                    },
+            )
+        DiscoveryScreen(
+            listState = rememberLazyListState(),
+            viewModel = viewModel,
+            onRefresh = {},
         )
-
-    val navController = rememberNavController()
-    val navigationActions = rememberNavigationActions(navController = navController)
-    DiscoveryScreen(
-        navController = navigationActions,
-        listState = rememberLazyListState(),
-        viewModel = viewModel,
-        onRefresh = {},
-    )
+    }
 }

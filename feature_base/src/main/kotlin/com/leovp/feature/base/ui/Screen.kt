@@ -79,4 +79,8 @@ sealed class Screen(
     data object PlayerScreen : Screen(
         "player_screen/{id}/{artist}/{track}",
     )
+
+    data object CommentScreen : Screen(
+        "comment_screen/{songInfo}",
+    )
 }

@@ -27,7 +27,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,7 +37,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
-import com.leovp.compose.utils.previewInitLog
+import com.leovp.compose.composable.event.UiEventManager
 import com.leovp.discovery.R
 import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.presentation.player.base.ControllerItem
@@ -47,6 +46,7 @@ import com.leovp.discovery.presentation.player.base.ExtraControllerItem
 import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiEvent
 import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiState
 import com.leovp.discovery.presentation.player.base.PlayerDelegate
+import com.leovp.discovery.presentation.player.base.PlayerDelegateManager
 import com.leovp.discovery.presentation.player.base.PlayerExtraDelegate
 import com.leovp.discovery.presentation.player.base.SeekbarItem
 import com.leovp.discovery.presentation.player.base.SongEventDelegate
@@ -54,9 +54,11 @@ import com.leovp.discovery.presentation.player.base.TitleContent
 import com.leovp.discovery.presentation.player.base.TrackBadge
 import com.leovp.discovery.presentation.player.base.TrackInfoItem
 import com.leovp.discovery.testdata.PreviewPlayerModule
+import com.leovp.feature.base.event.composable.GenericEventHandler
+import com.leovp.feature.base.ui.LocalNavigationActions
+import com.leovp.feature.base.ui.PreviewWrapper
 import com.leovp.log.base.d
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
-import com.leovp.ui.theme.ImmersiveTheme
 
 /**
  * Author: Michael Leo
@@ -67,9 +69,7 @@ private const val TAG = "PlayerScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerScreen(
-    onMenuUpAction: () -> Unit,
     onShareAction: () -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: PlayerViewModel = hiltViewModel<PlayerViewModel>(),
 ) {
     SideEffect {
@@ -79,7 +79,8 @@ fun PlayerScreen(
                 "id=${viewModel.songId}"
         }
     }
-    // EventHandler(events = viewModel.requireUiEvents)
+    val navController = LocalNavigationActions.current
+    GenericEventHandler(events = viewModel.requireUiEvents, navController = navController)
 
     val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val uiState = uiStateFlow as PlayerUiState.Content
@@ -94,7 +95,7 @@ fun PlayerScreen(
     val containerBg = MaterialTheme.colorScheme.primary
     Scaffold(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = containerBg,
         topBar = {
             CenterAlignedTopAppBar(
@@ -115,7 +116,7 @@ fun PlayerScreen(
                         containerColor = containerBg,
                     ),
                 navigationIcon = {
-                    IconButton(onClick = onMenuUpAction) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             modifier = Modifier.requiredSize(32.dp),
                             imageVector = Icons.Default.KeyboardArrowDown,
@@ -183,7 +184,7 @@ fun PlayerScreenContent(
                 artist = viewModel.songArtist,
                 track = viewModel.songTrack,
                 onEvent = { event ->
-                    ctx.toast("You click on $event.")
+                    // ctx.toast("You click on $event.")
                     viewModel.onEvent(event)
                 },
             )
@@ -245,7 +246,10 @@ fun TrackArtistItem(
                 TrackBadge(
                     id = R.drawable.dis_chat_24px,
                     count = commentCount,
-                    onClick = { onEvent(PlayerUiEvent.SongEvent.CommentClick) },
+                    onClick = {
+                        checkNotNull(songInfo)
+                        onEvent(PlayerUiEvent.SongEvent.CommentClick(songInfo))
+                    },
                 )
             }
         }
@@ -297,36 +301,30 @@ fun ControllerContent(viewModel: PlayerViewModel) {
 @Preview(name = "Night", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewPlayerScreen() {
-    previewInitLog()
-
-    val viewModel: PlayerViewModel =
-        viewModel(
-            factory =
-                viewModelProviderFactoryOf {
-                    PlayerViewModel(
-                        savedStateHandle =
-                            SavedStateHandle().also {
-                                it["id"] = arrayOf(10712L)
-                                it["artist"] = "鄧麗君"
-                                it["track"] = "甜蜜蜜"
-                            },
-                        // uiEventManager = UiEventManager(),
-                        useCase = PreviewPlayerModule.previewPlayerUseCase,
-                        songEventDelegate = SongEventDelegate(),
-                        playerDelegate = PlayerDelegate(),
-                        playerExtraDelegate = PlayerExtraDelegate(),
-                    )
-                },
-        )
-
-    viewModel.updatePlayPos(80_000f)
-    ImmersiveTheme(
-        systemBarColor = Color.Transparent,
-        dynamicColor = false,
-        lightSystemBar = false,
-    ) {
+    PreviewWrapper {
+        val viewModel: PlayerViewModel =
+            viewModel(
+                factory =
+                    viewModelProviderFactoryOf {
+                        PlayerViewModel(
+                            savedStateHandle =
+                                SavedStateHandle().also {
+                                    it["id"] = arrayOf(10712L)
+                                    it["artist"] = "鄧麗君"
+                                    it["track"] = "甜蜜蜜"
+                                },
+                            uiEventManager = UiEventManager(),
+                            useCase = PreviewPlayerModule.previewPlayerUseCase,
+                            delegateManager = PlayerDelegateManager(
+                                songEventDelegate = SongEventDelegate(UiEventManager()),
+                                playerDelegate = PlayerDelegate(),
+                                playerExtraDelegate = PlayerExtraDelegate(),
+                            )
+                        )
+                    },
+            )
+        viewModel.updatePlayPos(80_000f)
         PlayerScreen(
-            onMenuUpAction = {},
             onShareAction = {},
             viewModel = viewModel,
         )

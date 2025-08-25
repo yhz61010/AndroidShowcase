@@ -15,6 +15,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavBackStackEntry
@@ -22,10 +23,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.leovp.androidshowcase.ui.addAppDrawerGraph
 import com.leovp.androidshowcase.ui.addAppMainGraph
-import com.leovp.androidshowcase.ui.addOtherGraph
+import com.leovp.androidshowcase.ui.addCommentGraph
+import com.leovp.androidshowcase.ui.addPlayerGraph
 import com.leovp.androidshowcase.utils.InitManager
 import com.leovp.feature.base.GlobalConst
 import com.leovp.feature.base.http.RequestUtil
+import com.leovp.feature.base.ui.LocalNavigationActions
 import com.leovp.feature.base.ui.Screen
 import com.leovp.feature.base.ui.rememberNavigationActions
 import com.leovp.log.base.d
@@ -72,9 +75,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     d(TAG) { "=> Enter ShowcaseApp <=" }
-    val navController = rememberNavController()
-    val navigationActions =
-        rememberNavigationActions(navController = navController)
 
     /*
      * Suppose we are moving from screen A to B (navigate):
@@ -113,21 +113,27 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
         slideOutHorizontally(animationSpec = tween, targetOffsetX = { it })
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Splash.route,
-        modifier = Modifier,
-        enterTransition = enterTransition,
-        exitTransition = exitTransition,
-        popEnterTransition = popEnterTransition,
-        popExitTransition = popExitTransition,
+    val navController = rememberNavController()
+    val navigationActions =
+        rememberNavigationActions(navController = navController)
+
+    CompositionLocalProvider(
+        LocalNavigationActions provides navigationActions,
     ) {
-        addAppMainGraph(
-            widthSizeClass = widthSizeClass,
-            navController = navigationActions,
-        )
-        // widthSizeClass = widthSizeClass,
-        addAppDrawerGraph(navController = navigationActions)
-        addOtherGraph(navController = navigationActions)
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Splash.route,
+            modifier = Modifier,
+            enterTransition = enterTransition,
+            exitTransition = exitTransition,
+            popEnterTransition = popEnterTransition,
+            popExitTransition = popExitTransition,
+        ) {
+            addAppMainGraph(widthSizeClass = widthSizeClass)
+            // widthSizeClass = widthSizeClass,
+            addAppDrawerGraph()
+            addPlayerGraph()
+            addCommentGraph()
+        }
     }
 }

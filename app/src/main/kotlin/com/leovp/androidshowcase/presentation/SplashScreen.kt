@@ -14,7 +14,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
-import com.leovp.compose.utils.previewInitLog
+import com.leovp.androidshowcase.ui.theme.SplashTheme
+import com.leovp.feature.base.ui.PreviewWrapperNoTheme
 import com.leovp.log.base.d
 import kotlinx.coroutines.delay
 
@@ -54,7 +55,9 @@ fun SplashScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewSplashScreen() {
-    previewInitLog()
-
-    SplashScreen(onTimeout = {})
+    PreviewWrapperNoTheme {
+        SplashTheme {
+            SplashScreen(onTimeout = {})
+        }
+    }
 }

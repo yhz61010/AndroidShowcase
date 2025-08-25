@@ -20,9 +20,11 @@ object PlayerContract {
         sealed class SongEvent : PlayerUiEvent() {
             data object ArtistClick : SongEvent()
 
+            data object MarkClick : SongEvent()
+
             data object FavoriteClick : SongEvent()
 
-            data object CommentClick : SongEvent()
+            data class CommentClick(val songInfo: SongModel) : SongEvent()
 
             data object HotCommentClick : SongEvent()
         }

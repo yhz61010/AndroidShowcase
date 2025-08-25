@@ -3,6 +3,7 @@
 package com.leovp.feature.base.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import com.leovp.compose.utils.navigateSingleTopTo
@@ -67,6 +68,7 @@ class AppNavigationActions(
             Screen.PlayerScreen.routeName,
             Screen.MessageScreen.route,
             Screen.SettingScreen.route,
+            Screen.CommentScreen.routeName,
             ->
                 navController.navigateSingleTopTo(
                     route,
@@ -81,6 +83,10 @@ class AppNavigationActions(
 @Composable
 fun rememberNavigationActions(navController: NavHostController): AppNavigationActions =
     remember { AppNavigationActions(navController) }
+
+val LocalNavigationActions = compositionLocalOf<AppNavigationActions> {
+    error("No NavigationActions provided")
+}
 
 private fun NavHostController.navigateToMain() =
     navigate(Screen.Main.route) {

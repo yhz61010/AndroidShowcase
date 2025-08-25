@@ -110,4 +110,10 @@ data class SongModel(
         defArtist: String = "",
         defTrack: String = "",
     ): String = "${getSongArtist(defArtist)}-$name"
+
+    enum class CommentType {
+        Recommended,
+        Hot,
+        Latest,
+    }
 }

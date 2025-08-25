@@ -51,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.leovp.androidshowcase.R
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent
@@ -72,9 +71,9 @@ import com.leovp.discovery.presentation.discovery.DiscoveryScreen
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature.base.event.composable.EventHandler
-import com.leovp.feature.base.ui.AppNavigationActions
 import com.leovp.feature.base.ui.DrawerDestinations
-import com.leovp.feature.base.ui.rememberNavigationActions
+import com.leovp.feature.base.ui.LocalNavigationActions
+import com.leovp.feature.base.ui.PreviewWrapperNoTheme
 import com.leovp.log.LogContext
 import com.leovp.log.base.d
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
@@ -94,7 +93,6 @@ private const val TAB_SWITCH_ANIM_DURATION = 300
 @Composable
 fun MainScreen(
     widthSize: WindowWidthSizeClass,
-    navController: AppNavigationActions,
     viewModel: MainViewModel = hiltViewModel<MainViewModel>(),
 ) {
     d(TAG) { "=> Enter MainScreen <=" }
@@ -108,7 +106,6 @@ fun MainScreen(
         drawerContent = {
             AppDrawer(
                 currentRoute = DrawerDestinations.NO_ROUTE,
-                onNavigateTo = { route -> navController.navigate(route) },
                 onCloseDrawer = {
                     coroutineScope.launch { sizeAwareDrawerState.close() }
                 },
@@ -119,6 +116,7 @@ fun MainScreen(
         // Only enable opening the drawer via gestures if the screen is not expanded
         gesturesEnabled = !isExpandedScreen,
     ) {
+        val navController = LocalNavigationActions.current
         val snackbarHostState = remember { SnackbarHostState() }
         EventHandler(
             events = viewModel.requireUiEvents,
@@ -134,7 +132,6 @@ fun MainScreen(
                 }
             }
             MainContentScaffold(
-                navController = navController,
                 snackbarHostState = snackbarHostState,
                 unreadList = unreadList,
                 onEvent = { event ->
@@ -154,7 +151,6 @@ fun MainScreen(
 
 @Composable
 private fun MainContentScaffold(
-    navController: AppNavigationActions,
     snackbarHostState: SnackbarHostState,
     unreadList: List<UnreadModel>,
     onEvent: (MainUiEvent) -> Unit,
@@ -188,7 +184,6 @@ private fun MainContentScaffold(
         bottomBar = { CustomBottomBar(pagerState, coroutineScope, unreadList) },
     ) { contentPadding ->
         MainScreenContent(
-            navController = navController,
             pagerState = pagerState,
             pagerScreenValues = pagerScreenValues,
             onMainRefresh = { onEvent(MainUiEvent.Refresh) },
@@ -302,7 +297,6 @@ fun CustomBottomBar(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreenContent(
-    navController: AppNavigationActions,
     pagerState: PagerState,
     pagerScreenValues: Array<AppBottomNavigationItems>,
     onMainRefresh: () -> Unit,
@@ -317,7 +311,6 @@ fun MainScreenContent(
         when (pagerScreenValues[page]) {
             AppBottomNavigationItems.DISCOVERY ->
                 DiscoveryScreen(
-                    navController = navController,
                     onRefresh = onMainRefresh,
                 )
 
@@ -419,12 +412,8 @@ fun PreviewMainScreen() {
     )
 
     AppTheme(dynamicColor = false) {
-        val navController = rememberNavController()
-        val navigationActions = rememberNavigationActions(navController = navController)
-
         MainScreen(
             widthSize = WindowWidthSizeClass.Compact,
-            navController = navigationActions,
             viewModel = viewModel,
         )
     }
@@ -433,18 +422,18 @@ fun PreviewMainScreen() {
 @Preview(uiMode = UI_MODE_NIGHT_NO)
 @Composable
 fun PreviewMainScreenLoading() {
-    previewInitLog()
-
-    AppTheme(dynamicColor = false) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            ProgressIndicator(
-                bgColor = MaterialTheme.colorScheme.background,
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.primaryContainer,
-            )
+    PreviewWrapperNoTheme {
+        AppTheme(dynamicColor = false) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                ProgressIndicator(
+                    bgColor = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.primaryContainer,
+                )
+            }
         }
     }
 }

@@ -17,7 +17,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 object UiEventModule {
-    // @Singleton
     @Provides
     @ViewModelScoped
     fun provideUiEventManager(): UiEventManager {

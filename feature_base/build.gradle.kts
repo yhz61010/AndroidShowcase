@@ -1,3 +1,10 @@
+@file:Suppress(
+    "ktlint:standard:max-line-length", // for ktlint
+    "MaximumLineLength", // for detekt
+    "MaxLineLength", // for detekt
+    "LongLine", // for detekt
+)
+
 import com.android.build.api.dsl.LibraryDefaultConfig
 import java.util.Locale
 
@@ -71,6 +78,14 @@ android {
             buildConfigField("boolean", "DEBUG_MODE", "false")
         }
     }
+}
+
+ksp {
+    // The following two lines will suppress the warning:
+    // Hilt_CustomApplication.java:25: 警告: [deprecation] Builder中的applicationContextModule(ApplicationContextModule)已过时
+    //           .applicationContextModule(new ApplicationContextModule(Hilt_CustomApplication.this))
+    arg("dagger.fastInit", "enabled")
+    arg("dagger.formatGeneratedSource", "disabled")
 }
 
 composeCompiler {

@@ -28,6 +28,7 @@ import com.leovp.androidshowcase.R
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.feature.base.res.Dimen
 import com.leovp.feature.base.ui.DrawerDestinations
+import com.leovp.feature.base.ui.LocalNavigationActions
 import com.leovp.feature.base.ui.Screen
 import com.leovp.log.base.d
 import com.leovp.ui.theme.AppTheme
@@ -53,11 +54,11 @@ enum class AppBottomNavigationItems(
 @Composable
 fun AppDrawer(
     currentRoute: String,
-    onNavigateTo: (route: String) -> Unit,
     onCloseDrawer: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     d(TAG) { "=> Enter AppDrawer <=" }
+    val navController = LocalNavigationActions.current
     ModalDrawerSheet(modifier) {
         AppLogo(
             modifier =
@@ -77,7 +78,7 @@ fun AppDrawer(
             nameResId = Screen.MemberCenterScreen.nameResId,
             selected = currentRoute == Screen.MemberCenterScreen.route,
             onClick = {
-                onNavigateTo(Screen.MemberCenterScreen.route)
+                navController.navigate(Screen.MemberCenterScreen.route)
                 onCloseDrawer()
             },
         )
@@ -86,7 +87,7 @@ fun AppDrawer(
             nameResId = Screen.MessageScreen.nameResId,
             selected = currentRoute == Screen.MessageScreen.route,
             onClick = {
-                onNavigateTo(Screen.MessageScreen.route)
+                navController.navigate(Screen.MessageScreen.route)
                 onCloseDrawer()
             },
         )
@@ -95,7 +96,7 @@ fun AppDrawer(
             nameResId = Screen.SettingScreen.nameResId,
             selected = currentRoute == Screen.SettingScreen.route,
             onClick = {
-                onNavigateTo(Screen.SettingScreen.route)
+                navController.navigate(Screen.SettingScreen.route)
                 onCloseDrawer()
             },
         )
@@ -162,7 +163,6 @@ fun PreviewAppDrawer() {
     AppTheme(dynamicColor = false) {
         AppDrawer(
             currentRoute = DrawerDestinations.NO_ROUTE,
-            onNavigateTo = { },
             onCloseDrawer = { },
         )
     }

@@ -114,7 +114,7 @@ constructor(
     }
 
     sealed interface Action : BaseAction.Simple<UiState> {
-        object ShowLoading : Action {
+        data object ShowLoading : Action {
             override fun reduce(state: UiState): UiState {
                 val uiState = state as Content
                 return uiState.copy(isLoading = true)

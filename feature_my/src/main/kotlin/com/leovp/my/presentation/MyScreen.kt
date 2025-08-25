@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.leovp.feature.base.ui.PreviewWrapper
 
 /**
  * Author: Michael Leo
@@ -28,5 +29,7 @@ fun MyScreen(
 @Preview
 @Composable
 fun PreviewMyScreen() {
-    MyScreen()
+    PreviewWrapper {
+        MyScreen()
+    }
 }

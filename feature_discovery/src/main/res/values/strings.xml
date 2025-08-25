@@ -26,4 +26,7 @@
         <item>杜比全景声</item>
         <item>超清母带</item>
     </string-array>
+
+    <string name="dis_discovery_tab_comment">评论</string>
+    <string name="dis_discovery_tab_note">笔记</string>
 </resources>
