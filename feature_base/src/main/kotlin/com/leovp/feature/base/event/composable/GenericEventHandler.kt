@@ -17,7 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.leovp.android.exts.toast
-import com.leovp.feature.base.event.UiEvent
+import com.leovp.compose.composable.event.UiEvent
 import com.leovp.feature.base.ui.AppNavigationActions
 import kotlinx.coroutines.flow.Flow
 
@@ -34,9 +34,9 @@ fun GenericEventHandler(
     hideLoadingContent: @Composable (() -> Unit)? = null,
     dialogContent: @Composable (
         (
-            dialogState: MutableState<UiEvent.ShowDialog?>,
-            dialog: UiEvent.ShowDialog,
-        ) -> Unit
+        dialogState: MutableState<UiEvent.ShowDialog?>,
+        dialog: UiEvent.ShowDialog,
+    ) -> Unit
     )? = null,
 ) {
     val context = LocalContext.current

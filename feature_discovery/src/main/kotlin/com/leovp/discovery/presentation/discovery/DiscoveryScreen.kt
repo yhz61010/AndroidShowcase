@@ -53,6 +53,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.leovp.android.exts.toast
+import com.leovp.compose.composable.event.UiEventManager
 import com.leovp.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.compose.composable.pager.HorizontalAutoPager
 import com.leovp.compose.utils.previewInitLog
@@ -67,7 +68,6 @@ import com.leovp.discovery.presentation.discovery.base.SupportingContent
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.discovery.ui.theme.Dimens
 import com.leovp.discovery.ui.theme.place_holder_bg_color
-import com.leovp.feature.base.event.UiEventManager
 import com.leovp.feature.base.event.composable.GenericEventHandler
 import com.leovp.feature.base.ui.AppNavigationActions
 import com.leovp.feature.base.ui.rememberNavigationActions

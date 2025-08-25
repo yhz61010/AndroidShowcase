@@ -4,9 +4,9 @@ package com.leovp.feature.base.framework
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.leovp.compose.composable.event.UiEvent
+import com.leovp.compose.composable.event.UiEventManager
 import com.leovp.feature.base.BuildConfig
-import com.leovp.feature.base.event.UiEvent
-import com.leovp.feature.base.event.UiEventManager
 import com.leovp.mvvm.viewmodel.lifecycle.LifecycleAware
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

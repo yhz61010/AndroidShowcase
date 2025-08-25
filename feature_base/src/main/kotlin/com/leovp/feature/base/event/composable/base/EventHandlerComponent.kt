@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.leovp.compose.composable.event.UiEvent
 import com.leovp.feature.base.R
-import com.leovp.feature.base.event.UiEvent
 
 /**
  * Author: Michael Leo

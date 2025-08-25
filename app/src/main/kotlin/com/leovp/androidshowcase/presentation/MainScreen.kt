@@ -63,6 +63,7 @@ import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.community.presentation.CommunityScreen
 import com.leovp.compose.composable.SearchBar
 import com.leovp.compose.composable.defaultLinearGradient
+import com.leovp.compose.composable.event.UiEventManager
 import com.leovp.compose.composable.loading.ProgressIndicator
 import com.leovp.compose.composable.rememberSizeAwareDrawerState
 import com.leovp.compose.utils.previewInitLog
@@ -70,7 +71,6 @@ import com.leovp.compose.utils.toCounterBadgeText
 import com.leovp.discovery.presentation.discovery.DiscoveryScreen
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
-import com.leovp.feature.base.event.UiEventManager
 import com.leovp.feature.base.event.composable.EventHandler
 import com.leovp.feature.base.ui.AppNavigationActions
 import com.leovp.feature.base.ui.DrawerDestinations
