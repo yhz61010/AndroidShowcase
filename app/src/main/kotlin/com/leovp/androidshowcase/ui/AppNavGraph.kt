@@ -17,7 +17,7 @@ import com.leovp.androidshowcase.presentation.MainScreen
 import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.discovery.domain.model.SongModel
-import com.leovp.discovery.presentation.comment.CommentScreen
+import com.leovp.discovery.presentation.comment.CommentMainScreen
 import com.leovp.discovery.presentation.player.PlayerScreen
 import com.leovp.discovery.presentation.search.SearchScreen
 import com.leovp.feature.base.ui.LocalNavigationActions
@@ -77,7 +77,7 @@ fun NavGraphBuilder.addAppMainGraph(widthSizeClass: WindowWidthSizeClass) {
 
 fun NavGraphBuilder.addAppDrawerGraph() {
     d(TAG) { "=> Enter addAppDrawerGraph <=" }
-    composable(route = Screen.MemberCenterScreen.route) {
+    composable(route = Screen.MemberCenter.route) {
         d(TAG) { "=> Enter MemberCenterScreen Composable <=" }
         ImmersiveTheme(
             systemBarColor = immersive_sys_ui,
@@ -87,10 +87,10 @@ fun NavGraphBuilder.addAppDrawerGraph() {
             MemberCenterScreen()
         }
     }
-    composable(route = Screen.MessageScreen.route) {
+    composable(route = Screen.Message.route) {
         d(TAG) { "=> Enter MessageScreen Composable <=" }
     }
-    composable(route = Screen.SettingScreen.route) {
+    composable(route = Screen.Setting.route) {
         d(TAG) { "=> Enter SettingScreen Composable <=" }
     }
 }
@@ -98,7 +98,7 @@ fun NavGraphBuilder.addAppDrawerGraph() {
 fun NavGraphBuilder.addPlayerGraph() {
     d(TAG) { "=> Enter addOtherGraph <=" }
 
-    composable(route = Screen.SearchScreen.route) {
+    composable(route = Screen.Search.route) {
         d(TAG) { "=> Enter SearchScreen Composable <=" }
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
@@ -119,7 +119,7 @@ fun NavGraphBuilder.addPlayerGraph() {
     }
 
     composable(
-        route = Screen.PlayerScreen.route,
+        route = Screen.Player.route,
         arguments =
             listOf(
                 navArgument("id") { type = NavType.LongType },
@@ -167,7 +167,7 @@ fun NavGraphBuilder.addCommentGraph(
 ) {
     d(TAG) { "=> Enter addCommentGraph <=" }
     composable(
-        route = Screen.CommentScreen.route,
+        route = Screen.Comment.route,
         arguments = listOf(navArgument("songInfo") { type = NavType.StringType }),
     ) {
         val songInfoString = checkNotNull(it.arguments?.getString("songInfo"))
@@ -180,7 +180,7 @@ fun NavGraphBuilder.addCommentGraph(
             lightSystemBar = !isSystemInDarkTheme(),
             dynamicColor = false,
         ) {
-            CommentScreen(songInfo = checkNotNull(songInfo))
+            CommentMainScreen(songInfo = checkNotNull(songInfo))
         }
     }
 }

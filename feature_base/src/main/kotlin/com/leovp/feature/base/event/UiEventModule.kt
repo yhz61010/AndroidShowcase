@@ -19,7 +19,5 @@ import dagger.hilt.android.scopes.ViewModelScoped
 object UiEventModule {
     @Provides
     @ViewModelScoped
-    fun provideUiEventManager(): UiEventManager {
-        return UiEventManager()
-    }
+    fun provideUiEventManager(): UiEventManager = UiEventManager()
 }

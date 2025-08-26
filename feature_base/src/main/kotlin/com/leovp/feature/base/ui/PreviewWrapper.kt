@@ -13,9 +13,7 @@ import com.leovp.ui.theme.ImmersiveTheme
  */
 
 @Composable
-fun PreviewWrapper(
-    content: @Composable () -> Unit
-) {
+fun PreviewWrapper(content: @Composable () -> Unit) {
     PreviewWrapperNoTheme {
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
@@ -28,9 +26,7 @@ fun PreviewWrapper(
 }
 
 @Composable
-fun PreviewWrapperNoTheme(
-    content: @Composable () -> Unit
-) {
+fun PreviewWrapperNoTheme(content: @Composable () -> Unit) {
     previewInitLog()
 
     val navController = rememberNavController()

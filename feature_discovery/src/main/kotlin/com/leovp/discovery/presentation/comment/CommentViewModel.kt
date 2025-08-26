@@ -19,55 +19,55 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommentViewModel
-@Inject
-constructor(
-    private val useCase: GetDiscoveryListUseCase,
-    uiEventManager: UiEventManager,
-) : BaseViewModel<CommentUiState, CommentAction>(
-    initialState = CommentUiState.Content(SongModel.CommentType.Recommended),
-    uiEventManager = uiEventManager,
-) {
-    companion object {
-        private const val TAG = "CmtVM"
-    }
-
-    sealed interface CommentUiState : BaseState {
-        data class Content(
-            val commentType: SongModel.CommentType,
-            val commentList: List<SongModel.CommentsModel> = emptyList(),
-            val isLoading: Boolean = false,
-            val exception: ResultException? = null,
-        ) : CommentUiState
-    }
-
-    sealed interface CommentAction : BaseAction.Simple<CommentUiState> {
-        data object ShowLoading : CommentAction {
-            override fun reduce(state: CommentUiState): CommentUiState {
-                val uiState = state as CommentUiState.Content
-                return uiState.copy(isLoading = true)
-            }
+    @Inject
+    constructor(
+        private val useCase: GetDiscoveryListUseCase,
+        uiEventManager: UiEventManager,
+    ) : BaseViewModel<CommentUiState, CommentAction>(
+            initialState = CommentUiState.Content(SongModel.CommentType.Recommended),
+            uiEventManager = uiEventManager,
+        ) {
+        companion object {
+            private const val TAG = "CmtVM"
         }
 
-        data class LoadSuccess(
-            val commentType: SongModel.CommentType,
-            val commentList: List<SongModel.CommentsModel> = emptyList(),
-        ) : CommentAction {
-            override fun reduce(state: CommentUiState): CommentUiState {
-                val uiState = state as CommentUiState.Content
-                return uiState.copy(
-                    commentType = commentType,
-                    commentList = commentList,
-                )
-            }
+        sealed interface CommentUiState : BaseState {
+            data class Content(
+                val commentType: SongModel.CommentType,
+                val commentList: List<SongModel.CommentsModel> = emptyList(),
+                val isLoading: Boolean = false,
+                val exception: ResultException? = null,
+            ) : CommentUiState
         }
 
-        data class LoadFailure(
-            private val err: ResultException,
-        ) : CommentAction {
-            override fun reduce(state: CommentUiState): CommentUiState {
-                val uiState = state as CommentUiState.Content
-                return uiState.copy(isLoading = false, exception = err)
+        sealed interface CommentAction : BaseAction.Simple<CommentUiState> {
+            data object ShowLoading : CommentAction {
+                override fun reduce(state: CommentUiState): CommentUiState {
+                    val uiState = state as CommentUiState.Content
+                    return uiState.copy(isLoading = true)
+                }
+            }
+
+            data class LoadSuccess(
+                val commentType: SongModel.CommentType,
+                val commentList: List<SongModel.CommentsModel> = emptyList(),
+            ) : CommentAction {
+                override fun reduce(state: CommentUiState): CommentUiState {
+                    val uiState = state as CommentUiState.Content
+                    return uiState.copy(
+                        commentType = commentType,
+                        commentList = commentList,
+                    )
+                }
+            }
+
+            data class LoadFailure(
+                private val err: ResultException,
+            ) : CommentAction {
+                override fun reduce(state: CommentUiState): CommentUiState {
+                    val uiState = state as CommentUiState.Content
+                    return uiState.copy(isLoading = false, exception = err)
+                }
             }
         }
     }
-}

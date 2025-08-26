@@ -47,7 +47,7 @@ fun SearchScreen() {
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            val title = stringResource(id = Screen.SearchScreen.nameResId)
+            val title = stringResource(id = Screen.Search.nameResId)
             CenterAlignedTopAppBar(
                 // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 //     containerColor = Color.Cyan

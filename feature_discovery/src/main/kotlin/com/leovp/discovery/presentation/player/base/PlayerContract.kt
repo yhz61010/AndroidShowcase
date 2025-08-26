@@ -24,7 +24,9 @@ object PlayerContract {
 
             data object FavoriteClick : SongEvent()
 
-            data class CommentClick(val songInfo: SongModel) : SongEvent()
+            data class CommentClick(
+                val songInfo: SongModel,
+            ) : SongEvent()
 
             data object HotCommentClick : SongEvent()
         }

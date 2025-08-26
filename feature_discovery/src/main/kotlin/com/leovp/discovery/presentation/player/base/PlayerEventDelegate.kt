@@ -21,53 +21,56 @@ internal interface PlayerEventDelegate<T : PlayerUiEvent> {
 }
 
 class SongEventDelegate
-@Inject
-constructor(private val uiEventManager: UiEventManager) :
-    PlayerEventDelegate<SongEvent> {
-    override suspend fun handle(event: SongEvent) {
-        when (event) {
-            is SongEvent.CommentClick -> {
-                // uiEventManager.sendEvent(UiEvent.ShowToast(message = "Click on Comment"))
-                val songInfoStr =
-                    URLEncoder.encode(event.songInfo.toJsonString(), Charsets.UTF_8.name())
-                uiEventManager.sendEvent(
-                    UiEvent.Navigate(Screen.CommentScreen.routeName, songInfoStr)
-                )
-            }
+    @Inject
+    constructor(
+        private val uiEventManager: UiEventManager,
+    ) : PlayerEventDelegate<SongEvent> {
+        override suspend fun handle(event: SongEvent) {
+            when (event) {
+                is SongEvent.CommentClick -> {
+                    // uiEventManager.sendEvent(UiEvent.ShowToast(message = "Click on Comment"))
+                    val songInfoStr =
+                        URLEncoder.encode(
+                            event.songInfo.toJsonString(),
+                            Charsets.UTF_8.name(),
+                        )
+                    uiEventManager.sendEvent(
+                        UiEvent.Navigate(Screen.Comment.routeName, songInfoStr),
+                    )
+                }
 
-            SongEvent.FavoriteClick -> Unit
-            SongEvent.HotCommentClick -> Unit
-            SongEvent.ArtistClick -> Unit
-            SongEvent.MarkClick -> Unit
+                SongEvent.FavoriteClick -> Unit
+                SongEvent.HotCommentClick -> Unit
+                SongEvent.ArtistClick -> Unit
+                SongEvent.MarkClick -> Unit
+            }
         }
     }
-}
 
 class PlayerDelegate
-@Inject
-constructor() :
-    PlayerEventDelegate<PlayerEvent> {
-    override suspend fun handle(event: PlayerEvent) {
-        when (event) {
-            PlayerEvent.BackwardClick -> Unit
-            PlayerEvent.ForwardClick -> Unit
-            PlayerEvent.PlayPauseClick -> Unit
-            PlayerEvent.PlaylistClick -> Unit
-            PlayerEvent.QualityClick -> Unit
-            PlayerEvent.RepeatClick -> Unit
+    @Inject
+    constructor() : PlayerEventDelegate<PlayerEvent> {
+        override suspend fun handle(event: PlayerEvent) {
+            when (event) {
+                PlayerEvent.BackwardClick -> Unit
+                PlayerEvent.ForwardClick -> Unit
+                PlayerEvent.PlayPauseClick -> Unit
+                PlayerEvent.PlaylistClick -> Unit
+                PlayerEvent.QualityClick -> Unit
+                PlayerEvent.RepeatClick -> Unit
+            }
         }
     }
-}
 
 class PlayerExtraDelegate
-@Inject
-constructor() :
+    @Inject
+    constructor() :
     PlayerEventDelegate<ExtraEvent> {
-    override suspend fun handle(event: ExtraEvent) {
-        when (event) {
-            ExtraEvent.DownloadClick -> Unit
-            ExtraEvent.InfoClick -> Unit
-            ExtraEvent.MirrorClick -> Unit
+        override suspend fun handle(event: ExtraEvent) {
+            when (event) {
+                ExtraEvent.DownloadClick -> Unit
+                ExtraEvent.InfoClick -> Unit
+                ExtraEvent.MirrorClick -> Unit
+            }
         }
     }
-}

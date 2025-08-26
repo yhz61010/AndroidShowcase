@@ -57,7 +57,6 @@ import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent
 import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.SearchEvent
 import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.TopAppBarEvent
 import com.leovp.androidshowcase.testdata.PreviewMainModule
-import com.leovp.androidshowcase.ui.AppBottomNavigationItems
 import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.community.presentation.CommunityScreen
 import com.leovp.compose.composable.SearchBar
@@ -65,7 +64,6 @@ import com.leovp.compose.composable.defaultLinearGradient
 import com.leovp.compose.composable.event.UiEventManager
 import com.leovp.compose.composable.loading.ProgressIndicator
 import com.leovp.compose.composable.rememberSizeAwareDrawerState
-import com.leovp.compose.utils.previewInitLog
 import com.leovp.compose.utils.toCounterBadgeText
 import com.leovp.discovery.presentation.discovery.DiscoveryScreen
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel
@@ -73,6 +71,7 @@ import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature.base.event.composable.EventHandler
 import com.leovp.feature.base.ui.DrawerDestinations
 import com.leovp.feature.base.ui.LocalNavigationActions
+import com.leovp.feature.base.ui.MainBottomNavigationItems
 import com.leovp.feature.base.ui.PreviewWrapperNoTheme
 import com.leovp.log.LogContext
 import com.leovp.log.base.d
@@ -156,10 +155,10 @@ private fun MainContentScaffold(
     onEvent: (MainUiEvent) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val pagerScreenValues = AppBottomNavigationItems.entries.toTypedArray()
+    val pagerScreenValues = MainBottomNavigationItems.entries.toTypedArray()
     val pagerState =
         rememberPagerState(
-            initialPage = AppBottomNavigationItems.DISCOVERY.ordinal,
+            initialPage = MainBottomNavigationItems.DISCOVERY.ordinal,
             initialPageOffsetFraction = 0f,
             pageCount = { pagerScreenValues.size },
         )
@@ -210,7 +209,7 @@ fun HomeTopAppBarContent(
     // val scrolled = firstVisibleItemIndex != 0 || firstVisibleItemScrollOffset != 0
 
     when (pagerState.currentPage) {
-        AppBottomNavigationItems.DISCOVERY.ordinal -> {
+        MainBottomNavigationItems.DISCOVERY.ordinal -> {
             SearchBar(
                 searchText = "Wellerman Nathan Evans",
                 border = BorderStroke(width = 0.5.dp, brush = defaultLinearGradient),
@@ -237,7 +236,7 @@ fun CustomBottomBar(
 ) {
     d(TAG) { "=> Enter CustomBottomBar <=" }
     NavigationBar {
-        AppBottomNavigationItems.entries.forEachIndexed { index, bottomItemData ->
+        MainBottomNavigationItems.entries.forEachIndexed { index, bottomItemData ->
             val badgeNum =
                 unreadList.firstOrNull { it.key == bottomItemData.screen.route }?.value
                     ?: 0
@@ -298,7 +297,7 @@ fun CustomBottomBar(
 @Composable
 fun MainScreenContent(
     pagerState: PagerState,
-    pagerScreenValues: Array<AppBottomNavigationItems>,
+    pagerScreenValues: Array<MainBottomNavigationItems>,
     onMainRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -309,13 +308,13 @@ fun MainScreenContent(
         key = { index -> pagerScreenValues[index].ordinal },
     ) { page ->
         when (pagerScreenValues[page]) {
-            AppBottomNavigationItems.DISCOVERY ->
+            MainBottomNavigationItems.DISCOVERY ->
                 DiscoveryScreen(
                     onRefresh = onMainRefresh,
                 )
 
-            AppBottomNavigationItems.MY -> MyScreen()
-            AppBottomNavigationItems.COMMUNITY -> CommunityScreen()
+            MainBottomNavigationItems.MY -> MyScreen()
+            MainBottomNavigationItems.COMMUNITY -> CommunityScreen()
         }
     }
 }
@@ -373,7 +372,7 @@ fun HomeTopAppBar(
             Row(modifier = modifier.weight(1f)) {
                 content()
             }
-            if (pagerState.currentPage == AppBottomNavigationItems.DISCOVERY.ordinal) {
+            if (pagerState.currentPage == MainBottomNavigationItems.DISCOVERY.ordinal) {
                 IconButton(onClick = { onEvent(TopAppBarEvent.RecordingClick) }) {
                     Icon(
                         painter = painterResource(id = R.drawable.app_mic),
@@ -388,34 +387,34 @@ fun HomeTopAppBar(
 @Preview
 @Composable
 fun PreviewMainScreen() {
-    previewInitLog()
+    PreviewWrapperNoTheme {
+        val viewModel: MainViewModel =
+            viewModel(
+                factory =
+                    viewModelProviderFactoryOf {
+                        MainViewModel(
+                            PreviewMainModule.previewMainUseCase,
+                            UiEventManager(),
+                        )
+                    },
+            )
 
-    val viewModel: MainViewModel =
-        viewModel(
+        viewModel<DiscoveryViewModel>(
             factory =
                 viewModelProviderFactoryOf {
-                    MainViewModel(
-                        PreviewMainModule.previewMainUseCase,
+                    DiscoveryViewModel(
+                        PreviewDiscoveryModule.previewDiscoveryListUseCase,
                         UiEventManager(),
                     )
                 },
         )
 
-    viewModel<DiscoveryViewModel>(
-        factory =
-            viewModelProviderFactoryOf {
-                DiscoveryViewModel(
-                    PreviewDiscoveryModule.previewDiscoveryListUseCase,
-                    UiEventManager(),
-                )
-            },
-    )
-
-    AppTheme(dynamicColor = false) {
-        MainScreen(
-            widthSize = WindowWidthSizeClass.Compact,
-            viewModel = viewModel,
-        )
+        AppTheme(dynamicColor = false) {
+            MainScreen(
+                widthSize = WindowWidthSizeClass.Compact,
+                viewModel = viewModel,
+            )
+        }
     }
 }
 

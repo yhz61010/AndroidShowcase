@@ -37,135 +37,135 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel
-@Inject
-constructor(
-    savedStateHandle: SavedStateHandle,
-    uiEventManager: UiEventManager,
-    private val useCase: PlayerUseCase,
-    private val delegateManager: PlayerDelegateManager
-) : BaseViewModel<PlayerUiState, PlayerAction>(
-    PlayerUiState.Content(),
-    uiEventManager
-) {
-    companion object {
-        private const val TAG = "PlayerVM"
-    }
-
-    val songId: Long = (savedStateHandle["id"] as? Long) ?: 0L
-    val songArtist: String =
-        URLDecoder.decode(
-            (savedStateHandle["artist"] as? String) ?: "",
-            Charsets.UTF_8.name(),
-        )
-    val songTrack: String =
-        URLDecoder.decode(
-            (savedStateHandle["track"] as? String) ?: "",
-            Charsets.UTF_8.name(),
-        )
-
-    private val _playPositionState = MutableStateFlow(0f)
-    val playPositionState: StateFlow<Float> = _playPositionState.asStateFlow()
-
-    init {
-        loadData(id = songId)
-    }
-
-    fun onEvent(event: PlayerUiEvent) {
-        viewModelScope.launch {
-            delegateManager.handleEvent(event)
+    @Inject
+    constructor(
+        savedStateHandle: SavedStateHandle,
+        uiEventManager: UiEventManager,
+        private val useCase: PlayerUseCase,
+        private val delegateManager: PlayerDelegateManager,
+    ) : BaseViewModel<PlayerUiState, PlayerAction>(
+            PlayerUiState.Content(),
+            uiEventManager,
+        ) {
+        companion object {
+            private const val TAG = "PlayerVM"
         }
-    }
 
-    fun loadData(id: Long) {
-        i(TAG) { "Player -> getData() id=$id" }
-
-        viewModelScope.launch {
-            val songAvailableResult = useCase.checkMusic(id, 999000)
-
-            songAvailableResult.fold(
-                onSuccess = { songAvailModel ->
-                    onSongAvailableSuccess(id, songAvailModel)
-                    d(TAG) { "Player -> getData() done." }
-                },
-                onFailure = { e ->
-                    e(TAG, e) {
-                        "Song check error. msg=${e.message}"
-                    }
-                    sendAction(
-                        PlayerAction.LoadContent(
-                            songInfo = null,
-                            exception = e,
-                        ),
-                    )
-                },
+        val songId: Long = (savedStateHandle["id"] as? Long) ?: 0L
+        val songArtist: String =
+            URLDecoder.decode(
+                (savedStateHandle["artist"] as? String) ?: "",
+                Charsets.UTF_8.name(),
             )
+        val songTrack: String =
+            URLDecoder.decode(
+                (savedStateHandle["track"] as? String) ?: "",
+                Charsets.UTF_8.name(),
+            )
+
+        private val _playPositionState = MutableStateFlow(0f)
+        val playPositionState: StateFlow<Float> = _playPositionState.asStateFlow()
+
+        init {
+            loadData(id = songId)
         }
-    }
 
-    private suspend fun CoroutineScope.onSongAvailableSuccess(
-        id: Long,
-        songAvailModel: SongModel.MusicAvailableModel,
-    ) {
-        if (!songAvailModel.success) {
-            val ex = ResultException(message = songAvailModel.message)
-            e(TAG, ex) { "Song check business error.  msg=${ex.message}" }
-            sendAction(PlayerAction.LoadContent(songInfo = null, exception = ex))
-            return
-        }
-
-        val songUrlDeferred =
-            async { useCase.getSongUrlV1(id, SongModel.Quality.Standard) }
-        val songInfoDeferred = async { useCase.getSongInfo(id) }
-        val songCommentsDeferred =
-            async { useCase.getMusicComment(id = id, limit = 20, offset = 0) }
-        val songRedCountDeferred = async { useCase.getSongRedCount(id) }
-        val songUrlResult = songUrlDeferred.await()
-        val songInfoResult = songInfoDeferred.await()
-        val songCommentsResult = songCommentsDeferred.await()
-        val songRedCountResult = songRedCountDeferred.await()
-
-        val firstSong: SongModel? =
-            songInfoResult
-                .getOrNull()
-                ?.firstOrNull()
-                ?.also { firstSongRef ->
-                    firstSongRef.commentsModel = songCommentsResult.getOrNull()
-                    firstSongRef.redCountModel = songRedCountResult.getOrNull()
-                }
-        firstSong?.urlModel = songUrlResult.getOrNull()?.firstOrNull()
-        d(TAG) { "---> UrlModel: ${firstSong?.toJsonString()}" }
-
-        var ex =
-            songInfoResult.exceptionOrNull()
-                ?: songUrlResult.exceptionOrNull()
-                ?: songCommentsResult.exceptionOrNull()
-                ?: songRedCountResult.exceptionOrNull()
-
-        if (firstSong?.getUrlSuccess() != true) {
-            w(TAG) {
-                "Failed to get song url. " +
-                    "code=${firstSong?.getUrlCode()} " +
-                    "url=${firstSong?.getUrl()}"
+        fun onEvent(event: PlayerUiEvent) {
+            viewModelScope.launch {
+                delegateManager.handleEvent(event)
             }
-            ex = ResultException(message = "Failed to get song url.", cause = ex)
         }
-        sendAction(PlayerAction.LoadContent(songInfo = firstSong, exception = ex))
-    }
 
-    fun updatePlayPos(pos: Float) {
-        _playPositionState.value = pos
-    }
+        fun loadData(id: Long) {
+            i(TAG) { "Player -> getData() id=$id" }
 
-    sealed interface PlayerAction : BaseAction.Simple<PlayerUiState> {
-        data class LoadContent(
-            val songInfo: SongModel? = null,
-            val exception: ResultException? = null,
-        ) : PlayerAction {
-            override fun reduce(state: PlayerUiState): PlayerUiState =
-                PlayerUiState.Content(
-                    songInfo = songInfo,
-                    exception = exception,
+            viewModelScope.launch {
+                val songAvailableResult = useCase.checkMusic(id, 999000)
+
+                songAvailableResult.fold(
+                    onSuccess = { songAvailModel ->
+                        onSongAvailableSuccess(id, songAvailModel)
+                        d(TAG) { "Player -> getData() done." }
+                    },
+                    onFailure = { e ->
+                        e(TAG, e) {
+                            "Song check error. msg=${e.message}"
+                        }
+                        sendAction(
+                            PlayerAction.LoadContent(
+                                songInfo = null,
+                                exception = e,
+                            ),
+                        )
+                    },
                 )
+            }
+        }
+
+        private suspend fun CoroutineScope.onSongAvailableSuccess(
+            id: Long,
+            songAvailModel: SongModel.MusicAvailableModel,
+        ) {
+            if (!songAvailModel.success) {
+                val ex = ResultException(message = songAvailModel.message)
+                e(TAG, ex) { "Song check business error.  msg=${ex.message}" }
+                sendAction(PlayerAction.LoadContent(songInfo = null, exception = ex))
+                return
+            }
+
+            val songUrlDeferred =
+                async { useCase.getSongUrlV1(id, SongModel.Quality.Standard) }
+            val songInfoDeferred = async { useCase.getSongInfo(id) }
+            val songCommentsDeferred =
+                async { useCase.getMusicComment(id = id, limit = 20, offset = 0) }
+            val songRedCountDeferred = async { useCase.getSongRedCount(id) }
+            val songUrlResult = songUrlDeferred.await()
+            val songInfoResult = songInfoDeferred.await()
+            val songCommentsResult = songCommentsDeferred.await()
+            val songRedCountResult = songRedCountDeferred.await()
+
+            val firstSong: SongModel? =
+                songInfoResult
+                    .getOrNull()
+                    ?.firstOrNull()
+                    ?.also { firstSongRef ->
+                        firstSongRef.commentsModel = songCommentsResult.getOrNull()
+                        firstSongRef.redCountModel = songRedCountResult.getOrNull()
+                    }
+            firstSong?.urlModel = songUrlResult.getOrNull()?.firstOrNull()
+            d(TAG) { "---> UrlModel: ${firstSong?.toJsonString()}" }
+
+            var ex =
+                songInfoResult.exceptionOrNull()
+                    ?: songUrlResult.exceptionOrNull()
+                    ?: songCommentsResult.exceptionOrNull()
+                    ?: songRedCountResult.exceptionOrNull()
+
+            if (firstSong?.getUrlSuccess() != true) {
+                w(TAG) {
+                    "Failed to get song url. " +
+                        "code=${firstSong?.getUrlCode()} " +
+                        "url=${firstSong?.getUrl()}"
+                }
+                ex = ResultException(message = "Failed to get song url.", cause = ex)
+            }
+            sendAction(PlayerAction.LoadContent(songInfo = firstSong, exception = ex))
+        }
+
+        fun updatePlayPos(pos: Float) {
+            _playPositionState.value = pos
+        }
+
+        sealed interface PlayerAction : BaseAction.Simple<PlayerUiState> {
+            data class LoadContent(
+                val songInfo: SongModel? = null,
+                val exception: ResultException? = null,
+            ) : PlayerAction {
+                override fun reduce(state: PlayerUiState): PlayerUiState =
+                    PlayerUiState.Content(
+                        songInfo = songInfo,
+                        exception = exception,
+                    )
+            }
         }
     }
-}

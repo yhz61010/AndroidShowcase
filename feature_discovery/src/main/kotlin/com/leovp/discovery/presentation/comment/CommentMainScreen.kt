@@ -1,12 +1,10 @@
 package com.leovp.discovery.presentation.comment
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,12 +20,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.leovp.discovery.R
 import com.leovp.discovery.domain.model.AlbumModel
 import com.leovp.discovery.domain.model.ArtistModel
 import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.domain.model.SongModel.Quality
+import com.leovp.feature.base.ui.CommentBottomNavigationItems
 import com.leovp.feature.base.ui.LocalNavigationActions
 import com.leovp.feature.base.ui.PreviewWrapper
 import com.leovp.feature.base.R as BaseR
@@ -38,9 +35,18 @@ import com.leovp.feature.base.R as BaseR
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentScreen(songInfo: SongModel) {
+fun CommentMainScreen(songInfo: SongModel) {
     // val context = LocalContext.current
     val navController = LocalNavigationActions.current
+
+    val pagerScreenValues = CommentBottomNavigationItems.entries.toTypedArray()
+    val pagerState =
+        rememberPagerState(
+            initialPage = CommentBottomNavigationItems.COMMENT.ordinal,
+            initialPageOffsetFraction = 0f,
+            pageCount = { pagerScreenValues.size },
+        )
+
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(
@@ -50,7 +56,7 @@ fun CommentScreen(songInfo: SongModel) {
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            val title = stringResource(R.string.dis_discovery_tab_comment)
+            val titleResId = pagerScreenValues[pagerState.targetPage].screen.nameResId
             CenterAlignedTopAppBar(
                 // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 //     containerColor = Color.Cyan
@@ -58,7 +64,7 @@ fun CommentScreen(songInfo: SongModel) {
                 // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
                 title = {
-                    Text(text = title)
+                    Text(text = stringResource(titleResId))
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
@@ -76,31 +82,43 @@ fun CommentScreen(songInfo: SongModel) {
             ) // end of CenterAlignedTopAppBar
         }, // end of topBar
     ) { contentPadding ->
-        SearchScreenContent(
+        CommentScreenPager(
+            pagerState = pagerState,
+            pagerScreenValues = pagerScreenValues,
+            songInfo = songInfo,
             modifier =
                 Modifier
                     // .nestedScroll(scrollBehavior.nestedScrollConnection)
                     // innerPadding takes into account the top and bottom bar
                     .padding(contentPadding),
-            state = rememberLazyListState(),
         )
     }
 }
 
 @Composable
-fun SearchScreenContent(
+fun CommentScreenPager(
+    pagerState: PagerState,
+    pagerScreenValues: Array<CommentBottomNavigationItems>,
+    songInfo: SongModel,
     modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(16.dp),
-        modifier = modifier.fillMaxSize(),
-        state = state,
-    ) {
-        item {
-            Text(text = "Comment Screen")
+    HorizontalPager(
+        state = pagerState,
+        modifier = modifier,
+        key = { index -> pagerScreenValues[index] },
+    ) { page ->
+        when (pagerScreenValues[page]) {
+            CommentBottomNavigationItems.COMMENT ->
+                CommentScreen(songInfo)
+
+            CommentBottomNavigationItems.NOTE -> Unit
         }
     }
+}
+
+@Composable
+fun CommentScreen(songInfo: SongModel) {
+    Text(text = songInfo.name)
 }
 
 @Preview
@@ -108,22 +126,24 @@ fun SearchScreenContent(
 @Composable
 fun PreviewCommentScreen() {
     PreviewWrapper {
-        CommentScreen(
+        CommentMainScreen(
             // widthSize = WindowWidthSizeClass.Compact,
-            songInfo = SongModel(
-                id = 1,
-                name = "青花",
-                duration = 240000,
-                artists = listOf(ArtistModel(id = 1, name = "周传雄")),
-                album = AlbumModel(
+            songInfo =
+                SongModel(
                     id = 1,
-                    name = "Album Name",
-                    picUrl = ""
+                    name = "青花",
+                    duration = 240000,
+                    artists = listOf(ArtistModel(id = 1, name = "周传雄")),
+                    album =
+                        AlbumModel(
+                            id = 1,
+                            name = "Album Name",
+                            picUrl = "",
+                        ),
+                    quality = Quality.Jymaster,
+                    fee = 8,
+                    markText = "VIP",
                 ),
-                quality = Quality.Jymaster,
-                fee = 8,
-                markText = "VIP"
-            )
         )
     }
 }

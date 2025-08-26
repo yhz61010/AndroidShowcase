@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dis_discovery_tab_recommends_playlist">甄选歌单</string>
-    <string name="dis_discovery_tab_new_songs">新歌新碟</string>
+    <string name="dis_tab_recommends_playlist">甄选歌单</string>
+    <string name="dis_tab_new_songs">新歌新碟</string>
 
     <string-array name="dis_player_song_quality_id">
         <item>standard</item>
@@ -26,7 +26,4 @@
         <item>杜比全景声</item>
         <item>超清母带</item>
     </string-array>
-
-    <string name="dis_discovery_tab_comment">评论</string>
-    <string name="dis_discovery_tab_note">笔记</string>
 </resources>

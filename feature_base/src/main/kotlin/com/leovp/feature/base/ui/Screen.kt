@@ -27,6 +27,11 @@ sealed class Screen(
 
     data object Main : Screen("app_main")
 
+    data object Search : Screen(
+        "search_screen",
+        R.string.bas_dis_search_screen_title,
+    )
+
     // ============================
     // ===== Home tab screens =====
     // ============================
@@ -52,35 +57,62 @@ sealed class Screen(
     // ===============================
     // ===== Drawer item screens =====
     // ===============================
-    data object MemberCenterScreen : Screen(
+    data object MemberCenter : Screen(
         route = "drawer_member_center",
         nameResId = R.string.bas_drawer_member_center,
         iconResId = R.drawable.bas_credit_card,
     )
 
-    data object MessageScreen : Screen(
+    data object Message : Screen(
         "drawer_messages",
         R.string.bas_drawer_message_label,
         iconResId = R.drawable.bas_mail,
     )
 
-    data object SettingScreen : Screen(
+    data object Setting : Screen(
         "drawer_setting",
         R.string.bas_drawer_settings_label,
         iconResId = R.drawable.bas_settings,
     )
     // ==============================
 
-    data object SearchScreen : Screen(
-        "search_screen",
-        R.string.bas_dis_search_screen_title,
-    )
-
-    data object PlayerScreen : Screen(
+    // ============================
+    // ====== Player screens ======
+    // ============================
+    data object Player : Screen(
         "player_screen/{id}/{artist}/{track}",
     )
 
-    data object CommentScreen : Screen(
-        "comment_screen/{songInfo}",
+    data object Comment : Screen(
+        route = "comment_screen/{songInfo}",
+        nameResId = R.string.bas_discovery_tab_comment,
     )
+
+    data object Note : Screen(
+        route = "note_screen/{songInfo}",
+        nameResId = R.string.bas_discovery_tab_note,
+    )
+}
+
+enum class MainBottomNavigationItems(
+    val screenProvider: () -> Screen,
+) {
+    DISCOVERY({ Screen.Discovery }),
+
+    MY({ Screen.My }),
+
+    COMMUNITY({ Screen.Community }),
+    ;
+
+    val screen: Screen get() = screenProvider()
+}
+
+enum class CommentBottomNavigationItems(
+    val screenProvider: () -> Screen,
+) {
+    COMMENT({ Screen.Comment }),
+    NOTE({ Screen.Note }),
+    ;
+
+    val screen: Screen get() = screenProvider()
 }

@@ -315,11 +315,15 @@ fun PreviewPlayerScreen() {
                                 },
                             uiEventManager = UiEventManager(),
                             useCase = PreviewPlayerModule.previewPlayerUseCase,
-                            delegateManager = PlayerDelegateManager(
-                                songEventDelegate = SongEventDelegate(UiEventManager()),
-                                playerDelegate = PlayerDelegate(),
-                                playerExtraDelegate = PlayerExtraDelegate(),
-                            )
+                            delegateManager =
+                                PlayerDelegateManager(
+                                    songEventDelegate =
+                                        SongEventDelegate(
+                                            UiEventManager(),
+                                        ),
+                                    playerDelegate = PlayerDelegate(),
+                                    playerExtraDelegate = PlayerExtraDelegate(),
+                                ),
                         )
                     },
             )

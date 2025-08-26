@@ -269,8 +269,7 @@ private fun CommentItem(
                     .background(
                         color = mark_vip_bg2,
                         shape = MaterialTheme.shapes.extraLarge,
-                    )
-                    .clickable(onClick = onClick)
+                    ).clickable(onClick = onClick)
                     .padding(horizontal = 12.dp, vertical = 4.dp)
                     .alpha(0.6f),
             color = MaterialTheme.colorScheme.onPrimary,
@@ -433,10 +432,10 @@ fun RowScope.TrackInfoItem(
                             .background(
                                 color = mark_vip_bg2,
                                 shape = smallRounded,
-                            )
-                            .padding(horizontal = 4.dp, vertical = 0.dp)
-                            .clickable(onClick = { onEvent(PlayerUiEvent.SongEvent.MarkClick) })
-                            .alpha(0.6f),
+                            ).padding(horizontal = 4.dp, vertical = 0.dp)
+                            .clickable(
+                                onClick = { onEvent(PlayerUiEvent.SongEvent.MarkClick) },
+                            ).alpha(0.6f),
                     text = it,
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.labelSmall,

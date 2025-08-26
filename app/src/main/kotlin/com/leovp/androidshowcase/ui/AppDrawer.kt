@@ -25,10 +25,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
-import com.leovp.compose.utils.previewInitLog
 import com.leovp.feature.base.res.Dimen
 import com.leovp.feature.base.ui.DrawerDestinations
 import com.leovp.feature.base.ui.LocalNavigationActions
+import com.leovp.feature.base.ui.PreviewWrapperNoTheme
 import com.leovp.feature.base.ui.Screen
 import com.leovp.log.base.d
 import com.leovp.ui.theme.AppTheme
@@ -40,16 +40,6 @@ import com.leovp.feature.base.R as BaseR
  */
 
 private const val TAG = "AppDrawer"
-
-enum class AppBottomNavigationItems(
-    val screen: Screen,
-) {
-    DISCOVERY(Screen.Discovery),
-
-    MY(Screen.My),
-
-    COMMUNITY(Screen.Community),
-}
 
 @Composable
 fun AppDrawer(
@@ -74,29 +64,29 @@ fun AppDrawer(
                 ),
         )
         DrawerItem(
-            iconResId = Screen.MemberCenterScreen.getIcon(),
-            nameResId = Screen.MemberCenterScreen.nameResId,
-            selected = currentRoute == Screen.MemberCenterScreen.route,
+            iconResId = Screen.MemberCenter.getIcon(),
+            nameResId = Screen.MemberCenter.nameResId,
+            selected = currentRoute == Screen.MemberCenter.route,
             onClick = {
-                navController.navigate(Screen.MemberCenterScreen.route)
+                navController.navigate(Screen.MemberCenter.route)
                 onCloseDrawer()
             },
         )
         DrawerItem(
-            iconResId = Screen.MessageScreen.getIcon(),
-            nameResId = Screen.MessageScreen.nameResId,
-            selected = currentRoute == Screen.MessageScreen.route,
+            iconResId = Screen.Message.getIcon(),
+            nameResId = Screen.Message.nameResId,
+            selected = currentRoute == Screen.Message.route,
             onClick = {
-                navController.navigate(Screen.MessageScreen.route)
+                navController.navigate(Screen.Message.route)
                 onCloseDrawer()
             },
         )
         DrawerItem(
-            iconResId = Screen.SettingScreen.getIcon(),
-            nameResId = Screen.SettingScreen.nameResId,
-            selected = currentRoute == Screen.SettingScreen.route,
+            iconResId = Screen.Setting.getIcon(),
+            nameResId = Screen.Setting.nameResId,
+            selected = currentRoute == Screen.Setting.route,
             onClick = {
-                navController.navigate(Screen.SettingScreen.route)
+                navController.navigate(Screen.Setting.route)
                 onCloseDrawer()
             },
         )
@@ -158,12 +148,12 @@ private fun AppLogo(modifier: Modifier = Modifier) {
 @Preview("Drawer contents (dark)", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewAppDrawer() {
-    previewInitLog()
-
-    AppTheme(dynamicColor = false) {
-        AppDrawer(
-            currentRoute = DrawerDestinations.NO_ROUTE,
-            onCloseDrawer = { },
-        )
+    PreviewWrapperNoTheme {
+        AppTheme(dynamicColor = false) {
+            AppDrawer(
+                currentRoute = DrawerDestinations.NO_ROUTE,
+                onCloseDrawer = { },
+            )
+        }
     }
 }

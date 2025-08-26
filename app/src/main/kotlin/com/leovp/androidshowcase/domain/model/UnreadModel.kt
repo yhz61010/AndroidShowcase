@@ -16,7 +16,7 @@ data class UnreadModel(
     val value: Int,
 ) {
     companion object {
-        val MESSAGE = Screen.MemberCenterScreen.route
+        val MESSAGE = Screen.MemberCenter.route
 
         val DISCOVERY = Screen.Discovery.route
         val MY = Screen.My.route

@@ -34,9 +34,9 @@ fun GenericEventHandler(
     hideLoadingContent: @Composable (() -> Unit)? = null,
     dialogContent: @Composable (
         (
-        dialogState: MutableState<UiEvent.ShowDialog?>,
-        dialog: UiEvent.ShowDialog,
-    ) -> Unit
+            dialogState: MutableState<UiEvent.ShowDialog?>,
+            dialog: UiEvent.ShowDialog,
+        ) -> Unit
     )? = null,
 ) {
     val context = LocalContext.current

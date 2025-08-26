@@ -63,12 +63,12 @@ class AppNavigationActions(
         return when (route) {
             Screen.Main.route -> navController.navigateToMain()
 
-            Screen.MemberCenterScreen.route,
-            Screen.SearchScreen.route,
-            Screen.PlayerScreen.routeName,
-            Screen.MessageScreen.route,
-            Screen.SettingScreen.route,
-            Screen.CommentScreen.routeName,
+            Screen.MemberCenter.route,
+            Screen.Search.route,
+            Screen.Player.routeName,
+            Screen.Message.route,
+            Screen.Setting.route,
+            Screen.Comment.routeName,
             ->
                 navController.navigateSingleTopTo(
                     route,
@@ -84,9 +84,10 @@ class AppNavigationActions(
 fun rememberNavigationActions(navController: NavHostController): AppNavigationActions =
     remember { AppNavigationActions(navController) }
 
-val LocalNavigationActions = compositionLocalOf<AppNavigationActions> {
-    error("No NavigationActions provided")
-}
+val LocalNavigationActions =
+    compositionLocalOf<AppNavigationActions> {
+        error("No NavigationActions provided")
+    }
 
 private fun NavHostController.navigateToMain() =
     navigate(Screen.Main.route) {

@@ -189,7 +189,7 @@ fun TopSongsHeader() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.dis_discovery_tab_new_songs),
+            text = stringResource(R.string.dis_tab_new_songs),
             style =
                 MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Black,
@@ -227,7 +227,7 @@ fun RecommendsPlaylistHeader() {
         Text(
             text =
                 stringResource(
-                    R.string.dis_discovery_tab_recommends_playlist,
+                    R.string.dis_tab_recommends_playlist,
                 ),
             style =
                 MaterialTheme.typography.bodyLarge.copy(
@@ -277,8 +277,7 @@ fun RecommendsPlaylistContent(
                                 onItemClick(
                                     DiscoveryUiEvent.RecommendsItemClick(playlist),
                                 )
-                            }
-                            .size(cardWidth),
+                            }.size(cardWidth),
                     shape = MaterialTheme.shapes.large,
                 ) {
                     Box {
@@ -413,8 +412,7 @@ fun CarouselItem(
                                 .background(
                                     Color.White,
                                     RoundedCornerShape(4.dp),
-                                )
-                                .padding(4.dp, 2.dp),
+                                ).padding(4.dp, 2.dp),
                         text = currentItem.typeName,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,
