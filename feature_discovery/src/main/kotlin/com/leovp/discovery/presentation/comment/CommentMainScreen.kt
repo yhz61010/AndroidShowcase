@@ -35,10 +35,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -74,6 +75,10 @@ import com.leovp.feature.base.R as BaseR
  * Author: Michael Leo
  * Date: 2025/8/26 13:14
  */
+
+private val imgSize = 40.dp
+private val imgPadding = 8.dp
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentMainScreen(
@@ -112,19 +117,20 @@ fun CommentMainScreen(
                 // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
                 title = {
-                    PrimaryTabRow(
+                    TabRow(
                         selectedTabIndex = pagerState.currentPage,
                         modifier = Modifier.fillMaxWidth(),
                         // containerColor = Color.White,
                         contentColor = Color.Black,
                         divider = {},
-                        // indicator = {
-                        //     TabRowDefaults.PrimaryIndicator(
-                        //         modifier = Modifier,
-                        //         width = 18.dp,
-                        //         color = MaterialTheme.colorScheme.primary
-                        //     )
-                        // }
+                        indicator = { tabPositions ->
+                            TabRowDefaults.PrimaryIndicator(
+                                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                                height = 3.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(2.dp),
+                            )
+                        }
                     ) {
                         pagerScreenValues.forEachIndexed { index, item ->
                             Tab(
@@ -135,7 +141,7 @@ fun CommentMainScreen(
                                 },
                                 selected = pagerState.currentPage == index,
                                 onClick = {
-                                /* Will be handled by pager */
+                                    /* Will be handled by pager */
                                     coroutineScope.launch {
                                         pagerState.animateScrollToPage(
                                             page = item.ordinal,
@@ -188,22 +194,24 @@ fun CommentTabContent(songInfo: SongModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            // .background(Color.White)
+        // .background(Color.White)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = "https://via.placeholder.com/40x40",
+                model = "https://picsum.photos/40/40?random=0",
                 contentDescription = "Avatar",
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(imgSize)
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(imgPadding))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = songInfo.name,
@@ -250,9 +258,12 @@ fun CommentTabContent(songInfo: SongModel) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                // .background(Color.White)
+            // .background(Color.White)
         ) {
-            items(LocalCommentData.mockComments) { comment ->
+            items(
+                items = LocalCommentData.mockComments,
+                key = { comment -> comment.id }
+            ) { comment ->
                 CommentItem(comment = comment, onLike = { })
             }
         }
@@ -272,22 +283,20 @@ fun CommentItem(
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Avatar
-            AsyncImage(
-                model = comment.userAvatar,
-                contentDescription = "User Avatar",
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
             Column(modifier = Modifier.weight(1f)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Avatar
+                    AsyncImage(
+                        model = comment.userAvatar,
+                        contentDescription = "User Avatar",
+                        modifier = Modifier
+                            .size(imgSize)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.width(imgPadding))
                     // User information
                     Column {
                         // User name and mark
@@ -365,6 +374,7 @@ fun CommentItem(
 
                 // Comment text
                 Text(
+                    modifier = Modifier.padding(start = imgSize + imgPadding),
                     text = comment.comment,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         lineHeight = 20.sp
@@ -376,8 +386,10 @@ fun CommentItem(
                 if (comment.replyCount > 0) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable(onClick = {})
+                        modifier = Modifier
+                            .padding(start = imgSize + imgPadding)
+                            .clickable(onClick = {}),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         HorizontalDivider(
                             modifier = Modifier.width(32.dp),
