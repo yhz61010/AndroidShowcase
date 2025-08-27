@@ -52,7 +52,7 @@ class LocalPlayerDataSource
                 totalComments = 1567,
                 hotComments =
                     listOf(
-                        SongModel.Comment(1L, "热评：放给舍友听的时候，她只回一句这..."),
+                        SongModel.Comment(id = 1L, comment = "热评：放给舍友听的时候，她只回一句这..."),
                     ),
             )
 

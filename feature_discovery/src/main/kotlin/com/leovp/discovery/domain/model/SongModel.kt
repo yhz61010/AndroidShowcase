@@ -65,7 +65,15 @@ data class SongModel(
     @Immutable
     data class Comment(
         val id: Long,
+        val userName: String = "",
+        val userAvatar: String = "",
+        val isVip: Boolean = false,
+        val location: String = "",
         val comment: String,
+        val timeAgo: String = "",
+        val likeCount: Int = 0,
+        val isLiked: Boolean = false,
+        val replyCount: Int = 0,
     )
 
     @Keep
