@@ -1,8 +1,12 @@
+
 @file:Suppress("unused")
 
 package com.leovp.ui.theme
 
 import androidx.compose.ui.graphics.Color
+
+// https://material-foundation.github.io/material-theme-builder/
+// https://www.logicui.com/colorgenerator
 
 // --------------------
 
