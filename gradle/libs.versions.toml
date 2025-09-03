@@ -35,7 +35,7 @@ versionName = "1.0.5"
 versionCode = "105"
 
 # @keep
-leo-version = "5.12.86"
+leo-version = "5.12.89"
 
 #===================
 #===== Compile =====
@@ -135,25 +135,6 @@ androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "mult
 #lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 #androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 
-#=========================
-#===== Leo Libraries =====
-#=========================
-# Try to migrate this library to M3.
-leo-androidbase = { module = "com.leovp.android:androidbase", version.ref = "leo-version" }
-
-leo-lib-network = { module = "com.leovp.android:lib-network", version.ref = "leo-version" }
-leo-lib-compose = { module = "com.leovp.android:lib-compose", version.ref = "leo-version" }
-
-# The following FIVE libraries are already included by leo-androidbase.
-#leo-log = { module = "com.leovp.android:log", version.ref = "leo-version" }
-#leo-lib-json = { module = "com.leovp.android:lib-json", version.ref = "leo-version" }
-#leo-lib-common-kotlin = { module = "com.leovp.android:lib-common-kotlin", version.ref = "leo-version" }
-
-#leo-lib-common-android = { module = "com.leovp.android:lib-common-android", version.ref = "leo-version" }
-#leo-lib-bytes = { module = "com.leovp.android:lib-bytes", version.ref = "leo-version" }
-
-leo-pref = { module = "com.leovp.android:pref", version.ref = "leo-version" }
-
 #===================
 #= Android Compose =
 #===================
@@ -178,6 +159,25 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 #androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 
+#=========================
+#===== Leo Libraries =====
+#=========================
+# Try to migrate this library to M3.
+leo-androidbase = { module = "com.leovp.android:androidbase", version.ref = "leo-version" }
+
+leo-lib-network = { module = "com.leovp.android:lib-network", version.ref = "leo-version" }
+leo-lib-compose = { module = "com.leovp.android:lib-compose", version.ref = "leo-version" }
+
+# The following FIVE libraries are already included by leo-androidbase.
+#leo-log = { module = "com.leovp.android:log", version.ref = "leo-version" }
+#leo-lib-json = { module = "com.leovp.android:lib-json", version.ref = "leo-version" }
+#leo-lib-common-kotlin = { module = "com.leovp.android:lib-common-kotlin", version.ref = "leo-version" }
+
+#leo-lib-common-android = { module = "com.leovp.android:lib-common-android", version.ref = "leo-version" }
+#leo-lib-bytes = { module = "com.leovp.android:lib-bytes", version.ref = "leo-version" }
+
+leo-pref = { module = "com.leovp.android:pref", version.ref = "leo-version" }
+
 #=======================
 #===== Third party =====
 #=======================
@@ -191,9 +191,9 @@ square-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "square-
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json" }
 colorful-slider = { module = "com.github.SmartToolFactory:Compose-Colorful-Sliders", version.ref = "colorful-slider" }
 
-#=======================
+#==================
 #===== Helper =====
-#=======================
+#==================
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 # https://github.com/Kotlin/dokka
 #dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
