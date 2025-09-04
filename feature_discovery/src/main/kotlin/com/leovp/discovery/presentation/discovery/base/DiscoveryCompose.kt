@@ -25,8 +25,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.leovp.discovery.domain.enum.MarkType
 import com.leovp.discovery.domain.model.TopSongModel
 import com.leovp.discovery.ui.theme.mark_hot_bg

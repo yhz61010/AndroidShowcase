@@ -2,12 +2,12 @@ package com.leovp.androidshowcase
 
 import android.util.Log
 import androidx.multidex.MultiDexApplication
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.compose.AsyncImage
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
-import coil.request.CachePolicy
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
+import coil3.disk.directory
+import coil3.request.crossfade
 import com.leovp.feature.base.log.MarsXLog
 import com.leovp.log.LogContext
 import dagger.hilt.android.HiltAndroidApp
@@ -20,7 +20,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class CustomApplication :
     MultiDexApplication(),
-    ImageLoaderFactory {
+    SingletonImageLoader.Factory {
     companion object {
         private const val TAG = "CA"
     }
@@ -37,32 +37,25 @@ class CustomApplication :
         )
     }
 
-    /**
-     * Create the singleton [ImageLoader].
-     * This is used by [AsyncImage] to load images in the app.
-     */
-    override fun newImageLoader(): ImageLoader =
-        ImageLoader
-            .Builder(this)
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        return ImageLoader
+            .Builder(context)
             .crossfade(true)
             // Disable `Cache-Control` header support in order to disable disk caching.
             // .respectCacheHeaders(false)
-            // .components {
-            //     add(UnsplashSizingInterceptor)
+            // .memoryCache {
+            //     MemoryCache.Builder(this)
+            //         .maxSizePercent(0.25)
+            //         .build()
             // }
-            .memoryCache {
-                MemoryCache
-                    .Builder(this)
-                    .maxSizePercent(0.25)
-                    .build()
-            }.memoryCachePolicy(CachePolicy.ENABLED)
             .diskCache {
                 DiskCache
                     .Builder()
-                    .directory(this.cacheDir.resolve("image_cache"))
+                    .directory(context.cacheDir.resolve("image_cache"))
                     // .maxSizePercent(0.02)
                     .build()
             }.build()
+    }
 
     // override fun attachBaseContext(base: Context) {
     //     // super.attachBaseContext(LangUtil.getInstance(base).setAppLanguage(base))

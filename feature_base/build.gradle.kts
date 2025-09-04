@@ -132,9 +132,10 @@ dependencies {
     api(libs.square.okhttp)
     api(libs.net)
     // Net - dependencies - End
+
     api(libs.serialization.json)
     api(libs.mars.xlog)
-    api(libs.coil.kt.compose)
+    api(libs.bundles.coil)
     api(libs.karn.notify)
     // api(libs.lottie.compose)
 
