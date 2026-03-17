@@ -1,4 +1,5 @@
-import com.android.build.gradle.BaseExtension
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
@@ -69,7 +70,8 @@ plugins {
     // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.kotlin.android) apply false
+    // AGP 9.0 has built-in Kotlin support, so kotlin-android plugin is no longer needed.
+    // alias(libs.plugins.kotlin.android) apply false
     // https://developer.android.com/develop/ui/compose/compiler?hl=zh-cn
     alias(libs.plugins.kotlin.compose.compiler) apply false
     alias(libs.plugins.hilt) apply false
@@ -185,7 +187,7 @@ allprojects {
         useJUnitPlatform()
     }
 
-    // https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
+    // https://medium.com/kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
     // Configure it in your each compose module.
     // composeCompiler {
     //     enableStrongSkippingMode = true
@@ -213,12 +215,13 @@ allprojects {
 }
 
 subprojects {
-    apply(
-        plugin =
-            rootProject.libs.plugins.kotlin.android
-                .get()
-                .pluginId,
-    )
+    // AGP 9.0 has built-in Kotlin support, so kotlin-android plugin is no longer needed.
+    // apply(
+    //     plugin =
+    //         rootProject.libs.plugins.kotlin.android
+    //             .get()
+    //             .pluginId,
+    // )
 
     plugins.withId(
         rootProject.libs.plugins.android.application
@@ -236,6 +239,7 @@ subprojects {
     ) {
         configureLibrary()
     }
+
 }
 
 tasks.register<Delete>("clean") {
@@ -276,7 +280,7 @@ fun Project.configureCompileTasks() {
         }
 }
 
-// https://medium.com/@kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
+// https://medium.com/kacper.wojciechowski/kotlin-2-0-android-project-migration-guide-b1234fbbff65
 // fun Project.configureCompilerOptions() {
 //     extensions.getByType<ComposeCompilerGradlePluginExtension>().apply {
 //         enableStrongSkippingMode = true
@@ -284,13 +288,19 @@ fun Project.configureCompileTasks() {
 //     }
 // }
 
-fun Project.configureBase(): BaseExtension =
-    extensions.getByName<BaseExtension>("android").apply {
-        compileSdkVersion(
+/**
+ * The application level default configurations.
+ * You just need to add your custom properties as you wish.
+ *
+ * **Attention**:
+ * The default value of `applicationId` is `namespace`.
+ */
+fun Project.configureApplication() {
+    extensions.configure<ApplicationExtension>("android") {
+        compileSdk =
             rootProject.libs.versions.compile.sdk
                 .get()
-                .toInt(),
-        )
+                .toInt()
         defaultConfig {
             minSdk =
                 rootProject.libs.versions.min.sdk
@@ -300,17 +310,14 @@ fun Project.configureBase(): BaseExtension =
                 rootProject.libs.versions.target.sdk
                     .get()
                     .toInt()
-
+            applicationId = namespace
+            vectorDrawables.useSupportLibrary = true
             testInstrumentationRunner =
                 "androidx.test.runner.AndroidJUnitRunner"
         }
         sourceSets.configureEach {
-            // This `name` is just the name for each `source` in `sourceSets`.
-            java.srcDirs("src/$name/kotlin", "src/$name/java")
+            java.directories.addAll(listOf("src/$name/kotlin", "src/$name/java"))
         }
-        // sourceSets {
-        //     map { it.java.srcDir("src/${it.name}/kotlin") }
-        // }
         testOptions {
             unitTests {
                 isReturnDefaultValues = true
@@ -318,7 +325,6 @@ fun Project.configureBase(): BaseExtension =
             }
         }
         compileOptions {
-            // setDefaultJavaVersion(jdkVersion)
             sourceCompatibility = javaVersion
             targetCompatibility = javaVersion
         }
@@ -328,103 +334,121 @@ fun Project.configureBase(): BaseExtension =
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro",
                 )
-            }
-        }
-
-        buildFeatures.viewBinding = true
-        // https://medium.com/androiddevelopers/5-ways-to-prepare-your-app-build-for-android-studio-flamingo-release-da34616bb946
-        // Add this line as needed
-        // buildFeatures.buildConfig = true
-
-        // Turn off checking the given issue id's
-        lintOptions.disable +=
-            setOf(
-                // "MissingTranslation",
-                // "GoogleAppIndexingWarning",
-                "RtlHardcoded",
-                "RtlCompat",
-                "RtlEnabled",
-            )
-        packagingOptions.resources.pickFirsts +=
-            setOf(
-                // kotlinx-coroutines-android
-                "META-INF/atomicfu.kotlin_module",
-            )
-        packagingOptions.resources.excludes +=
-            setOf(
-                "META-INF/licenses/**",
-                "META-INF/NOTICE*",
-                "META-INF/LICENSE*",
-                "META-INF/DEPENDENCIES*",
-                "META-INF/INDEX.LIST",
-                "META-INF/io.netty.versions.properties",
-                "META-INF/services/reactor.blockhound.integration.BlockHoundIntegration",
-                "META-INF/{AL2.0,LGPL2.1}",
-                "**/*.proto",
-                "**/*.bin",
-                "**/*.java",
-                // "**/*.properties",
-                // "**/*.version",
-                // ==============================
-                // ==============================
-                // Don't exclude [kotlin_module] file.
-                // Or else, you can't import kotlin extension methods in kotlin file.
-                // "**/*.*_module", // **/*.kotlin_module
-                // ==============================
-                // ==============================
-                // "*.txt",
-                // "kotlin/**",
-                // "kotlinx/**",
-                // "okhttp3/**",
-                // "META-INF/services/**",
-            )
-    }
-
-/**
- * The application level default configurations.
- * You just need to add your custom properties as you wish.
- *
- * **Attention**:
- * The default value of `applicationId` is `namespace`.
- */
-fun Project.configureApplication(): BaseExtension =
-    configureBase().apply {
-        defaultConfig {
-            applicationId = namespace
-            vectorDrawables.useSupportLibrary = true
-        }
-        buildTypes {
-            getByName("release") {
                 isShrinkResources = true
                 isMinifyEnabled = true
             }
-
             getByName("debug") {
                 isShrinkResources = false
                 isMinifyEnabled = false
             }
         }
+        buildFeatures.viewBinding = true
+        lint {
+            disable +=
+                setOf(
+                    "RtlHardcoded",
+                    "RtlCompat",
+                    "RtlEnabled",
+                )
+        }
+        packaging {
+            resources.pickFirsts +=
+                setOf(
+                    "META-INF/atomicfu.kotlin_module",
+                )
+            resources.excludes +=
+                setOf(
+                    "META-INF/licenses/**",
+                    "META-INF/NOTICE*",
+                    "META-INF/LICENSE*",
+                    "META-INF/DEPENDENCIES*",
+                    "META-INF/INDEX.LIST",
+                    "META-INF/io.netty.versions.properties",
+                    "META-INF/services/reactor.blockhound.integration.BlockHoundIntegration",
+                    "META-INF/{AL2.0,LGPL2.1}",
+                    "**/*.proto",
+                    "**/*.bin",
+                    "**/*.java",
+                )
+        }
     }
+}
 
 /**
  * All the submodules will have the hierarchy configurations.
  * You just need to add your custom properties as you wish.
  */
-fun Project.configureLibrary(): BaseExtension =
-    configureBase().apply {
+fun Project.configureLibrary() {
+    extensions.configure<LibraryExtension>("android") {
+        compileSdk =
+            rootProject.libs.versions.compile.sdk
+                .get()
+                .toInt()
         defaultConfig {
+            minSdk =
+                rootProject.libs.versions.min.sdk
+                    .get()
+                    .toInt()
             consumerProguardFiles("consumer-rules.pro")
+            testInstrumentationRunner =
+                "androidx.test.runner.AndroidJUnitRunner"
+        }
+        sourceSets.configureEach {
+            java.directories.addAll(listOf("src/$name/kotlin", "src/$name/java"))
+        }
+        testOptions {
+            unitTests {
+                isReturnDefaultValues = true
+                isIncludeAndroidResources = true
+            }
+        }
+        compileOptions {
+            sourceCompatibility = javaVersion
+            targetCompatibility = javaVersion
         }
         buildTypes {
             getByName("release") {
+                proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro",
+                )
                 isMinifyEnabled = false
             }
-
             getByName("debug") {
                 isMinifyEnabled = false
             }
         }
+        buildFeatures.viewBinding = true
+        lint {
+            disable +=
+                setOf(
+                    "RtlHardcoded",
+                    "RtlCompat",
+                    "RtlEnabled",
+                )
+        }
+        packaging {
+            resources.pickFirsts +=
+                setOf(
+                    "META-INF/atomicfu.kotlin_module",
+                )
+            resources.excludes +=
+                setOf(
+                    "META-INF/licenses/**",
+                    "META-INF/NOTICE*",
+                    "META-INF/LICENSE*",
+                    "META-INF/DEPENDENCIES*",
+                    "META-INF/INDEX.LIST",
+                    "META-INF/io.netty.versions.properties",
+                    "META-INF/services/reactor.blockhound.integration.BlockHoundIntegration",
+                    "META-INF/{AL2.0,LGPL2.1}",
+                    "**/*.proto",
+                    "**/*.bin",
+                    "**/*.java",
+                )
+        }
     }
+}
 
 // Target version of the generated JVM bytecode. It is used for type resolution.
 tasks.withType<Detekt>().configureEach {

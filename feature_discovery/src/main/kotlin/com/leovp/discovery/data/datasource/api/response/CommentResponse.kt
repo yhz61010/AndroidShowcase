@@ -3,7 +3,7 @@ package com.leovp.discovery.data.datasource.api.response
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import com.leovp.discovery.data.datasource.api.model.CommentApiModel
-import com.leovp.feature.base.http.model.ApiResponseResult
+import com.leovp.feature.base.http.model.ApiResponse
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
@@ -24,4 +24,4 @@ data class CommentResponse(
     val comments: List<CommentApiModel> = emptyList(),
     val topComments: List<CommentApiModel> = emptyList(),
     val hotComments: List<CommentApiModel> = emptyList(),
-) : ApiResponseResult()
+) : ApiResponse()

@@ -1,3 +1,4 @@
+import com.android.build.api.variant.BuildConfigField
 import java.util.Properties
 
 // https://developer.android.com/studio/build?hl=zh-cn#module-level
@@ -6,7 +7,6 @@ apply(from = "../jacoco.gradle.kts")
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     // Apply the `compose.compiler` plugin to every module that uses Jetpack Compose.
     alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.hilt)
@@ -20,6 +20,12 @@ plugins {
     jacoco
 }
 
+junitPlatform {
+    jacocoOptions {
+        taskGenerationEnabled.set(false)
+    }
+}
+
 // val jvmTargetVersion by extra {
 //     org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(libs.versions.jvmVersion.get())
 // }
@@ -29,8 +35,6 @@ plugins {
 // }
 
 android {
-    val appName = "LeoAndroidShowcase"
-
     /** The app's namespace. Used primarily to access app resources. */
     namespace = "com.leovp.androidshowcase"
 
@@ -48,11 +52,9 @@ android {
                 .toInt()
         versionName = libs.versions.versionName.get()
 
-        multiDexEnabled = true
-
         ndk {
             // abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
-            @android.annotation.SuppressLint("ChromeOsAbiSupport")
+            // noinspection ChromeOsAbiSupport
             abiFilters += setOf("armeabi-v7a")
         }
 
@@ -168,27 +170,45 @@ android {
         ignoreTestSources = true
     }
 
-    applicationVariants.all {
-        val variant = this
-        // println("Iterating variant: " + variant.name)
-        if (variant.name == "prodRelease") {
-            variant.buildConfigField("boolean", "CONSOLE_LOG_OPEN", "false")
-        } else {
-            variant.buildConfigField("boolean", "CONSOLE_LOG_OPEN", "true")
-        }
-        variant.outputs
-            .mapNotNull {
-                it as? com.android.build.gradle.internal.api.ApkVariantOutputImpl
-            }.forEach { output ->
-                output.outputFileName =
-                    "${appName}${("-$flavorName").takeIf {
-                        it != "-"
-                    } ?: ""}-${buildType.name}" +
-                    "-v$versionName($versionCode)" +
-                    "-${gitVersionTag()}-${gitCommitCount()}" +
-//                        ("-unaligned".takeIf { !output.zipAlign.enabled } ?: "") +
-                    ".apk"
+}
+
+androidComponents {
+    val appName = "LeoAndroidShowcase"
+    onVariants { variant ->
+        val isConsoleLogOpen = variant.name != "prodRelease"
+        variant.buildConfigFields?.put(
+            "CONSOLE_LOG_OPEN",
+            BuildConfigField("boolean", isConsoleLogOpen.toString(), null),
+        )
+
+        // Rename APK output files
+        val appName = "LeoAndroidShowcase"
+        val gitTag = gitVersionTag()
+        val gitCount = gitCommitCount()
+        val flavorName = variant.flavorName.orEmpty()
+        val buildTypeName = variant.buildType.orEmpty()
+        val mainOutput = variant.outputs.firstOrNull()
+        val versionName = mainOutput?.versionName?.getOrElse("") ?: ""
+        val versionCode = mainOutput?.versionCode?.getOrElse(0) ?: 0
+        val apkName =
+            "$appName${("-$flavorName").takeIf {
+                it != "-"
+            } ?: ""}-$buildTypeName" +
+                "-v$versionName($versionCode)" +
+                "-$gitTag-$gitCount" +
+                ".apk"
+
+        // Use the package task to rename APK
+        tasks.configureEach {
+            if (name == "package${variant.name.replaceFirstChar { it.titlecase() }}") {
+                doLast {
+                    val outputDir = outputs.files.files.firstOrNull()
+                    outputDir?.listFiles()?.filter { it.extension == "apk" }?.forEach { apkFile ->
+                        apkFile.renameTo(File(apkFile.parentFile, apkName))
+                    }
+                }
             }
+        }
     }
 }
 
@@ -286,7 +306,6 @@ fun Project.getSignProperty(
         }.getProperty(key)
 
 dependencies {
-    implementation(libs.androidx.multidex)
     // hilt - start
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)

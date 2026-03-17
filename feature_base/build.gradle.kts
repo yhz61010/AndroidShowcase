@@ -26,6 +26,12 @@ plugins {
     jacoco
 }
 
+junitPlatform {
+    jacocoOptions {
+        taskGenerationEnabled.set(false)
+    }
+}
+
 android {
     namespace = "com.leovp.feature.base"
 
@@ -59,7 +65,7 @@ android {
 
     // https://developer.android.com/reference/tools/gradle-api/7.1/com/android/build/api/dsl/Lint
     lint {
-        // if true, stop the gradle build if errors are found
+        // if true, stop the Gradle build if errors are found
         abortOnError = false
         // Like checkTestSources, but always skips analyzing tests -- meaning that it
         // also ignores checks that have explicitly asked to look at test sources, such
@@ -139,6 +145,8 @@ dependencies {
     api(libs.karn.notify)
     // api(libs.lottie.compose)
 
+    api(libs.gson)
+
     // ==============================
     testImplementation(libs.bundles.test)
     // testRuntimeOnly(libs.bundles.test.runtime.only)
@@ -156,7 +164,7 @@ dependencies {
 
 /*
  * Takes value from Gradle project property and sets it as Android build config property
- * eg. apiToken variable present in the gradle.properties file
+ * e.g. apiToken variable present in the gradle.properties file
  * will be accessible as BuildConfig.GRADLE_API_TOKEN in the app.
  */
 fun LibraryDefaultConfig.buildConfigFieldFromGradleProperty(gradlePropertyName: String) {

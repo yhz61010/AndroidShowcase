@@ -3,7 +3,7 @@ package com.leovp.discovery.data.datasource.api.response
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import com.leovp.discovery.data.datasource.api.model.PrivateContentApiModel
-import com.leovp.feature.base.http.model.ApiResponseResult
+import com.leovp.feature.base.http.model.ApiResponse
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 data class PrivateContentResponse(
     val name: String,
     @SerialName("result") val result: List<PrivateContentApiModel>,
-) : ApiResponseResult()
+) : ApiResponse()
 
 // {
 //   "code": 200,

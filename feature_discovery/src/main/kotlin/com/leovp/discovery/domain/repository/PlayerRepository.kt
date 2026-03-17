@@ -1,6 +1,7 @@
 package com.leovp.discovery.domain.repository
 
 import com.leovp.discovery.domain.model.SongModel
+import com.leovp.feature.base.http.model.ApiResponseModel
 import com.leovp.network.http.Result
 
 /**
@@ -8,23 +9,23 @@ import com.leovp.network.http.Result
  * Date: 2024/8/26 13:56
  */
 interface PlayerRepository {
-    suspend fun getSongInfo(vararg ids: Long): Result<List<SongModel>>
+    suspend fun getSongInfo(vararg ids: Long): Result<ApiResponseModel<List<SongModel>>>
 
     suspend fun getMusicComment(
         id: Long,
         limit: Int,
         offset: Int,
-    ): Result<SongModel.CommentsModel>
+    ): Result<ApiResponseModel<SongModel.CommentsModel>>
 
-    suspend fun getSongRedCount(id: Long): Result<SongModel.RedCountModel>
+    suspend fun getSongRedCount(id: Long): Result<ApiResponseModel<SongModel.RedCountModel>>
 
     suspend fun getSongUrlV1(
         id: Long,
         level: SongModel.Quality,
-    ): Result<List<SongModel.UrlModel>>
+    ): Result<ApiResponseModel<List<SongModel.UrlModel>>>
 
     suspend fun checkMusic(
         id: Long,
         br: Int,
-    ): Result<SongModel.MusicAvailableModel>
+    ): Result<ApiResponseModel<SongModel.MusicAvailableModel>>
 }

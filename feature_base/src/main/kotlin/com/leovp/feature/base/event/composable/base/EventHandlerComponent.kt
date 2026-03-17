@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
-import com.leovp.compose.composable.event.UiEvent
 import com.leovp.feature.base.R
 import com.leovp.feature.base.ui.PreviewWrapper
+import com.leovp.mvvm.event.base.UiEvent
 
 /**
  * Author: Michael Leo
@@ -165,35 +165,47 @@ private fun LoadingDialogContent() {
 @Composable
 fun EventDialogContent(
     dialogState: MutableState<UiEvent.ShowDialog?>,
-    dialog: UiEvent.ShowDialog,
 ) {
+    val dialog = dialogState.value ?: return
+
+    val titleRef = dialog.title ?: dialog.titleResId?.let { stringResource(it) }
+    val messageRef =
+        dialog.message ?: dialog.messageResId?.let { stringResource(it) }
+    requireNotNull(messageRef) { "Dialog message can't be null." }
+
     AlertDialog(
         onDismissRequest = { dialogState.value = null },
-        title = { Text(dialog.title) },
-        text = { Text(dialog.message) },
+        title = { titleRef?.let { Text(it) } },
+        text = { Text(messageRef) },
         confirmButton = {
+            val positiveButtonTextRef = dialog.positiveButtonText
+                ?: dialog.positiveButtonTextResId?.let { stringResource(it) }
+            requireNotNull(positiveButtonTextRef) {
+                "Dialog positive button text can't be null."
+            }
             TextButton(
                 onClick = {
                     dialog.onPositive()
                     dialogState.value = null
                 },
             ) {
-                Text(dialog.positiveButton)
+                Text(positiveButtonTextRef)
             }
         },
-        dismissButton =
-            dialog.negativeButton?.let {
-                {
-                    TextButton(
-                        onClick = {
-                            dialog.onNegative()
-                            dialogState.value = null
-                        },
-                    ) {
-                        Text(it)
-                    }
+        dismissButton = {
+            val negativeButtonTextRef = dialog.negativeButtonText
+                ?: dialog.negativeButtonTextResId?.let { stringResource(it) }
+            negativeButtonTextRef?.let { negBtnText ->
+                TextButton(
+                    onClick = {
+                        dialog.onNegative?.invoke()
+                        dialogState.value = null
+                    },
+                ) {
+                    Text(negBtnText)
                 }
-            },
+            }
+        },
     )
 }
 

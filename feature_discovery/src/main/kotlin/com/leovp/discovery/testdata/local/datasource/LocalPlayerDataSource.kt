@@ -74,8 +74,8 @@ class LocalPlayerDataSource
                     size = 11309805,
                     md5 = "e2c13e2158a9d9ad8e8f1f5c8c82c3a2",
                     type = "mp3",
-                    gain = -9.8743f,
-                    peak = 1,
+                    gain = -9.8743,
+                    peak = 1.0,
                     level =
                         SongModel.Quality.Jymaster.name
                             .lowercase(),

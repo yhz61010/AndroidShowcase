@@ -6,11 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
+import com.leovp.compose.composable.nav.AppNavigation
 import com.leovp.compose.utils.navigateSingleTopTo
 import com.leovp.compose.utils.navigateTo
-import com.leovp.compose.utils.outputGraphInfo
-import com.leovp.log.base.d
-import com.leovp.log.base.i
+import com.leovp.mvvm.event.base.UiEvent
 
 /**
  * Author: Michael Leo
@@ -42,24 +41,14 @@ object DrawerDestinations {
  */
 class AppNavigationActions(
     private val navController: NavHostController,
-) {
-    @Suppress("unused")
-    val currentRoute: String? get() = navController.currentDestination?.route
+) : AppNavigation(navController) {
 
-    fun popBackStack() {
-        navController.popBackStack()
-    }
-
-    fun upPress() {
-        navController.navigateUp()
-    }
-
-    fun navigate(
+    override fun navigate(
         route: String,
-        arguments: String? = null,
+        arguments: String?,
+        extras: UiEvent.NavExtras?,
     ) {
-        i(TAG) { "-> navigate to: $route" }
-        d { block = { outputGraphInfo(route, navController) } }
+        super.navigate(route, arguments, extras)
         return when (route) {
             Screen.Main.route -> navController.navigateToMain()
 
@@ -69,7 +58,7 @@ class AppNavigationActions(
             Screen.Message.route,
             Screen.Setting.route,
             Screen.Comment.routeName,
-            ->
+                ->
                 navController.navigateSingleTopTo(
                     route,
                     arguments,
@@ -79,15 +68,6 @@ class AppNavigationActions(
         }
     }
 }
-
-@Composable
-fun rememberNavigationActions(navController: NavHostController): AppNavigationActions =
-    remember { AppNavigationActions(navController) }
-
-val LocalNavigationActions =
-    compositionLocalOf<AppNavigationActions> {
-        error("No NavigationActions provided")
-    }
 
 private fun NavHostController.navigateToMain() =
     navigate(Screen.Main.route) {

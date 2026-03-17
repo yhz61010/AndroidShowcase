@@ -2,7 +2,8 @@ package com.leovp.androidshowcase.domain.usecase
 
 import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.domain.repository.MainRepository
-import com.leovp.network.http.Result
+import com.leovp.feature.base.http.model.ApiResponseModel.Companion.processApiResponseResult
+import com.leovp.network.http.ResultBiz
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,6 +18,6 @@ class MainUseCase
         // @MainRepositoryImplement
         private val repository: MainRepository,
     ) {
-        suspend fun getUnreadList(uid: String): Result<List<UnreadModel>> =
-            repository.getUnreadList(uid)
+        suspend fun getUnreadList(uid: String): ResultBiz<List<UnreadModel>> =
+            processApiResponseResult(repository.getUnreadList(uid))
     }

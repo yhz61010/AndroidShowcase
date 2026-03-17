@@ -16,11 +16,11 @@ import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.presentation.MainScreen
 import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
+import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.presentation.comment.CommentMainScreen
 import com.leovp.discovery.presentation.player.PlayerScreen
 import com.leovp.discovery.presentation.search.SearchScreen
-import com.leovp.feature.base.ui.LocalNavigationActions
 import com.leovp.feature.base.ui.Screen
 import com.leovp.json.toObject
 import com.leovp.log.base.d

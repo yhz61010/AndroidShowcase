@@ -3,7 +3,7 @@ package com.leovp.discovery.presentation.discovery.base
 import com.leovp.discovery.domain.model.PlaylistModel
 import com.leovp.discovery.domain.model.PrivateContentModel
 import com.leovp.discovery.domain.model.TopSongModel
-import com.leovp.feature.base.framework.BaseState
+import com.leovp.mvvm.BaseState
 import com.leovp.network.http.exception.ResultException
 
 /**

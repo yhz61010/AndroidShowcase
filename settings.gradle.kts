@@ -49,11 +49,9 @@ dependencyResolutionManagement {
      * but it does not configure any dependencies (unless you select a
      * template that requires some).
      */
-    @Suppress("UnstableApiUsage")
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
-    @Suppress("UnstableApiUsage")
-    repositories {
+repositories {
         google()
         mavenCentral {
             isAllowInsecureProtocol = true

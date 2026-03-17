@@ -32,12 +32,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
-import com.leovp.compose.composable.event.UiEventManager
+import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.discovery.R
 import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.presentation.player.base.ControllerItem
@@ -54,10 +54,10 @@ import com.leovp.discovery.presentation.player.base.TitleContent
 import com.leovp.discovery.presentation.player.base.TrackBadge
 import com.leovp.discovery.presentation.player.base.TrackInfoItem
 import com.leovp.discovery.testdata.PreviewPlayerModule
-import com.leovp.feature.base.event.composable.GenericEventHandler
-import com.leovp.feature.base.ui.LocalNavigationActions
+import com.leovp.feature.base.event.composable.CustomEventHandler
 import com.leovp.feature.base.ui.PreviewWrapper
 import com.leovp.log.base.d
+import com.leovp.mvvm.event.base.UiEventManager
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 
 /**
@@ -80,7 +80,7 @@ fun PlayerScreen(
         }
     }
     val navController = LocalNavigationActions.current
-    GenericEventHandler(events = viewModel.requireUiEvents, navController = navController)
+    CustomEventHandler(events = viewModel.requireUiEvents, navController = navController)
 
     val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val uiState = uiStateFlow as PlayerUiState.Content
@@ -112,7 +112,7 @@ fun PlayerScreen(
                     )
                 },
                 colors =
-                    TopAppBarDefaults.centerAlignedTopAppBarColors().copy(
+                    TopAppBarDefaults.topAppBarColors().copy(
                         containerColor = containerBg,
                     ),
                 navigationIcon = {

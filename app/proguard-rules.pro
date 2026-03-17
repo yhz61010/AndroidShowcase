@@ -80,8 +80,25 @@
 -dontnote com.google.android.material.**
 
 -dontwarn androidx.**
--keep class androidx.** { *; }
 -keep interface androidx.** { *; }
+
+# Keep essential androidx classes but allow icon optimization
+-keep class androidx.compose.material.icons.Icons {*;}
+-keep class androidx.compose.material.icons.filled.** {*;}
+-keep class androidx.compose.material.icons.outlined.** {*;}
+-keep class androidx.compose.material.icons.rounded.** {*;}
+-keep class androidx.compose.material.icons.sharp.** {*;}
+-keep class androidx.compose.material.icons.twotone.** {*;}
+
+# Keep other essential androidx classes (excluding i3cons-extended)
+-keep class androidx.activity.** {*;}
+-keep class androidx.fragment.** {*;}
+-keep class androidx.lifecycle.** {*;}
+-keep class androidx.navigation.** {*;}
+-keep class androidx.compose.runtime.** {*;}
+-keep class androidx.compose.ui.** {*;}
+-keep class androidx.compose.foundation.** {*;}
+-keep class androidx.compose.material3.** {*;}
 
 # Keep all interface
 -keep interface * {

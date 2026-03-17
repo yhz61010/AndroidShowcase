@@ -26,11 +26,12 @@ import com.leovp.androidshowcase.ui.addAppMainGraph
 import com.leovp.androidshowcase.ui.addCommentGraph
 import com.leovp.androidshowcase.ui.addPlayerGraph
 import com.leovp.androidshowcase.utils.InitManager
+import com.leovp.compose.composable.nav.rememberNavigationActions
+import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.feature.base.GlobalConst
 import com.leovp.feature.base.http.RequestUtil
-import com.leovp.feature.base.ui.LocalNavigationActions
+import com.leovp.feature.base.ui.AppNavigationActions
 import com.leovp.feature.base.ui.Screen
-import com.leovp.feature.base.ui.rememberNavigationActions
 import com.leovp.log.base.d
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -82,7 +83,7 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
      * - Screen B will run enterTransition
      *
      * Suppose we press the back button screen B to A (pop/back):
-     * - Screen B will runs popExitTransition
+     * - Screen B will run popExitTransition
      * - Screen A will run popEnterTransition
      */
     // val slideStart = AnimatedContentTransitionScope.SlideDirection.Start
@@ -115,7 +116,9 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
 
     val navController = rememberNavController()
     val navigationActions =
-        rememberNavigationActions(navController = navController)
+        rememberNavigationActions(navController = navController) {
+            AppNavigationActions(it)
+        }
 
     CompositionLocalProvider(
         LocalNavigationActions provides navigationActions,

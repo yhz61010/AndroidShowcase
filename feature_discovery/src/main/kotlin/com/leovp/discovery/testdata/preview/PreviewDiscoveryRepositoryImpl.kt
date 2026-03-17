@@ -6,6 +6,7 @@ import com.leovp.discovery.domain.model.PrivateContentModel
 import com.leovp.discovery.domain.model.TopSongModel
 import com.leovp.discovery.domain.repository.DiscoveryRepository
 import com.leovp.discovery.testdata.local.datasource.LocalDiscoveryDataSource
+import com.leovp.feature.base.http.model.ApiResponseModel
 import com.leovp.network.http.Result
 import javax.inject.Inject
 
@@ -18,15 +19,15 @@ class PreviewDiscoveryRepositoryImpl
     constructor(
         private val dataSource: LocalDiscoveryDataSource,
     ) : DiscoveryRepository {
-        override suspend fun getHomePageBlock(): Result<HomePageBlockModel> =
-            Result.Success(dataSource.getHomePageBlock())
+        override suspend fun getHomePageBlock(): Result<ApiResponseModel<HomePageBlockModel>> =
+            Result.Success(ApiResponseModel(result = dataSource.getHomePageBlock()))
 
-        override suspend fun getPrivateContent(): Result<List<PrivateContentModel>> =
-            Result.Success(dataSource.getPrivateContent())
+        override suspend fun getPrivateContent(): Result<ApiResponseModel<List<PrivateContentModel>>> =
+            Result.Success(ApiResponseModel(result = dataSource.getPrivateContent()))
 
-        override suspend fun getRecommendPlaylist(): Result<List<PlaylistModel>> =
-            Result.Success(dataSource.getRecommendPlaylist())
+        override suspend fun getRecommendPlaylist(): Result<ApiResponseModel<List<PlaylistModel>>> =
+            Result.Success(ApiResponseModel(result = dataSource.getRecommendPlaylist()))
 
-        override suspend fun getTopSongs(type: Int): Result<List<TopSongModel>> =
-            Result.Success(dataSource.getTopSong(type))
+        override suspend fun getTopSongs(type: Int): Result<ApiResponseModel<List<TopSongModel>>> =
+            Result.Success(ApiResponseModel(result = dataSource.getTopSong(type)))
     }

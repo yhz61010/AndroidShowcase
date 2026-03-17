@@ -1,13 +1,15 @@
 package com.leovp.discovery.presentation.player.base
 
-import com.leovp.compose.composable.event.UiEvent
-import com.leovp.compose.composable.event.UiEventManager
 import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiEvent
 import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiEvent.ExtraEvent
 import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiEvent.PlayerEvent
 import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiEvent.SongEvent
 import com.leovp.feature.base.ui.Screen
 import com.leovp.json.toJsonString
+import com.leovp.mvvm.event.base.UiEvent
+import com.leovp.mvvm.event.base.UiEventManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 import javax.inject.Inject
 
@@ -30,10 +32,12 @@ class SongEventDelegate
                 is SongEvent.CommentClick -> {
                     // uiEventManager.sendEvent(UiEvent.ShowToast(message = "Click on Comment"))
                     val songInfoStr =
-                        URLEncoder.encode(
-                            event.songInfo.toJsonString(),
-                            Charsets.UTF_8.name(),
-                        )
+                        withContext(Dispatchers.IO) {
+                            URLEncoder.encode(
+                                event.songInfo.toJsonString(),
+                                Charsets.UTF_8.name(),
+                            )
+                        }
                     uiEventManager.sendEvent(
                         UiEvent.Navigate(Screen.Comment.routeName, songInfoStr),
                     )

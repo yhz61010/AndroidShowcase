@@ -37,9 +37,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -56,17 +55,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.leovp.compose.composable.event.UiEventManager
+import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.discovery.testdata.local.datasource.LocalCommentData
-import com.leovp.feature.base.event.composable.GenericEventHandler
+import com.leovp.feature.base.event.composable.CustomEventHandler
 import com.leovp.feature.base.ui.CommentBottomNavigationItems
-import com.leovp.feature.base.ui.LocalNavigationActions
 import com.leovp.feature.base.ui.PreviewWrapper
+import com.leovp.mvvm.event.base.UiEventManager
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 import kotlinx.coroutines.launch
 import com.leovp.feature.base.R as BaseR
@@ -87,7 +86,7 @@ fun CommentMainScreen(
 ) {
     // val context = LocalContext.current
     val navController = LocalNavigationActions.current
-    GenericEventHandler(
+    CustomEventHandler(
         events = viewModel.requireUiEvents,
         navController = navController,
     )
@@ -117,15 +116,15 @@ fun CommentMainScreen(
                 // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
                 // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
                 title = {
-                    TabRow(
+                    PrimaryTabRow(
                         selectedTabIndex = pagerState.currentPage,
                         modifier = Modifier.fillMaxWidth(),
                         // containerColor = Color.White,
                         contentColor = Color.Black,
                         divider = {},
-                        indicator = { tabPositions ->
+                        indicator = {
                             TabRowDefaults.PrimaryIndicator(
-                                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                                modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
                                 height = 3.dp,
                                 color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(2.dp),

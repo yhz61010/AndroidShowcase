@@ -17,6 +17,12 @@ plugins {
     jacoco
 }
 
+junitPlatform {
+    jacocoOptions {
+        taskGenerationEnabled.set(false)
+    }
+}
+
 android {
     namespace = "com.leovp.community"
 

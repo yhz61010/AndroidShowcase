@@ -3,10 +3,11 @@ package com.leovp.feature.base.event.composable
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.leovp.compose.composable.event.UiEvent
+import com.leovp.compose.composable.event.base.GenericEventHandler
+import com.leovp.compose.composable.nav.AppNavigation
 import com.leovp.feature.base.event.composable.base.EventDialogContent
 import com.leovp.feature.base.event.composable.base.EventLoadingDialogContent
-import com.leovp.feature.base.ui.AppNavigationActions
+import com.leovp.mvvm.event.base.UiEvent
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -14,19 +15,19 @@ import kotlinx.coroutines.flow.Flow
  * Date: 2025/8/21 10:43
  */
 @Composable
-fun EventHandler(
+fun CustomEventHandler(
     events: Flow<UiEvent>,
-    navController: AppNavigationActions? = null,
+    navController: AppNavigation? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     GenericEventHandler(
         events = events,
         navController = navController,
         snackbarHostState = snackbarHostState,
-        showLoadingContent = { EventLoadingDialogContent() },
-        hideLoadingContent = null,
-        dialogContent = { dialogState, dialog ->
-            EventDialogContent(dialogState, dialog)
+        loadingDialogContent = { EventLoadingDialogContent() },
+        // hideLoadingContent = null,
+        dialogContent = { dialogState ->
+            EventDialogContent(dialogState)
         },
     )
 }

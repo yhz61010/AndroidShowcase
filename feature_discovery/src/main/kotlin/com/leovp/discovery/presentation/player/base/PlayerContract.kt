@@ -1,7 +1,7 @@
 package com.leovp.discovery.presentation.player.base
 
 import com.leovp.discovery.domain.model.SongModel
-import com.leovp.feature.base.framework.BaseState
+import com.leovp.mvvm.BaseState
 import com.leovp.network.http.exception.ResultException
 
 /**

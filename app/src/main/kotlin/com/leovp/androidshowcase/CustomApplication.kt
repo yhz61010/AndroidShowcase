@@ -1,7 +1,7 @@
 package com.leovp.androidshowcase
 
+import android.app.Application
 import android.util.Log
-import androidx.multidex.MultiDexApplication
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
@@ -19,7 +19,7 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class CustomApplication :
-    MultiDexApplication(),
+    Application(),
     SingletonImageLoader.Factory {
     companion object {
         private const val TAG = "CA"

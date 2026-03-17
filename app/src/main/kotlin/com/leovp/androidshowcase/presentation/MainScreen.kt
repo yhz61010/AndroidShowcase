@@ -48,7 +48,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.androidshowcase.R
@@ -56,25 +56,26 @@ import com.leovp.androidshowcase.domain.model.UnreadModel
 import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent
 import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.SearchEvent
 import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.TopAppBarEvent
+import com.leovp.androidshowcase.presentation.MainViewModel.UiState
 import com.leovp.androidshowcase.testdata.PreviewMainModule
 import com.leovp.androidshowcase.ui.AppDrawer
 import com.leovp.community.presentation.CommunityScreen
 import com.leovp.compose.composable.SearchBar
 import com.leovp.compose.composable.defaultLinearGradient
-import com.leovp.compose.composable.event.UiEventManager
 import com.leovp.compose.composable.loading.ProgressIndicator
 import com.leovp.compose.composable.rememberSizeAwareDrawerState
+import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.compose.utils.toCounterBadgeText
 import com.leovp.discovery.presentation.discovery.DiscoveryScreen
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
-import com.leovp.feature.base.event.composable.EventHandler
+import com.leovp.feature.base.event.composable.CustomEventHandler
 import com.leovp.feature.base.ui.DrawerDestinations
-import com.leovp.feature.base.ui.LocalNavigationActions
 import com.leovp.feature.base.ui.MainBottomNavigationItems
 import com.leovp.feature.base.ui.PreviewWrapperNoTheme
 import com.leovp.log.LogContext
 import com.leovp.log.base.d
+import com.leovp.mvvm.event.base.UiEventManager
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 import com.leovp.my.presentation.MyScreen
 import com.leovp.ui.theme.AppTheme
@@ -117,7 +118,7 @@ fun MainScreen(
     ) {
         val navController = LocalNavigationActions.current
         val snackbarHostState = remember { SnackbarHostState() }
-        EventHandler(
+        CustomEventHandler(
             events = viewModel.requireUiEvents,
             navController = navController,
             snackbarHostState = snackbarHostState,
@@ -127,7 +128,7 @@ fun MainScreen(
             var unreadList: List<UnreadModel>
             mainUiState.let {
                 when (it) {
-                    is MainViewModel.UiState.Content -> unreadList = it.unreadList
+                    is UiState.Content -> unreadList = it.unreadList
                 }
             }
             MainContentScaffold(

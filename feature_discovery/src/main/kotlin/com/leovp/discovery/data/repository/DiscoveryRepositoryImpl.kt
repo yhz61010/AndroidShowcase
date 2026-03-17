@@ -14,9 +14,9 @@ import com.leovp.discovery.domain.model.TopSongModel
 import com.leovp.discovery.domain.repository.DiscoveryRepository
 import com.leovp.feature.base.GlobalConst
 import com.leovp.feature.base.GlobalConst.PLAYLIST_SONG_SIZE
+import com.leovp.feature.base.http.model.ApiResponseModel
 import com.leovp.network.http.Result
 import com.leovp.network.http.net.result
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 /**
@@ -29,50 +29,62 @@ class DiscoveryRepositoryImpl
         @Suppress("unused") private val dataSource: DiscoveryDataSource,
     ) : DiscoveryRepository {
         /** 首页-发现 */
-        override suspend fun getHomePageBlock(): Result<HomePageBlockModel> =
-            result(Dispatchers.IO) {
-                Get<HomePageBlockResponse>(
+        override suspend fun getHomePageBlock(): Result<ApiResponseModel<HomePageBlockModel>> =
+            result {
+                val respResult = Get<HomePageBlockResponse>(
                     GlobalConst.HTTP_GET_HOMEPAGE_BLOCK_PAGE,
                 ).await()
-                    .result
-                    .toDomainModel()
+
+                ApiResponseModel(
+                    code = respResult.code,
+                    message = respResult.message,
+                    result = respResult.result.toDomainModel()
+                )
             }
 
         /** 获取独家放送 */
-        override suspend fun getPrivateContent(): Result<List<PrivateContentModel>> =
-            result(Dispatchers.IO) {
-                Get<PrivateContentResponse>(
+        override suspend fun getPrivateContent(): Result<ApiResponseModel<List<PrivateContentModel>>> =
+            result {
+                val respResult = Get<PrivateContentResponse>(
                     GlobalConst.HTTP_GET_PRIVATE_CONTENT,
                 ).await()
-                    .let { (typeName, result) ->
-                        result.map { it.toDomainModel(typeName) }
-                    }
+
+                ApiResponseModel(
+                    code = respResult.code,
+                    message = respResult.message,
+                    result = respResult.result.map { it.toDomainModel(respResult.name) }
+                )
             }
 
         /** 获取推荐歌单 */
-        override suspend fun getRecommendPlaylist(): Result<List<PlaylistModel>> =
-            result(Dispatchers.IO) {
-                Get<RecommendPlaylistResponse>(
+        override suspend fun getRecommendPlaylist(): Result<ApiResponseModel<List<PlaylistModel>>> =
+            result {
+                val respResult = Get<RecommendPlaylistResponse>(
                     GlobalConst.HTTP_GET_PERSONALIZED,
                 ) {
                     param("limit", PLAYLIST_SONG_SIZE)
                 }.await()
-                    .result
-                    .mapIndexed { _, respData ->
-                        respData.toDomainModel()
-                    }
+
+                ApiResponseModel(
+                    code = respResult.code,
+                    message = respResult.message,
+                    result = respResult.result.map { it.toDomainModel() }
+                )
             }
 
         /** 新歌速递 */
-        override suspend fun getTopSongs(type: Int): Result<List<TopSongModel>> =
-            result(Dispatchers.IO) {
-                Get<TopSongResponse>(GlobalConst.HTTP_GET_TOP_SONG) {
+        override suspend fun getTopSongs(type: Int): Result<ApiResponseModel<List<TopSongModel>>> =
+            result {
+                val respResult = Get<TopSongResponse>(GlobalConst.HTTP_GET_TOP_SONG) {
                     param("type", type)
                 }.await()
-                    .result
-                    .take(PLAYLIST_SONG_SIZE)
-                    .mapIndexed { _, respData ->
-                        respData.toDomainModel()
-                    }
+
+                ApiResponseModel(
+                    code = respResult.code,
+                    message = respResult.message,
+                    result = respResult.result
+                        .take(PLAYLIST_SONG_SIZE)
+                        .map { it.toDomainModel() }
+                )
             }
     }

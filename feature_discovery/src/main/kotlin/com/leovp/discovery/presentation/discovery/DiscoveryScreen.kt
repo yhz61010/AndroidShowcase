@@ -46,16 +46,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.leovp.android.exts.toast
-import com.leovp.compose.composable.event.UiEventManager
+import com.leovp.compose.composable.event.base.GenericEventHandler
 import com.leovp.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.compose.composable.pager.HorizontalAutoPager
+import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.discovery.R
 import com.leovp.discovery.domain.model.PlaylistModel
 import com.leovp.discovery.domain.model.PrivateContentModel
@@ -67,12 +68,12 @@ import com.leovp.discovery.presentation.discovery.base.SupportingContent
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.discovery.ui.theme.Dimens
 import com.leovp.discovery.ui.theme.place_holder_bg_color
-import com.leovp.feature.base.event.composable.GenericEventHandler
-import com.leovp.feature.base.ui.LocalNavigationActions
+import com.leovp.feature.base.event.composable.CustomEventHandler
 import com.leovp.feature.base.ui.PreviewWrapper
 import com.leovp.log.base.d
 import com.leovp.log.base.e
 import com.leovp.log.base.i
+import com.leovp.mvvm.event.base.UiEventManager
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 import com.leovp.feature.base.R as BaseR
 
@@ -91,7 +92,7 @@ fun DiscoveryScreen(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val ctx = LocalContext.current
-    GenericEventHandler(
+    CustomEventHandler(
         events = viewModel.requireUiEvents,
         navController = LocalNavigationActions.current,
     )
@@ -116,7 +117,7 @@ fun DiscoveryScreen(
             "DiscoveryScreen -> ResultException"
         }
         ctx.toast(
-            msg = "${ctx.getString(BaseR.string.bas_load_failed)}\n$message",
+            msg = "${stringResource(BaseR.string.bas_load_failed)}\n$message",
             error = true,
             longDuration = true,
         )
@@ -278,7 +279,8 @@ fun RecommendsPlaylistContent(
                                 onItemClick(
                                     DiscoveryUiEvent.RecommendsItemClick(playlist),
                                 )
-                            }.size(cardWidth),
+                            }
+                            .size(cardWidth),
                     shape = MaterialTheme.shapes.large,
                 ) {
                     Box {
@@ -413,7 +415,8 @@ fun CarouselItem(
                                 .background(
                                     Color.White,
                                     RoundedCornerShape(4.dp),
-                                ).padding(4.dp, 2.dp),
+                                )
+                                .padding(4.dp, 2.dp),
                         text = currentItem.typeName,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,

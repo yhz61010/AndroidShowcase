@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
+import com.leovp.compose.composable.nav.rememberNavigationActions
+import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.compose.utils.previewInitLog
 import com.leovp.ui.theme.ImmersiveTheme
 
@@ -31,7 +33,9 @@ fun PreviewWrapperNoTheme(content: @Composable () -> Unit) {
 
     val navController = rememberNavController()
     val navigationActions =
-        rememberNavigationActions(navController = navController)
+        rememberNavigationActions(navController = navController) {
+            AppNavigationActions(it)
+        }
 
     CompositionLocalProvider(
         LocalNavigationActions provides navigationActions,

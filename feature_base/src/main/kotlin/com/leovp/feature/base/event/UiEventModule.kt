@@ -2,7 +2,7 @@
 
 package com.leovp.feature.base.event
 
-import com.leovp.compose.composable.event.UiEventManager
+import com.leovp.mvvm.event.base.UiEventManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

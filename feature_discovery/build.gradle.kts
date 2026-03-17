@@ -15,6 +15,12 @@ plugins {
     jacoco
 }
 
+junitPlatform {
+    jacocoOptions {
+        taskGenerationEnabled.set(false)
+    }
+}
+
 // val jvmTargetVersion by extra {
 //     org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(libs.versions.jvmVersion.get())
 // }
