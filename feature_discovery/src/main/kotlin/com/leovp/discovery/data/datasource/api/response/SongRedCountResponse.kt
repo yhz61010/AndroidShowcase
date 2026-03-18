@@ -3,7 +3,7 @@ package com.leovp.discovery.data.datasource.api.response
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import com.leovp.discovery.data.datasource.api.model.SongRedCountApiModel
-import com.leovp.feature.base.http.model.ApiResponse
+import com.leovp.feature.base.http.model.BaseApiResponse
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SongRedCountResponse(
     @SerialName("data") val data: SongRedCountApiModel,
-) : ApiResponse()
+) : BaseApiResponse()
 
 // {
 //   "code": 200,

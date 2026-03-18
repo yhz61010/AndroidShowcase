@@ -2,7 +2,7 @@ package com.leovp.discovery.data.datasource.api.response
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
-import com.leovp.feature.base.http.model.ApiResponse
+import com.leovp.feature.base.http.model.BaseApiResponse
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MusicAvailableResponse(
     val success: Boolean,
-) : ApiResponse()
+) : BaseApiResponse()
 
 // {
 //   "code": 200,

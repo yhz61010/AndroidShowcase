@@ -46,7 +46,7 @@ constructor(
     // Because when pop back to this screen,
     // the NavGraphBuilder.composable() will be called again.
     init {
-        loadData()
+        onEvent(DiscoveryUiEvent.Refresh)
     }
 
     fun onEvent(event: DiscoveryUiEvent) {
@@ -85,6 +85,7 @@ constructor(
         }
     }
 
+    @Suppress("SameParameterValue")
     private fun loadData(forceRefresh: Boolean = false) {
         val uiState = uiStateFlow.value as DiscoveryUiState.Content
         i(tag) {
