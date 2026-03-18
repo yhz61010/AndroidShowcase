@@ -2,12 +2,14 @@ package com.leovp.discovery.presentation.player
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.domain.usecase.PlayerUseCase
 import com.leovp.discovery.presentation.player.PlayerViewModel.PlayerAction
 import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiEvent
 import com.leovp.discovery.presentation.player.base.PlayerContract.PlayerUiState
 import com.leovp.discovery.presentation.player.base.PlayerDelegateManager
+import com.leovp.feature.base.ui.Screen
 import com.leovp.json.toJsonString
 import com.leovp.log.base.d
 import com.leovp.log.base.e
@@ -27,7 +29,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.net.URLDecoder
 import javax.inject.Inject
 
 /**
@@ -49,23 +50,13 @@ constructor(
 ) {
     override fun getTagName() = "PlayerVM"
 
-    val songId: Long = (savedStateHandle["id"] as? Long) ?: 0L
-    val songArtist: String =
-        URLDecoder.decode(
-            (savedStateHandle["artist"] as? String) ?: "",
-            Charsets.UTF_8.name(),
-        )
-    val songTrack: String =
-        URLDecoder.decode(
-            (savedStateHandle["track"] as? String) ?: "",
-            Charsets.UTF_8.name(),
-        )
+    val playSongParam = savedStateHandle.toRoute<Screen.Player>()
 
     private val _playPositionState = MutableStateFlow(0f)
     val playPositionState: StateFlow<Float> = _playPositionState.asStateFlow()
 
     init {
-        loadData(id = songId)
+        loadData(id = playSongParam.id)
     }
 
     fun onEvent(event: PlayerUiEvent) {

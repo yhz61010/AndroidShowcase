@@ -90,7 +90,7 @@ constructor(
     private fun handleSearchEvent(event: SearchEvent) {
         when (event) {
             SearchEvent.SearchClick -> {
-                navigate(Screen.Search.route)
+                navigate(Screen.Search)
             }
 
             SearchEvent.ScanClick -> {

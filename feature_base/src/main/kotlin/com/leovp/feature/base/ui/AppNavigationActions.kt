@@ -2,14 +2,10 @@
 
 package com.leovp.feature.base.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import com.leovp.compose.composable.nav.AppNavigation
-import com.leovp.compose.utils.navigateSingleTopTo
-import com.leovp.compose.utils.navigateTo
-import com.leovp.mvvm.event.base.UiEvent
 
 /**
  * Author: Michael Leo
@@ -28,7 +24,7 @@ object DrawerDestinations {
 /**
  * Models the navigation actions in the app.
  *
- * DO NOT use this class directly, use [com.leovp.feature.base.ui.nav.rememberNavigationActions] instead.
+ * DO NOT use this class directly, use [com.leovp.compose.composable.nav.rememberNavigationActions] instead.
  *
  * Attention:
  * This class can't be singleton. Otherwise, it will cause the following exception
@@ -43,26 +39,23 @@ class AppNavigationActions(
     private val navController: NavHostController,
 ) : AppNavigation(navController) {
 
-    override fun navigate(
-        route: String,
-        arguments: String?,
-        extras: UiEvent.NavExtras?,
+    override fun <T : Any> navigate(
+        route: T,
+        navOptions: NavOptions?,
+        navigatorExtras: Navigator.Extras?,
     ) {
-        super.navigate(route, arguments, extras)
-        return when (route) {
-            Screen.Main.route -> navController.navigateToMain()
+        super.navigate(route, navOptions, navigatorExtras)
+        when (route) {
+            is Screen.Main -> navController.navigateToMain()
 
-            Screen.MemberCenter.route,
-            Screen.Search.route,
-            Screen.Player.routeName,
-            Screen.Message.route,
-            Screen.Setting.route,
-            Screen.Comment.routeName,
+            is Screen.MemberCenter,
+            is Screen.Search,
+            is Screen.Player,
+            is Screen.Message,
+            is Screen.Setting,
+            is Screen.Comment,
                 ->
-                navController.navigateSingleTopTo(
-                    route,
-                    arguments,
-                )
+                navController.navigateSingleTopPopUpToMain(route)
 
             else -> error("Illegal route: $route")
         }
@@ -70,7 +63,7 @@ class AppNavigationActions(
 }
 
 private fun NavHostController.navigateToMain() =
-    navigate(Screen.Main.route) {
+    this.navigate(Screen.Main) {
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destinations
         // on the back stack as users select items
@@ -89,11 +82,8 @@ private fun NavHostController.navigateToMain() =
         restoreState = false
     }
 
-fun NavHostController.navigateSingleTopPopUpToMain(
-    route: String,
-    arguments: String? = null,
-) {
-    navigateTo(route, arguments) {
+fun <T : Any> NavHostController.navigateSingleTopPopUpToMain(route: T) {
+    this.navigate(route) {
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destinations
         // on the back stack as users select items

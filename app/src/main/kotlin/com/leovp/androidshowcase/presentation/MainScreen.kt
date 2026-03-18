@@ -310,9 +310,7 @@ fun MainScreenContent(
     ) { page ->
         when (pagerScreenValues[page]) {
             MainBottomNavigationItems.DISCOVERY ->
-                DiscoveryScreen(
-                    onRefresh = onMainRefresh,
-                )
+                DiscoveryScreen(onRefresh = onMainRefresh)
 
             MainBottomNavigationItems.MY -> MyScreen()
             MainBottomNavigationItems.COMMUNITY -> CommunityScreen()
@@ -404,8 +402,8 @@ fun PreviewMainScreen() {
             factory =
                 viewModelProviderFactoryOf {
                     DiscoveryViewModel(
-                        PreviewDiscoveryModule.previewDiscoveryListUseCase,
-                        UiEventManager(),
+                        useCase = PreviewDiscoveryModule.previewDiscoveryListUseCase,
+                        uiEventManager = UiEventManager(),
                     )
                 },
         )

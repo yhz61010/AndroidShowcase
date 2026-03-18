@@ -56,6 +56,7 @@ import com.leovp.discovery.presentation.player.base.TrackInfoItem
 import com.leovp.discovery.testdata.PreviewPlayerModule
 import com.leovp.feature.base.event.composable.CustomEventHandler
 import com.leovp.feature.base.ui.PreviewWrapper
+import com.leovp.json.toJsonString
 import com.leovp.log.base.d
 import com.leovp.mvvm.event.base.UiEventManager
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
@@ -74,9 +75,7 @@ fun PlayerScreen(
 ) {
     SideEffect {
         d(TAG) {
-            "=> Enter PlayerScreen <= " +
-                "${viewModel.songArtist}-${viewModel.songTrack} " +
-                "id=${viewModel.songId}"
+            "=> Enter PlayerScreen <= ${viewModel.playSongParam.toJsonString()} "
         }
     }
     val navController = LocalNavigationActions.current
@@ -107,8 +106,8 @@ fun PlayerScreen(
                 title = {
                     TitleContent(
                         uiState = uiState,
-                        defArtist = viewModel.songArtist,
-                        defTrack = viewModel.songTrack,
+                        defArtist = viewModel.playSongParam.artist,
+                        defTrack = viewModel.playSongParam.track,
                     )
                 },
                 colors =
@@ -181,8 +180,8 @@ fun PlayerScreenContent(
         ) {
             TrackArtistItem(
                 songInfo = songInfo,
-                artist = viewModel.songArtist,
-                track = viewModel.songTrack,
+                artist = viewModel.playSongParam.artist,
+                track = viewModel.playSongParam.track,
                 onEvent = { event ->
                     // ctx.toast("You click on $event.")
                     viewModel.onEvent(event)

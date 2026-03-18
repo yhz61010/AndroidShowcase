@@ -35,9 +35,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
-import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.leovp.compose.ui.LocalNavigationActions
@@ -65,6 +66,7 @@ import com.leovp.discovery.testdata.local.datasource.LocalCommentData
 import com.leovp.feature.base.event.composable.CustomEventHandler
 import com.leovp.feature.base.ui.CommentBottomNavigationItems
 import com.leovp.feature.base.ui.PreviewWrapper
+import com.leovp.feature.base.ui.Screen
 import com.leovp.mvvm.event.base.UiEventManager
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
 import kotlinx.coroutines.launch
@@ -81,7 +83,6 @@ private val imgPadding = 8.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentMainScreen(
-    songInfo: SongModel,
     viewModel: CommentViewModel = hiltViewModel<CommentViewModel>(),
 ) {
     // val context = LocalContext.current
@@ -181,7 +182,7 @@ fun CommentMainScreen(
             modifier = Modifier.padding(contentPadding),
         ) { page ->
             when (page) {
-                0 -> CommentTabContent(songInfo)
+                0 -> CommentTabContent(viewModel.songInfo)
                 1 -> NotesTabContent()
             }
         }
@@ -189,7 +190,7 @@ fun CommentMainScreen(
 }
 
 @Composable
-fun CommentTabContent(songInfo: SongModel) {
+fun CommentTabContent(songInfo: Screen.Comment) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -213,11 +214,11 @@ fun CommentTabContent(songInfo: SongModel) {
             Spacer(modifier = Modifier.width(imgPadding))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = songInfo.name,
+                    text = songInfo.songName,
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = " - ${songInfo.getSongArtist()}",
+                    text = " - ${songInfo.artist}",
                     color = Color.Gray,
                     style = MaterialTheme.typography.titleSmall,
                 )
@@ -440,6 +441,12 @@ fun PreviewCommentScreen() {
                 factory =
                     viewModelProviderFactoryOf {
                         CommentViewModel(
+                            savedStateHandle =
+                                SavedStateHandle().also {
+                                    it["id"] = arrayOf(10712L)
+                                    it["artist"] = "鄧麗君"
+                                    it["track"] = "甜蜜蜜"
+                                },
                             PreviewDiscoveryModule.previewDiscoveryListUseCase,
                             UiEventManager(),
                         )
@@ -448,7 +455,7 @@ fun PreviewCommentScreen() {
 
         CommentMainScreen(
             // widthSize = WindowWidthSizeClass.Compact,
-            songInfo = LocalCommentData.previewSongInfo,
+            // songInfo = LocalCommentData.previewSongInfo,
             viewModel = viewModel,
         )
     }

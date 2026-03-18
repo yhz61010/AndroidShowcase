@@ -125,7 +125,7 @@ fun ShowcaseApp(widthSizeClass: WindowWidthSizeClass) {
     ) {
         NavHost(
             navController = navController,
-            startDestination = Screen.Splash.route,
+            startDestination = Screen.Splash,
             modifier = Modifier,
             enterTransition = enterTransition,
             exitTransition = exitTransition,

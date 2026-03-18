@@ -1,9 +1,12 @@
 package com.leovp.discovery.presentation.comment
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.domain.usecase.GetDiscoveryListUseCase
 import com.leovp.discovery.presentation.comment.CommentViewModel.CommentAction
 import com.leovp.discovery.presentation.comment.CommentViewModel.CommentUiState
+import com.leovp.feature.base.ui.Screen
 import com.leovp.mvvm.BaseAction
 import com.leovp.mvvm.BaseState
 import com.leovp.mvvm.BaseViewModel
@@ -21,6 +24,7 @@ import javax.inject.Inject
 class CommentViewModel
 @Inject
 constructor(
+    savedStateHandle: SavedStateHandle,
     private val useCase: GetDiscoveryListUseCase,
     uiEventManager: UiEventManager,
 ) : BaseViewModel<CommentUiState, CommentAction>(
@@ -28,6 +32,8 @@ constructor(
     uiEventManager = uiEventManager,
 ) {
     override fun getTagName() = "CmtVM"
+
+    val songInfo = savedStateHandle.toRoute<Screen.Comment>()
 
     sealed interface CommentUiState : BaseState {
         data class Content(

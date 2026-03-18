@@ -9,25 +9,20 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.leovp.android.exts.toast
 import com.leovp.androidshowcase.presentation.MainScreen
 import com.leovp.androidshowcase.presentation.SplashScreen
 import com.leovp.androidshowcase.ui.theme.SplashTheme
 import com.leovp.compose.ui.LocalNavigationActions
-import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.presentation.comment.CommentMainScreen
 import com.leovp.discovery.presentation.player.PlayerScreen
 import com.leovp.discovery.presentation.search.SearchScreen
 import com.leovp.feature.base.ui.Screen
-import com.leovp.json.toObject
 import com.leovp.log.base.d
 import com.leovp.maindrawer.membercenter.presentation.MemberCenterScreen
 import com.leovp.ui.theme.ImmersiveTheme
 import com.leovp.ui.theme.immersive_sys_ui
-import java.net.URLDecoder
 
 /**
  * Author: Michael Leo
@@ -41,8 +36,7 @@ private val slideDown = AnimatedContentTransitionScope.SlideDirection.Down
 // private val tween = tween<IntOffset>(durationMillis = SCREEN_TRANSITION_DURATION)
 
 fun NavGraphBuilder.addAppMainGraph(widthSizeClass: WindowWidthSizeClass) {
-    composable(
-        route = Screen.Splash.route,
+    composable<Screen.Splash>(
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
@@ -53,12 +47,11 @@ fun NavGraphBuilder.addAppMainGraph(widthSizeClass: WindowWidthSizeClass) {
             // AnimatedSplashScreen(navController = navController)
             val navController = LocalNavigationActions.current
             SplashScreen(
-                onTimeout = { navController.navigate(Screen.Main.route) },
+                onTimeout = { navController.navigate(Screen.Main) },
             )
         }
     }
-    composable(
-        route = Screen.Main.route,
+    composable<Screen.Main>(
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
@@ -77,7 +70,7 @@ fun NavGraphBuilder.addAppMainGraph(widthSizeClass: WindowWidthSizeClass) {
 
 fun NavGraphBuilder.addAppDrawerGraph() {
     d(TAG) { "=> Enter addAppDrawerGraph <=" }
-    composable(route = Screen.MemberCenter.route) {
+    composable<Screen.MemberCenter> {
         d(TAG) { "=> Enter MemberCenterScreen Composable <=" }
         ImmersiveTheme(
             systemBarColor = immersive_sys_ui,
@@ -87,10 +80,10 @@ fun NavGraphBuilder.addAppDrawerGraph() {
             MemberCenterScreen()
         }
     }
-    composable(route = Screen.Message.route) {
+    composable<Screen.Message> {
         d(TAG) { "=> Enter MessageScreen Composable <=" }
     }
-    composable(route = Screen.Setting.route) {
+    composable<Screen.Setting> {
         d(TAG) { "=> Enter SettingScreen Composable <=" }
     }
 }
@@ -98,7 +91,7 @@ fun NavGraphBuilder.addAppDrawerGraph() {
 fun NavGraphBuilder.addPlayerGraph() {
     d(TAG) { "=> Enter addOtherGraph <=" }
 
-    composable(route = Screen.Search.route) {
+    composable<Screen.Search> {
         d(TAG) { "=> Enter SearchScreen Composable <=" }
         ImmersiveTheme(
             systemBarColor = Color.Transparent,
@@ -118,14 +111,7 @@ fun NavGraphBuilder.addPlayerGraph() {
         }
     }
 
-    composable(
-        route = Screen.Player.route,
-        arguments =
-            listOf(
-                navArgument("id") { type = NavType.LongType },
-                navArgument("artist") { type = NavType.StringType },
-                navArgument("track") { type = NavType.StringType },
-            ),
+    composable<Screen.Player>(
         enterTransition = {
             slideIntoContainer(towards = slideUp, animationSpec = tween(350))
         },
@@ -166,21 +152,14 @@ fun NavGraphBuilder.addCommentGraph(
     // widthSizeClass: WindowWidthSizeClass,
 ) {
     d(TAG) { "=> Enter addCommentGraph <=" }
-    composable(
-        route = Screen.Comment.route,
-        arguments = listOf(navArgument("songInfo") { type = NavType.StringType }),
-    ) {
-        val songInfoString = checkNotNull(it.arguments?.getString("songInfo"))
-        val songInfo =
-            URLDecoder.decode(songInfoString, Charsets.UTF_8.name()).toObject<SongModel>()
-
+    composable<Screen.Comment> {
         d(TAG) { "=> Enter CommentScreen Composable <=" }
         ImmersiveTheme(
             systemBarColor = immersive_sys_ui,
             lightSystemBar = !isSystemInDarkTheme(),
             dynamicColor = false,
         ) {
-            CommentMainScreen(songInfo = checkNotNull(songInfo))
+            CommentMainScreen()
         }
     }
 }

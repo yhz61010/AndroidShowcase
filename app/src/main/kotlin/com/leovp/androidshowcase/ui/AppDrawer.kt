@@ -68,7 +68,7 @@ fun AppDrawer(
             nameResId = Screen.MemberCenter.nameResId,
             selected = currentRoute == Screen.MemberCenter.route,
             onClick = {
-                navController.navigate(Screen.MemberCenter.route)
+                navController.navigate(Screen.MemberCenter)
                 onCloseDrawer()
             },
         )
@@ -77,7 +77,7 @@ fun AppDrawer(
             nameResId = Screen.Message.nameResId,
             selected = currentRoute == Screen.Message.route,
             onClick = {
-                navController.navigate(Screen.Message.route)
+                navController.navigate(Screen.Message)
                 onCloseDrawer()
             },
         )
@@ -86,7 +86,7 @@ fun AppDrawer(
             nameResId = Screen.Setting.nameResId,
             selected = currentRoute == Screen.Setting.route,
             onClick = {
-                navController.navigate(Screen.Setting.route)
+                navController.navigate(Screen.Setting)
                 onCloseDrawer()
             },
         )

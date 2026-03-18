@@ -21,7 +21,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
 import javax.inject.Inject
 
 /**
@@ -39,7 +38,6 @@ constructor(
     initialState = DiscoveryUiState.Content(),
     uiEventManager = uiEventManager,
 ) {
-
     override fun getTagName() = "DisVM"
 
     // Avoid recompose when pop back to this screen.
@@ -59,23 +57,19 @@ constructor(
                 }
 
                 is DiscoveryUiEvent.PersonalItemClick -> {
-                    val artist =
-                        URLEncoder.encode(
-                            event.data.getDefaultArtistName(),
-                            Charsets.UTF_8.name(),
-                        )
-                    val track =
-                        URLEncoder.encode(
-                            event.data.name,
-                            Charsets.UTF_8.name(),
-                        )
+                    val songId = event.data.id
+                    val songName = event.data.name
+                    val artist = event.data.getDefaultArtistName()
+                    val track = event.data.name
                     i(tag) {
-                        "Click [Personal Item] artist=$artist track=$track"
+                        "Click [Personal Item] song[$songId]=$songName artist=$artist track=$track"
                     }
-                    navigate(
-                        Screen.Player.routeName,
-                        "${event.data.id}/$artist/$track",
+                    val songParam = Screen.Player(
+                        id = songId,
+                        artist = artist,
+                        track = track
                     )
+                    navigate(songParam)
                 }
 
                 is DiscoveryUiEvent.RecommendsItemClick -> {
