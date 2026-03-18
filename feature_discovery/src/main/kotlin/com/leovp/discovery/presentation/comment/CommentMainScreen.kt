@@ -261,7 +261,8 @@ fun CommentTabContent(songInfo: SongModel) {
         ) {
             items(
                 items = LocalCommentData.mockComments,
-                key = { comment -> comment.id }
+                key = { comment -> comment.id },
+                contentType = { "comment" },
             ) { comment ->
                 CommentItem(comment = comment, onLike = { })
             }

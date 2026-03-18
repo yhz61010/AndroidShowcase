@@ -8,15 +8,15 @@ import com.leovp.androidshowcase.presentation.MainViewModel.MainUiEvent.TopAppBa
 import com.leovp.androidshowcase.presentation.MainViewModel.UiState
 import com.leovp.androidshowcase.presentation.MainViewModel.UiState.Content
 import com.leovp.feature.base.ui.Screen
+import com.leovp.json.toJsonString
 import com.leovp.log.base.i
 import com.leovp.log.base.w
 import com.leovp.mvvm.BaseAction
 import com.leovp.mvvm.BaseState
 import com.leovp.mvvm.BaseViewModel
 import com.leovp.mvvm.event.base.UiEventManager
-import com.leovp.network.http.getOrDefault
+import com.leovp.mvvm.http.dispatchBizResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +38,7 @@ constructor(
     // Because when pop back to this screen,
     // the NavGraphBuilder.composable() will be called again.
     init {
-        loadData()
+        onEvent(MainUiEvent.Refresh)
     }
 
     fun onEvent(event: MainUiEvent) {
@@ -51,6 +51,7 @@ constructor(
         }
     }
 
+    @Suppress("SameParameterValue")
     private fun loadData(forceRefresh: Boolean = false) {
         val uiState = uiStateFlow.value as Content
         i(tag) {
@@ -62,12 +63,15 @@ constructor(
         }
         sendAction(Action.ShowLoading)
         viewModelScope.launch {
-            val unreadListDeferred = async { useCase.getUnreadList("1") }
-            val unreadList =
-                unreadListDeferred.await().getOrDefault(
-                    emptyList(),
-                )
-            sendAction(Action.LoadSuccess(unreadList))
+            val unreadListBizResult = useCase.getUnreadList("1")
+            dispatchBizResult(
+                uiEventManager = uiEventManager,
+                bizResult = unreadListBizResult,
+                onSuccess = { unreadList, _ ->
+                    i(tag) { "unreadList=${unreadList.toJsonString()}" }
+                    sendAction(Action.LoadSuccess(unreadList))
+                }
+            )
         }
     }
 

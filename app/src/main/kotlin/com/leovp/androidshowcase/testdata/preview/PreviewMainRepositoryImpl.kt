@@ -19,6 +19,10 @@ constructor(
 ) : MainRepository {
     override suspend fun getUnreadList(uid: String): Result<ApiResponseModel<List<UnreadModel>>> =
         result {
-            ApiResponseModel(result = dataSource.getUnreadList(uid))
+            ApiResponseModel(
+                code = 200,
+                message = "",
+                result = dataSource.getUnreadList(uid)
+            )
         }
 }

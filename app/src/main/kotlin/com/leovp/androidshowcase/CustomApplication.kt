@@ -7,6 +7,7 @@ import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.disk.DiskCache
 import coil3.disk.directory
+import coil3.memory.MemoryCache
 import coil3.request.crossfade
 import com.leovp.feature.base.log.MarsXLog
 import com.leovp.log.LogContext
@@ -43,11 +44,11 @@ class CustomApplication :
             .crossfade(true)
             // Disable `Cache-Control` header support in order to disable disk caching.
             // .respectCacheHeaders(false)
-            // .memoryCache {
-            //     MemoryCache.Builder(this)
-            //         .maxSizePercent(0.25)
-            //         .build()
-            // }
+            .memoryCache {
+                MemoryCache.Builder()
+                    .maxSizePercent(context, 0.25)
+                    .build()
+            }
             .diskCache {
                 DiskCache
                     .Builder()

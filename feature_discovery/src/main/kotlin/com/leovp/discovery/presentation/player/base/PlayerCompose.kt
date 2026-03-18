@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -232,29 +233,32 @@ private fun CommentItem(
 ) {
     val inlineMoreContentId = "more"
     val text =
-        buildAnnotatedString {
-            append(commentsData.comment)
-            appendInlineContent(inlineMoreContentId, "[more]")
+        remember(commentsData.comment) {
+            buildAnnotatedString {
+                append(commentsData.comment)
+                appendInlineContent(inlineMoreContentId, "[more]")
+            }
         }
     val inlineContent =
-        mapOf(
-            inlineMoreContentId to
-                InlineTextContent(
-                    placeholder =
-                        Placeholder(
-                            width = 22.sp,
-                            height = 22.sp,
-                            placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
-                        ),
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp),
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
-                },
-        )
+        remember {
+            mapOf(
+                inlineMoreContentId to
+                    InlineTextContent(
+                        placeholder =
+                            Placeholder(
+                                width = 22.sp,
+                                height = 22.sp,
+                                placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
+                            ),
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(22.dp),
+                        )
+                    },
+            )
+        }
     Row(
         modifier =
             modifier

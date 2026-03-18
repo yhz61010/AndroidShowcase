@@ -9,15 +9,14 @@ import com.leovp.discovery.presentation.discovery.DiscoveryViewModel.DiscoveryAc
 import com.leovp.discovery.presentation.discovery.base.DiscoveryContract.DiscoveryUiEvent
 import com.leovp.discovery.presentation.discovery.base.DiscoveryContract.DiscoveryUiState
 import com.leovp.feature.base.ui.Screen
-import com.leovp.log.base.e
 import com.leovp.log.base.i
 import com.leovp.log.base.w
 import com.leovp.mvvm.BaseAction
 import com.leovp.mvvm.BaseViewModel
 import com.leovp.mvvm.event.base.UiEventManager
+import com.leovp.mvvm.http.extractBizData
+import com.leovp.network.http.ResultBiz
 import com.leovp.network.http.exception.ResultException
-import com.leovp.network.http.exceptionOrNull
-import com.leovp.network.http.getOrDefault
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -107,36 +106,30 @@ constructor(
                         Triple(private.await(), playlist.await(), songs.await())
                     }
 
-                val exceptions =
-                    listOfNotNull(
-                        privateContentResult.exceptionOrNull(),
-                        recommendPlaylistResult.exceptionOrNull(),
-                        topSongsResult.exceptionOrNull(),
-                    )
+                val privateContent = extractData(privateContentResult) ?: return@launch
+                val recommendPlaylist =
+                    extractData(recommendPlaylistResult) ?: return@launch
+                val topSongs = extractData(topSongsResult) ?: return@launch
 
-                if (exceptions.isNotEmpty()) {
-                    sendAction(DiscoveryAction.LoadFailure(exceptions.first()))
-                    exceptions.drop(1).forEach {
-                        e(tag, it) {
-                            "Additional exception occurred during data loading"
-                        }
-                    }
-                } else {
-                    val successAction =
-                        DiscoveryAction.LoadSuccess(
-                            privateContent =
-                                privateContentResult.getOrDefault(emptyList()),
-                            recommendPlaylist =
-                                recommendPlaylistResult.getOrDefault(emptyList()),
-                            topSongs = topSongsResult.getOrDefault(emptyList()),
-                        )
-                    sendAction(successAction)
-                }
+                sendAction(
+                    DiscoveryAction.LoadSuccess(
+                        privateContent = privateContent,
+                        recommendPlaylist = recommendPlaylist,
+                        topSongs = topSongs,
+                    )
+                )
             } finally {
                 hideLoading()
             }
         }
     }
+
+    private suspend fun <T> extractData(bizResult: ResultBiz<T>): T? =
+        extractBizData(uiEventManager, bizResult) { err, _ ->
+            sendAction(DiscoveryAction.LoadFailure(err))
+        }
+
+    // ==============================
 
     sealed interface DiscoveryAction : BaseAction.Simple<DiscoveryUiState> {
         data object ShowLoading : DiscoveryAction {

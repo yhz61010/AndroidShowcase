@@ -49,7 +49,7 @@ open class ApiResponseModel<T>(
         /**
          * Attention: Business errors will also be regarded as exceptions.
          *
-         * Attention: For returned value `ApiResponse`,
+         * Attention: For returned value `ApiResponseModel`,
          * when `success` is `true` but `result` is `null`,
          * the type defaults to String.
          *
@@ -57,7 +57,7 @@ open class ApiResponseModel<T>(
          * no business error, the `Result.Success` will be returned.
          * Otherwise, return the specific exception wrapped by `Result.Failure`.
          *
-         * @return responseApiResult The type should be `Result<ApiResponse<T?>?>`
+         * @return responseApiResult The type should be `Result<ApiResponseModel<T?>?>`
          *
          * @return If the returned result is `Result.Failure`,
          * it can be an instance of the following subclass:
@@ -95,6 +95,7 @@ open class ApiResponseModel<T>(
 
                 // Successfully receive network result
                 is Result.Success -> {
+                    // Get `ApiResponseModel` api result not the real data result.
                     val responseDataResult = responseApiResult.getOrNull()
                     d {
                         tag = TAG
@@ -104,6 +105,8 @@ open class ApiResponseModel<T>(
                     }
 
                     when {
+                        // This means `ApiResponseModel` itself is null,
+                        // not the real data is null.
                         responseDataResult == null -> {
                             w(TAG) { "Response is failure." }
                             ResultBiz.Failure(EmptyResponseException())
@@ -194,7 +197,7 @@ open class ApiResponseModel<T>(
             }
         }
 
-        fun isReloginCode(code: Int): Boolean = false
+        fun isReloginCode(@Suppress("UNUSED_PARAMETER") code: Int): Boolean = false
     }
 
 }

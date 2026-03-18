@@ -113,14 +113,12 @@ fun LazyListScope.memberCenterScreenContentItems() {
             contentScale = ContentScale.FillWidth,
         )
     }
-    repeat(100) {
-        item {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    modifier = Modifier.padding(2.dp, 16.dp),
-                    text = "item: $it",
-                )
-            }
+    items(100) { index ->
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                modifier = Modifier.padding(2.dp, 16.dp),
+                text = "item: $index",
+            )
         }
     }
 }

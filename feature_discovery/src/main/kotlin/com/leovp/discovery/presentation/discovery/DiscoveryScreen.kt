@@ -139,7 +139,7 @@ fun DiscoveryScreen(
         DiscoveryContent(
             listState = listState,
             uiState = uiState,
-            onEvent = { viewModel.onEvent(it) },
+            onEvent = remember { { event: DiscoveryUiEvent -> viewModel.onEvent(event) } },
         )
     } // end PullToRefreshBox
 }
@@ -176,6 +176,7 @@ fun DiscoveryContent(
             items(
                 items = uiState.topSongs,
                 key = { it.id },
+                contentType = { "topSong" },
             ) { data ->
                 TopSongsItem(data, onEvent)
             }
@@ -270,6 +271,7 @@ fun RecommendsPlaylistContent(
         items(
             items = list,
             key = { it.id },
+            contentType = { "playlist" },
         ) { playlist ->
             Column {
                 Card(
