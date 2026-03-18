@@ -70,9 +70,9 @@ import com.leovp.discovery.presentation.discovery.DiscoveryScreen
 import com.leovp.discovery.presentation.discovery.DiscoveryViewModel
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.feature.base.event.composable.CustomEventHandler
-import com.leovp.feature.base.ui.DrawerDestinations
 import com.leovp.feature.base.ui.MainBottomNavigationItems
 import com.leovp.feature.base.ui.PreviewWrapperNoTheme
+import com.leovp.feature.base.ui.Screen
 import com.leovp.log.LogContext
 import com.leovp.log.base.d
 import com.leovp.mvvm.event.base.UiEventManager
@@ -101,11 +101,11 @@ fun MainScreen(
         mutableStateOf(widthSize == WindowWidthSizeClass.Expanded)
     }
     val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
-
+    val navController = LocalNavigationActions.current
     ModalNavigationDrawer(
         drawerContent = {
             AppDrawer(
-                currentRoute = DrawerDestinations.NO_ROUTE,
+                currentRoute = Screen.None,
                 onCloseDrawer = {
                     coroutineScope.launch { sizeAwareDrawerState.close() }
                 },
@@ -116,7 +116,6 @@ fun MainScreen(
         // Only enable opening the drawer via gestures if the screen is not expanded
         gesturesEnabled = !isExpandedScreen,
     ) {
-        val navController = LocalNavigationActions.current
         val snackbarHostState = remember { SnackbarHostState() }
         CustomEventHandler(
             events = viewModel.requireUiEvents,
@@ -169,7 +168,7 @@ private fun MainContentScaffold(
             HomeTopAppBar(
                 unread =
                     unreadList
-                        .firstOrNull { it.key == UnreadModel.MESSAGE }
+                        .firstOrNull { it.key == Screen.Message }
                         ?.value,
                 pagerState = pagerState,
                 onEvent = onEvent,
@@ -239,7 +238,7 @@ fun CustomBottomBar(
     NavigationBar {
         MainBottomNavigationItems.entries.forEachIndexed { index, bottomItemData ->
             val badgeNum =
-                unreadList.firstOrNull { it.key == bottomItemData.screen.route }?.value
+                unreadList.firstOrNull { it.key == bottomItemData.screen }?.value
                     ?: 0
             NavigationBarItem(
                 icon = {
@@ -280,7 +279,7 @@ fun CustomBottomBar(
                 onClick = {
                     LogContext.log.i(
                         TAG,
-                        "Selected: ${bottomItemData.screen.route}",
+                        "Selected: ${bottomItemData.screen}",
                     )
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(

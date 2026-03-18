@@ -12,14 +12,6 @@ import com.leovp.feature.base.ui.Screen
 @Keep
 @Immutable
 data class UnreadModel(
-    val key: String,
+    val key: Screen,
     val value: Int,
-) {
-    companion object {
-        val MESSAGE = Screen.MemberCenter.route
-
-        val DISCOVERY = Screen.Discovery.route
-        val MY = Screen.My.route
-        val COMMUNITY = Screen.Community.route
-    }
-}
+)

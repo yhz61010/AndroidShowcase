@@ -14,13 +14,6 @@ import com.leovp.compose.composable.nav.AppNavigation
 
 private const val TAG = "Nav"
 
-// --------------------
-// Drawer destinations
-// --------------------
-object DrawerDestinations {
-    const val NO_ROUTE = "drawer_dst"
-}
-
 /**
  * Models the navigation actions in the app.
  *
@@ -35,9 +28,8 @@ object DrawerDestinations {
  * destination=Destination(0x88e673a4) route=app_main
  * ```
  */
-class AppNavigationActions(
-    private val navController: NavHostController,
-) : AppNavigation(navController) {
+class AppNavigationActions(navController: NavHostController) :
+    AppNavigation(navController) {
 
     override fun <T : Any> navigate(
         route: T,
@@ -75,7 +67,7 @@ private fun NavHostController.navigateToMain() =
         // `inclusive = true` ensures that `Splash` itself is also removed.
         // Effect: Once the user reaches `Main`,
         // pressing the back button won't return them to `Splash` — it will exit the app instead.
-        popUpTo(Screen.Splash.route) { inclusive = true }
+        popUpTo(Screen.Splash) { inclusive = true }
         // Avoid multiple copies of the same destination when re-selecting the same item
         launchSingleTop = true
         // Whether to restore state when re-selecting a previously selected item
@@ -95,7 +87,7 @@ fun <T : Any> NavHostController.navigateSingleTopPopUpToMain(route: T) {
         // `inclusive = false`(default value) ensures that `Main` itself is NOT removed.
         // Effect: Once the user reaches `route`,
         // pressing the back button will return to `Main` screen.
-        popUpTo(Screen.Main.route) { saveState = true }
+        popUpTo(Screen.Main) { saveState = true }
         // Avoid multiple copies of the same destination when re-selecting the same item
         launchSingleTop = true
         // Whether to restore state when re-selecting a previously selected item

@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.leovp.androidshowcase.R
 import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.feature.base.res.Dimen
-import com.leovp.feature.base.ui.DrawerDestinations
 import com.leovp.feature.base.ui.PreviewWrapperNoTheme
 import com.leovp.feature.base.ui.Screen
 import com.leovp.log.base.d
@@ -43,7 +42,7 @@ private const val TAG = "AppDrawer"
 
 @Composable
 fun AppDrawer(
-    currentRoute: String,
+    currentRoute: Screen,
     onCloseDrawer: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -66,7 +65,7 @@ fun AppDrawer(
         DrawerItem(
             iconResId = Screen.MemberCenter.getIcon(),
             nameResId = Screen.MemberCenter.nameResId,
-            selected = currentRoute == Screen.MemberCenter.route,
+            selected = currentRoute is Screen.MemberCenter,
             onClick = {
                 navController.navigate(Screen.MemberCenter)
                 onCloseDrawer()
@@ -75,7 +74,7 @@ fun AppDrawer(
         DrawerItem(
             iconResId = Screen.Message.getIcon(),
             nameResId = Screen.Message.nameResId,
-            selected = currentRoute == Screen.Message.route,
+            selected = currentRoute is Screen.Message,
             onClick = {
                 navController.navigate(Screen.Message)
                 onCloseDrawer()
@@ -84,7 +83,7 @@ fun AppDrawer(
         DrawerItem(
             iconResId = Screen.Setting.getIcon(),
             nameResId = Screen.Setting.nameResId,
-            selected = currentRoute == Screen.Setting.route,
+            selected = currentRoute is Screen.Setting,
             onClick = {
                 navController.navigate(Screen.Setting)
                 onCloseDrawer()
@@ -151,7 +150,7 @@ fun PreviewAppDrawer() {
     PreviewWrapperNoTheme {
         AppTheme(dynamicColor = false) {
             AppDrawer(
-                currentRoute = DrawerDestinations.NO_ROUTE,
+                currentRoute = Screen.MemberCenter,
                 onCloseDrawer = { },
             )
         }
