@@ -3,10 +3,13 @@ package com.leovp.feature.base.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import com.leovp.compose.composable.nav.rememberNavigationActions
 import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.compose.utils.previewInitLog
+import com.leovp.pref.LPref
+import com.leovp.pref.PrefContext
 import com.leovp.ui.theme.ImmersiveTheme
 
 /**
@@ -30,6 +33,7 @@ fun PreviewWrapper(content: @Composable () -> Unit) {
 @Composable
 fun PreviewWrapperNoTheme(content: @Composable () -> Unit) {
     previewInitLog()
+    PrefContext.setPrefImpl(LPref(LocalContext.current))
 
     val navController = rememberNavController()
     val navigationActions =

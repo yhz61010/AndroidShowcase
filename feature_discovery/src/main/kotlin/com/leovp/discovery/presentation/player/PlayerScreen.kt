@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -78,14 +79,17 @@ fun PlayerScreen(
             "=> Enter PlayerScreen <= ${viewModel.playSongParam.toJsonString()} "
         }
     }
+    val ctx = LocalContext.current
     val navController = LocalNavigationActions.current
     CustomEventHandler(events = viewModel.requireUiEvents, navController = navController)
 
     val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val uiState = uiStateFlow as PlayerUiState.Content
-    uiState.exception?.let { resultException ->
-        val message = resultException.cause?.cause?.message ?: resultException.message
-        LocalContext.current.toast(message, error = true, longDuration = true)
+    LaunchedEffect(uiState.exception) {
+        uiState.exception?.let { resultException ->
+            val message = resultException.cause?.cause?.message ?: resultException.message
+            ctx.toast(message, error = true, longDuration = true)
+        }
     }
 
     val topAppBarState = rememberTopAppBarState()
@@ -308,9 +312,9 @@ fun PreviewPlayerScreen() {
                         PlayerViewModel(
                             savedStateHandle =
                                 SavedStateHandle().also {
-                                    it["id"] = arrayOf(10712L)
-                                    it["artist"] = "鄧麗君"
+                                    it["id"] = 10712L
                                     it["track"] = "甜蜜蜜"
+                                    it["artist"] = "鄧麗君"
                                 },
                             uiEventManager = UiEventManager(),
                             useCase = PreviewPlayerModule.previewPlayerUseCase,

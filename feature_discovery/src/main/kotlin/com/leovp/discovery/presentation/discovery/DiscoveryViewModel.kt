@@ -58,11 +58,10 @@ constructor(
 
                 is DiscoveryUiEvent.PersonalItemClick -> {
                     val songId = event.data.id
-                    val songName = event.data.name
                     val artist = event.data.getDefaultArtistName()
                     val track = event.data.name
                     i(tag) {
-                        "Click [Personal Item] song[$songId]=$songName artist=$artist track=$track"
+                        "Click [Personal Item] song[$songId]=$track artist=$artist"
                     }
                     val songParam = Screen.Player(
                         id = songId,

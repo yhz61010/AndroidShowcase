@@ -64,7 +64,7 @@ import com.leovp.discovery.domain.model.SongModel
 import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.discovery.testdata.local.datasource.LocalCommentData
 import com.leovp.feature.base.event.composable.CustomEventHandler
-import com.leovp.feature.base.ui.CommentBottomNavigationItems
+import com.leovp.feature.base.ui.CommentTabs
 import com.leovp.feature.base.ui.PreviewWrapper
 import com.leovp.feature.base.ui.Screen
 import com.leovp.mvvm.event.base.UiEventManager
@@ -93,10 +93,10 @@ fun CommentMainScreen(
     )
 
     val coroutineScope = rememberCoroutineScope()
-    val pagerScreenValues = CommentBottomNavigationItems.entries.toTypedArray()
+    val pagerScreenValues = CommentTabs.entries.toTypedArray()
     val pagerState =
         rememberPagerState(
-            initialPage = CommentBottomNavigationItems.COMMENT.ordinal,
+            initialPage = CommentTabs.COMMENT.ordinal,
             initialPageOffsetFraction = 0f,
             pageCount = { pagerScreenValues.size },
         )
@@ -136,7 +136,10 @@ fun CommentMainScreen(
                             Tab(
                                 text = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(stringResource(pagerScreenValues[index].screen.nameResId))
+                                        Text(
+                                            text = stringResource(pagerScreenValues[index].nameResId),
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
                                     }
                                 },
                                 selected = pagerState.currentPage == index,
@@ -219,7 +222,6 @@ fun CommentTabContent(songInfo: Screen.Comment) {
                 )
                 Text(
                     text = " - ${songInfo.artist}",
-                    color = Color.Gray,
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
@@ -306,7 +308,7 @@ fun CommentItem(
                                 Text(
                                     text = comment.userName,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
 
                                 if (comment.isVip) {
@@ -328,7 +330,8 @@ fun CommentItem(
                                     }
                                 }
                             }
-                        } // End of Row - User name and mark
+                        } // End of Row - Username and mark
+                        Spacer(Modifier.height(2.dp))
                         // Date/Location
                         Row(
                             verticalAlignment = Alignment.CenterVertically
@@ -336,13 +339,13 @@ fun CommentItem(
                             Text(
                                 text = comment.timeAgo,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = comment.location,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         } // End of Row - Date/Location
                     } // End of Column - User information
@@ -354,7 +357,7 @@ fun CommentItem(
                         Text(
                             text = comment.likeCount.toString(),
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         IconButton(
@@ -380,7 +383,7 @@ fun CommentItem(
                     style = MaterialTheme.typography.bodyMedium.copy(
                         lineHeight = 20.sp
                     ),
-                    color = Color.Black,
+                    // color = Color.Black,
                 )
 
                 // Show more
@@ -443,9 +446,9 @@ fun PreviewCommentScreen() {
                         CommentViewModel(
                             savedStateHandle =
                                 SavedStateHandle().also {
-                                    it["id"] = arrayOf(10712L)
+                                    it["songId"] = 10712L
+                                    it["songName"] = "甜蜜蜜"
                                     it["artist"] = "鄧麗君"
-                                    it["track"] = "甜蜜蜜"
                                 },
                             PreviewDiscoveryModule.previewDiscoveryListUseCase,
                             UiEventManager(),

@@ -25,6 +25,7 @@ sealed class Screen(
 
     // val routeName: String = route.substringBefore("/", route)
 
+    @Serializable
     data object None : Screen()
 
     @Serializable
@@ -98,9 +99,7 @@ sealed class Screen(
     data object Note : Screen(nameResId = R.string.bas_discovery_tab_note)
 }
 
-enum class MainBottomNavigationItems(
-    val screenProvider: () -> Screen,
-) {
+enum class MainTabs(val screenProvider: () -> Screen) {
     DISCOVERY({ Screen.Discovery }),
 
     MY({ Screen.My }),
@@ -111,12 +110,7 @@ enum class MainBottomNavigationItems(
     val screen: Screen get() = screenProvider()
 }
 
-enum class CommentBottomNavigationItems(
-    val screenProvider: () -> Screen,
-) {
-    COMMENT({ Screen.Comment(0L, "", "") }),
-    NOTE({ Screen.Note }),
-    ;
-
-    val screen: Screen get() = screenProvider()
+enum class CommentTabs(@param:StringRes val nameResId: Int) {
+    COMMENT(R.string.bas_discovery_tab_comment),
+    NOTE(R.string.bas_discovery_tab_note),
 }
