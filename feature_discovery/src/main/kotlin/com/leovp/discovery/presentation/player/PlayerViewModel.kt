@@ -77,9 +77,7 @@ constructor(
                     d(tag) { "Player -> getData() done." }
                 },
                 onFailure = { e ->
-                    e(tag, e) {
-                        "Song check error. msg=${e.message}"
-                    }
+                    e(tag, e) { "Song check error. msg=${e.message}" }
                     sendAction(
                         PlayerAction.LoadContent(
                             songInfo = null,
@@ -118,11 +116,11 @@ constructor(
                 .getOrNull()
                 ?.firstOrNull()
                 ?.also { firstSongRef ->
+                    firstSongRef.urlModel = songUrlResult.getOrNull()?.firstOrNull()
+                    d(tag) { "---> UrlModel: ${firstSongRef.urlModel.toJsonString()}" }
                     firstSongRef.commentsModel = songCommentsResult.getOrNull()
                     firstSongRef.redCountModel = songRedCountResult.getOrNull()
                 }
-        firstSong?.urlModel = songUrlResult.getOrNull()?.firstOrNull()
-        d(tag) { "---> UrlModel: ${firstSong?.toJsonString()}" }
 
         var ex =
             songInfoResult.exceptionOrNull()
@@ -144,6 +142,8 @@ constructor(
     fun updatePlayPos(pos: Float) {
         _playPositionState.value = pos
     }
+
+    // ==============================
 
     sealed interface PlayerAction : BaseAction.Simple<PlayerUiState> {
         data class LoadContent(
