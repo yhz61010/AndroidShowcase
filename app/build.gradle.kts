@@ -1,4 +1,6 @@
 import com.android.build.api.variant.BuildConfigField
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Properties
 
 // https://developer.android.com/studio/build?hl=zh-cn#module-level
@@ -162,7 +164,7 @@ android {
 
     // https://developer.android.com/reference/tools/gradle-api/7.1/com/android/build/api/dsl/Lint
     lint {
-        // if true, stop the gradle build if errors are found
+        // if true, stop the Gradle build if errors are found
         abortOnError = false
         // Like checkTestSources, but always skips analyzing tests -- meaning that it
         // also ignores checks that have explicitly asked to look at test sources, such
@@ -173,7 +175,6 @@ android {
 }
 
 androidComponents {
-    val appName = "LeoAndroidShowcase"
     onVariants { variant ->
         val isConsoleLogOpen = variant.name != "prodRelease"
         variant.buildConfigFields?.put(
@@ -183,30 +184,53 @@ androidComponents {
 
         // Rename APK output files
         val appName = "LeoAndroidShowcase"
-        val gitTag = gitVersionTag()
-        val gitCount = gitCommitCount()
+        // Example: dev, prod
         val flavorName = variant.flavorName.orEmpty()
+        // Example: debug, release
         val buildTypeName = variant.buildType.orEmpty()
+        // Example: DevDebug, ProdRelease
+        val capitalizedName = variant.name.replaceFirstChar { it.uppercase() }
         val mainOutput = variant.outputs.firstOrNull()
         val versionName = mainOutput?.versionName?.getOrElse("") ?: ""
         val versionCode = mainOutput?.versionCode?.getOrElse(0) ?: 0
+        // val versionName = android.defaultConfig.versionName ?: "NA"
+        // val versionCode = android.defaultConfig.versionCode ?: 0
+        // Example: 20260325_104413(CST)
+        val timestamp = ZonedDateTime.now()
+            .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss(z)"))
+        // Example: 18cc7c4
+        val gitTag = gitVersionTag()
+        // Example: 148
+        val gitCount = gitCommitCount()
+        println("buildTypeName=$buildTypeName flavorName=$flavorName capitalizedName=$capitalizedName gitTag=$gitTag gitCount=$gitCount")
+        // Example: LeoAndroidShowcase-dev-debug-v1.0.5-dev(105)-20260325_104413(CST)-18cc7c4-148.apk
         val apkName =
             "$appName${("-$flavorName").takeIf {
                 it != "-"
             } ?: ""}-$buildTypeName" +
                 "-v$versionName($versionCode)" +
+                "-$timestamp" +
                 "-$gitTag-$gitCount" +
                 ".apk"
 
-        // Use the package task to rename APK
-        tasks.configureEach {
-            if (name == "package${variant.name.replaceFirstChar { it.titlecase() }}") {
-                doLast {
-                    val outputDir = outputs.files.files.firstOrNull()
-                    outputDir?.listFiles()?.filter { it.extension == "apk" }?.forEach { apkFile ->
-                        apkFile.renameTo(File(apkFile.parentFile, apkName))
+        tasks.register("rename${capitalizedName}Apk") {
+            val apkDir = variant.artifacts.get(com.android.build.api.artifact.SingleArtifact.APK)
+            inputs.dir(apkDir)
+            doLast {
+                val dir = apkDir.get().asFile
+                dir.listFiles()?.filter { it.extension == "apk" }?.forEach { srcFile ->
+                    val finalName = if ("unsigned" in srcFile.name) {
+                        apkName.replace(".apk", "-unsigned.apk")
+                    } else {
+                        apkName
                     }
+                    srcFile.copyTo(File(dir, finalName), overwrite = true)
                 }
+            }
+        }
+        afterEvaluate {
+            tasks.named("assemble${capitalizedName}") {
+                finalizedBy("rename${capitalizedName}Apk")
             }
         }
     }
