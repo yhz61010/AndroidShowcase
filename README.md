@@ -33,7 +33,7 @@ Dependencies are centralized inside the `Gradle Version Catalog` in the [libs.ve
 
 ## Static Analysis
 This template is using [**detekt**](https://github.com/detekt/detekt) to analyze the source code, 
-with the configuration that is stored in the [detekt.yml](config/detekt/detekt.yml) file (the file has been generated with the `detektGenerateConfig` task). 
+with the configuration that is stored in the [detekt.yml](config/detekt.yml) file (the file has been generated with the `detektGenerateConfig` task). 
 It also uses the **detekt-formatting** plugin which includes the ktlint rules (see https://detekt.dev/docs/rules/formatting/).
 
 ###  Runs the ktlint formatter on all kotlin sources in this project.
@@ -67,7 +67,7 @@ It also uses the **detekt-formatting** plugin which includes the ktlint rules (s
 ## How to enable and run jacoco
 1. Add following line before `plugins` in your module-level `build.gradle.kts`:
 ```kotlin
-apply(from = "../jacoco.gradle.kts")
+apply(from = "../config/jacoco.gradle.kts")
 ```
 2. Add `jacoco` plugin to the module which you want to check. Modify your module-level `build.gradle.kts` as following:
 ```kotlin

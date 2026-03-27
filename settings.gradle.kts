@@ -49,9 +49,10 @@ dependencyResolutionManagement {
      * but it does not configure any dependencies (unless you select a
      * template that requires some).
      */
-repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
-repositories {
+    @Suppress("UnstableApiUsage")
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    @Suppress("UnstableApiUsage")
+    repositories {
         google()
         mavenCentral {
             isAllowInsecureProtocol = true
@@ -60,10 +61,7 @@ repositories {
         maven("https://plugins.gradle.org/m2/")
         maven("https://maven.java.net/content/groups/public/")
         // https://github.com/airbnb/lottie/blob/master/android-compose.md
-        maven {
-            url =
-                uri("https://oss.sonatype.org/content/repositories/snapshots/")
-        }
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
 
         maven("https://jitpack.io")
 
@@ -72,9 +70,7 @@ repositories {
         maven("https://maven.aliyun.com/repository/central")
 
         maven("https://mirrors.cloud.tencent.com/gradle/")
-        maven(
-            "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/",
-        )
+        maven("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
     }
 }
 

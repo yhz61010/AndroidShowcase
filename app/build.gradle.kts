@@ -5,7 +5,7 @@ import java.util.Properties
 
 // https://developer.android.com/studio/build?hl=zh-cn#module-level
 
-apply(from = "../jacoco.gradle.kts")
+apply(from = "../config/jacoco.gradle.kts")
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
 plugins {
     alias(libs.plugins.android.application)
@@ -80,10 +80,11 @@ android {
 
     signingConfigs {
         named("debug") {
-            keyAlias = getSignProperty("keyAlias")
-            keyPassword = getSignProperty("keyPassword")
-            storeFile = File(rootDir, getSignProperty("storeFile"))
-            storePassword = getSignProperty("storePassword")
+            storeFile = File(rootDir, getDebugSignProperty("storeFile"))
+            storePassword = getDebugSignProperty("storePassword")
+            keyAlias = getDebugSignProperty("keyAlias")
+            keyPassword = getDebugSignProperty("keyPassword")
+
             enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true
@@ -91,10 +92,16 @@ android {
         }
 
         create("release") {
-            keyAlias = getSignProperty("keyAlias")
-            keyPassword = getSignProperty("keyPassword")
-            storeFile = File(rootDir, getSignProperty("storeFile"))
-            storePassword = getSignProperty("storePassword")
+            storeFile = System.getenv("KEYSTORE_PATH")?.let { file(it) }
+                ?: rootProject.properties["leovp.storeFile"]?.let { file(it) }
+                    ?: error("KEYSTORE_PATH not found")
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: rootProject.properties["leovp.storePassword"] as? String ?: error("KEYSTORE_PASSWORD not found")
+            keyAlias = System.getenv("KEY_ALIAS")
+                ?: rootProject.properties["leovp.keyAlias"] as? String ?: error("KEY_ALIAS not found")
+            keyPassword = System.getenv("KEY_PASSWORD")
+                ?: rootProject.properties["leovp.keyPassword"] as? String ?: error("KEY_PASSWORD not found")
+
             enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true
@@ -320,7 +327,7 @@ fun gitVersionTag(): String {
     }
 }
 
-fun Project.getSignProperty(
+fun Project.getDebugSignProperty(
     key: String,
     path: String = "config/sign/keystore.properties",
 ): String =

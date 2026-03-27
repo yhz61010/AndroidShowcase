@@ -1,17 +1,26 @@
 {
   "permissions": {
     "allow": [
+      "mcp__ide__getDiagnostics",
       "Bash(./gradlew:*)",
       "Bash(./gradlew *)",
       "Bash(find:*)",
       "Bash(jar tf:*)",
+      "Bash(jar xf:*)",
       "Bash(unzip:*)",
+      "Bash(javap *)",
+      "Read(//tmp/**)",
+      "Bash(rm -rf com)",
+      "Bash(cd /tmp && jar xf *)",
+      "Bash(2)",
+      "Bash(for mod:*)",
+      "Bash(do echo:*)",
+      "Read(*)",
+      "Bash(done)",
       "Bash(curl:*)",
       "Bash(grep:*)",
       "Bash(mkdir:*)",
       "Bash(ls:*)"
-    ],
-    "deny": [],
-    "ask": []
+    ]
   }
 }

@@ -8,7 +8,7 @@
 import com.android.build.api.dsl.LibraryDefaultConfig
 import java.util.Locale
 
-apply(from = "../jacoco.gradle.kts")
+apply(from = "../config/jacoco.gradle.kts")
 
 // https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl
 plugins {
