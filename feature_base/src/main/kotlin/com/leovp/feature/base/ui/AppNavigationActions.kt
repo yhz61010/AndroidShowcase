@@ -28,9 +28,9 @@ private const val TAG = "Nav"
  * destination=Destination(0x88e673a4) route=app_main
  * ```
  */
-class AppNavigationActions(navController: NavHostController) :
-    AppNavigation(navController) {
-
+class AppNavigationActions(
+    navController: NavHostController,
+) : AppNavigation(navController) {
     override fun <T : Any> navigate(
         route: T,
         navOptions: NavOptions?,
@@ -46,7 +46,7 @@ class AppNavigationActions(navController: NavHostController) :
             is Screen.Message,
             is Screen.Setting,
             is Screen.Comment,
-                ->
+            ->
                 navController.navigateSingleTopPopUpToMain(route)
 
             else -> error("Illegal route: $route")

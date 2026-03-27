@@ -17,17 +17,19 @@ import javax.inject.Singleton
 
 @Singleton
 class MainRepositoryImpl
-@Inject
-constructor(
-    private val dataSource: MainDataSource,
-) : MainRepository {
-    override suspend fun getUnreadList(uid: String): Result<ApiResponseModel<List<UnreadModel>>> =
-        result {
-            delay(1000)
-            ApiResponseModel(
-                code = 200,
-                message = "",
-                result = dataSource.getUnreadList("1")
-            )
-        }
-}
+    @Inject
+    constructor(
+        private val dataSource: MainDataSource,
+    ) : MainRepository {
+        override suspend fun getUnreadList(
+            uid: String,
+        ): Result<ApiResponseModel<List<UnreadModel>>> =
+            result {
+                delay(1000)
+                ApiResponseModel(
+                    code = 200,
+                    message = "",
+                    result = dataSource.getUnreadList("1"),
+                )
+            }
+    }

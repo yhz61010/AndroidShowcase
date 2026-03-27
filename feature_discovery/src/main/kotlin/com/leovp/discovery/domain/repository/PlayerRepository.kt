@@ -17,7 +17,9 @@ interface PlayerRepository {
         offset: Int,
     ): Result<ApiResponseModel<SongModel.CommentsModel>>
 
-    suspend fun getSongRedCount(id: Long): Result<ApiResponseModel<SongModel.RedCountModel>>
+    suspend fun getSongRedCount(
+        id: Long,
+    ): Result<ApiResponseModel<SongModel.RedCountModel>>
 
     suspend fun getSongUrlV1(
         id: Long,

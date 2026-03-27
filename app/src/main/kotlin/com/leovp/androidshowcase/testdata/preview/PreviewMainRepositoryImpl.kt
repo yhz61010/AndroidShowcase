@@ -13,16 +13,18 @@ import javax.inject.Inject
  * Date: 2023/9/4 14:28
  */
 class PreviewMainRepositoryImpl
-@Inject
-constructor(
-    private val dataSource: LocalMainDataSource,
-) : MainRepository {
-    override suspend fun getUnreadList(uid: String): Result<ApiResponseModel<List<UnreadModel>>> =
-        result {
-            ApiResponseModel(
-                code = 200,
-                message = "",
-                result = dataSource.getUnreadList(uid)
-            )
-        }
-}
+    @Inject
+    constructor(
+        private val dataSource: LocalMainDataSource,
+    ) : MainRepository {
+        override suspend fun getUnreadList(
+            uid: String,
+        ): Result<ApiResponseModel<List<UnreadModel>>> =
+            result {
+                ApiResponseModel(
+                    code = 200,
+                    message = "",
+                    result = dataSource.getUnreadList(uid),
+                )
+            }
+    }

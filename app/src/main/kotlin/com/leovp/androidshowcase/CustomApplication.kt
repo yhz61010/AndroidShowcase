@@ -38,25 +38,24 @@ class CustomApplication :
         )
     }
 
-    override fun newImageLoader(context: PlatformContext): ImageLoader {
-        return ImageLoader
+    override fun newImageLoader(context: PlatformContext): ImageLoader =
+        ImageLoader
             .Builder(context)
             .crossfade(true)
             // Disable `Cache-Control` header support in order to disable disk caching.
             // .respectCacheHeaders(false)
             .memoryCache {
-                MemoryCache.Builder()
+                MemoryCache
+                    .Builder()
                     .maxSizePercent(context, 0.25)
                     .build()
-            }
-            .diskCache {
+            }.diskCache {
                 DiskCache
                     .Builder()
                     .directory(context.cacheDir.resolve("image_cache"))
                     // .maxSizePercent(0.02)
                     .build()
             }.build()
-    }
 
     // override fun attachBaseContext(base: Context) {
     //     // super.attachBaseContext(LangUtil.getInstance(base).setAppLanguage(base))

@@ -85,21 +85,26 @@ sealed class Screen(
     // ====== Player screens ======
     // ============================
     @Serializable
-    data class Player(val id: Long, val artist: String, val track: String) :
-        Screen()
+    data class Player(
+        val id: Long,
+        val artist: String,
+        val track: String,
+    ) : Screen()
 
     @Serializable
     data class Comment(
         val songId: Long,
         val songName: String,
-        val artist: String
+        val artist: String,
     ) : Screen(nameResId = R.string.bas_discovery_tab_comment)
 
     @Serializable
     data object Note : Screen(nameResId = R.string.bas_discovery_tab_note)
 }
 
-enum class MainTabs(val screenProvider: () -> Screen) {
+enum class MainTabs(
+    val screenProvider: () -> Screen,
+) {
     DISCOVERY({ Screen.Discovery }),
 
     MY({ Screen.My }),
@@ -110,7 +115,9 @@ enum class MainTabs(val screenProvider: () -> Screen) {
     val screen: Screen get() = screenProvider()
 }
 
-enum class CommentTabs(@param:StringRes val nameResId: Int) {
+enum class CommentTabs(
+    @param:StringRes val nameResId: Int,
+) {
     COMMENT(R.string.bas_discovery_tab_comment),
     NOTE(R.string.bas_discovery_tab_note),
 }

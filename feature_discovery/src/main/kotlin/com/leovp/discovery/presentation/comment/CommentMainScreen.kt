@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,7 +62,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.discovery.domain.model.SongModel
-import com.leovp.discovery.testdata.PreviewDiscoveryModule
 import com.leovp.discovery.testdata.local.datasource.LocalCommentData
 import com.leovp.feature.base.event.composable.CustomEventHandler
 import com.leovp.feature.base.ui.CommentTabs
@@ -69,6 +69,7 @@ import com.leovp.feature.base.ui.PreviewWrapper
 import com.leovp.feature.base.ui.Screen
 import com.leovp.mvvm.event.base.UiEventManager
 import com.leovp.mvvm.viewmodel.viewModelProviderFactoryOf
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.leovp.feature.base.R as BaseR
 
@@ -82,9 +83,7 @@ private val imgPadding = 8.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentMainScreen(
-    viewModel: CommentViewModel = hiltViewModel<CommentViewModel>(),
-) {
+fun CommentMainScreen(viewModel: CommentViewModel = hiltViewModel<CommentViewModel>()) {
     // val context = LocalContext.current
     val navController = LocalNavigationActions.current
     CustomEventHandler(
@@ -110,75 +109,14 @@ fun CommentMainScreen(
         // contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
-                // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                //     containerColor = Color.Cyan
-                // ),
-                // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
-                // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-                title = {
-                    PrimaryTabRow(
-                        selectedTabIndex = pagerState.currentPage,
-                        modifier = Modifier.fillMaxWidth(),
-                        // containerColor = Color.White,
-                        contentColor = Color.Black,
-                        divider = {},
-                        indicator = {
-                            TabRowDefaults.PrimaryIndicator(
-                                modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
-                                height = 3.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(2.dp),
-                            )
-                        }
-                    ) {
-                        pagerScreenValues.forEachIndexed { index, item ->
-                            Tab(
-                                text = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            text = stringResource(pagerScreenValues[index].nameResId),
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    }
-                                },
-                                selected = pagerState.currentPage == index,
-                                onClick = {
-                                    /* Will be handled by pager */
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(
-                                            page = item.ordinal,
-                                            animationSpec = tween(300),
-                                        )
-                                    }
-                                }
-                            )
-                        }
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    id = BaseR.drawable.bas_arrow_back,
-                                ),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* Handle share */ }) {
-                        Icon(Icons.Default.Share, contentDescription = "Share")
-                    }
-                    IconButton(onClick = { /* Handle more */ }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "More")
-                    }
-                },
+            CommentTopBar(
+                pagerState = pagerState,
+                pagerScreenValues = pagerScreenValues,
+                coroutineScope = coroutineScope,
+                navController = navController,
                 scrollBehavior = scrollBehavior,
-            ) // end of CenterAlignedTopAppBar
-        }, // end of topBar
+            )
+        },
     ) { contentPadding ->
         HorizontalPager(
             state = pagerState,
@@ -192,74 +130,107 @@ fun CommentMainScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CommentTopBar(
+    pagerState: PagerState,
+    pagerScreenValues: Array<CommentTabs>,
+    coroutineScope: CoroutineScope,
+    navController: com.leovp.compose.ui.AppNavigation,
+    scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,
+) {
+    CenterAlignedTopAppBar(
+        // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        //     containerColor = Color.Cyan
+        // ),
+        // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
+        // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+        title = {
+            PrimaryTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                modifier = Modifier.fillMaxWidth(),
+                // containerColor = Color.White,
+                contentColor = Color.Black,
+                divider = {},
+                indicator = {
+                    TabRowDefaults.PrimaryIndicator(
+                        modifier =
+                            Modifier.tabIndicatorOffset(
+                                pagerState.currentPage,
+                            ),
+                        height = 3.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(2.dp),
+                    )
+                },
+            ) {
+                pagerScreenValues.forEachIndexed { index, item ->
+                    Tab(
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text =
+                                        stringResource(
+                                            pagerScreenValues[index].nameResId,
+                                        ),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                            }
+                        },
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            // Will be handled by pager
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    page = item.ordinal,
+                                    animationSpec = tween(300),
+                                )
+                            }
+                        },
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    painter =
+                        painterResource(
+                            id = BaseR.drawable.bas_arrow_back,
+                        ),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* Handle share */ }) {
+                Icon(Icons.Default.Share, contentDescription = "Share")
+            }
+            IconButton(onClick = { /* Handle more */ }) {
+                Icon(Icons.Default.MoreVert, contentDescription = "More")
+            }
+        },
+        scrollBehavior = scrollBehavior,
+    ) // end of CenterAlignedTopAppBar
+}
+
 @Composable
 fun CommentTabContent(songInfo: Screen.Comment) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier =
+            Modifier
+                .fillMaxSize(),
         // .background(Color.White)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = "https://picsum.photos/40/40?random=0",
-                contentDescription = "Avatar",
-                modifier = Modifier
-                    .size(imgSize)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(imgPadding))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = songInfo.songName,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = " - ${songInfo.artist}",
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            }
-        }
+        SongInfoHeader(songInfo)
         HorizontalDivider(thickness = 8.dp, color = Color(0xFFF5F5F5))
-        // Filter Tabs
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                // .background(Color.White)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = "评论(106486)",
-                style = MaterialTheme.typography.titleMedium
-            )
-            FilterChip(
-                onClick = { },
-                label = { Text("推荐") },
-                selected = true
-            )
-            FilterChip(
-                onClick = { },
-                label = { Text("最热") },
-                selected = false
-            )
-            FilterChip(
-                onClick = { },
-                label = { Text("最新") },
-                selected = false
-            )
-        }
-
+        FilterTabs()
         // Comments List
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .fillMaxSize(),
             // .background(Color.White)
         ) {
             items(
@@ -274,162 +245,259 @@ fun CommentTabContent(songInfo: Screen.Comment) {
 }
 
 @Composable
+private fun SongInfoHeader(songInfo: Screen.Comment) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AsyncImage(
+            model = "https://picsum.photos/40/40?random=0",
+            contentDescription = "Avatar",
+            modifier =
+                Modifier
+                    .size(imgSize)
+                    .clip(CircleShape),
+            contentScale = ContentScale.Crop,
+        )
+        Spacer(modifier = Modifier.width(imgPadding))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = songInfo.songName,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = " - ${songInfo.artist}",
+                style = MaterialTheme.typography.titleSmall,
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterTabs() {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                // .background(Color.White)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = "评论 (106486)",
+            style = MaterialTheme.typography.titleMedium,
+        )
+        FilterChip(
+            onClick = { },
+            label = { Text("推荐") },
+            selected = true,
+        )
+        FilterChip(
+            onClick = { },
+            label = { Text("最热") },
+            selected = false,
+        )
+        FilterChip(
+            onClick = { },
+            label = { Text("最新") },
+            selected = false,
+        )
+    }
+}
+
+@Composable
 fun CommentItem(
     comment: SongModel.Comment,
-    onLike: () -> Unit
+    onLike: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 22.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 22.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(1f)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Avatar
-                    AsyncImage(
-                        model = comment.userAvatar,
-                        contentDescription = "User Avatar",
-                        modifier = Modifier
-                            .size(imgSize)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.width(imgPadding))
-                    // User information
-                    Column {
-                        // User name and mark
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = comment.userName,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-
-                                if (comment.isVip) {
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Card(
-                                        shape = RoundedCornerShape(2.dp),
-                                        colors = CardDefaults.cardColors(containerColor = Color.Red),
-                                        modifier = Modifier.height(16.dp)
-                                    ) {
-                                        Text(
-                                            text = "VIP",
-                                            color = Color.White,
-                                            fontSize = 10.sp,
-                                            modifier = Modifier.padding(
-                                                horizontal = 4.dp,
-                                                vertical = 1.dp
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-                        } // End of Row - Username and mark
-                        Spacer(Modifier.height(2.dp))
-                        // Date/Location
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = comment.timeAgo,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = comment.location,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        } // End of Row - Date/Location
-                    } // End of Column - User information
-                    Spacer(modifier = Modifier.weight(1f))
-                    // Action Row (Like button)
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = comment.likeCount.toString(),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        IconButton(
-                            onClick = onLike,
-                            modifier = Modifier.size(20.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.ThumbUp,
-                                contentDescription = "Like",
-                                tint = if (comment.isLiked) Color.Red else Color.Gray,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                    } // End of Row - Action Row (Like button)
-                } // End of Row - User title Row
-
+                UserTitleRow(comment, onLike)
                 Spacer(modifier = Modifier.height(4.dp))
-
                 // Comment text
                 Text(
                     modifier = Modifier.padding(start = imgSize + imgPadding),
                     text = comment.comment,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        lineHeight = 20.sp
-                    ),
+                    style =
+                        MaterialTheme.typography.bodyMedium.copy(
+                            lineHeight = 20.sp,
+                        ),
                     // color = Color.Black,
                 )
-
                 // Show more
                 if (comment.replyCount > 0) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier
-                            .padding(start = imgSize + imgPadding)
-                            .clickable(onClick = {}),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        HorizontalDivider(
-                            modifier = Modifier.width(32.dp),
-                            thickness = 1.dp,
-                            color = Color.LightGray,
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = "展开${comment.replyCount}条回复",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF2A7E87)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = "ArrowForward",
-                            tint = Color(0xFF2A7E87)
-                        )
-                    }
-                } // End of if - Show more
+                    ShowMoreReplies(comment)
+                }
             }
         }
     }
 }
 
 @Composable
+private fun UserTitleRow(
+    comment: SongModel.Comment,
+    onLike: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // Avatar
+        AsyncImage(
+            model = comment.userAvatar,
+            contentDescription = "User Avatar",
+            modifier =
+                Modifier
+                    .size(imgSize)
+                    .clip(CircleShape),
+            contentScale = ContentScale.Crop,
+        )
+        Spacer(modifier = Modifier.width(imgPadding))
+        // User information
+        Column {
+            UserNameAndMark(comment)
+            Spacer(Modifier.height(2.dp))
+            DateTimeLocation(comment)
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        // Action Row (Like button)
+        LikeActionRow(comment, onLike)
+    }
+}
+
+@Composable
+private fun UserNameAndMark(comment: SongModel.Comment) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = comment.userName,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            if (comment.isVip) {
+                Spacer(modifier = Modifier.width(4.dp))
+                Card(
+                    shape = RoundedCornerShape(2.dp),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = Color.Red,
+                        ),
+                    modifier = Modifier.height(16.dp),
+                ) {
+                    Text(
+                        text = "VIP",
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        modifier =
+                            Modifier.padding(
+                                horizontal = 4.dp,
+                                vertical = 1.dp,
+                            ),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DateTimeLocation(comment: SongModel.Comment) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = comment.timeAgo,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = comment.location,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun LikeActionRow(
+    comment: SongModel.Comment,
+    onLike: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = comment.likeCount.toString(),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        IconButton(
+            onClick = onLike,
+            modifier = Modifier.size(20.dp),
+        ) {
+            Icon(
+                Icons.Default.ThumbUp,
+                contentDescription = "Like",
+                tint = if (comment.isLiked) Color.Red else Color.Gray,
+                modifier = Modifier.size(16.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ShowMoreReplies(comment: SongModel.Comment) {
+    Row(
+        modifier =
+            Modifier
+                .padding(start = imgSize + imgPadding)
+                .clickable(onClick = {}),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        HorizontalDivider(
+            modifier = Modifier.width(32.dp),
+            thickness = 1.dp,
+            color = Color.LightGray,
+        )
+        Text(
+            modifier = Modifier.padding(start = 4.dp),
+            text = "展开${comment.replyCount}条回复",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color(0xFF2A7E87),
+        )
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowDown,
+            contentDescription = "ArrowForward",
+            tint = Color(0xFF2A7E87),
+        )
+    }
+}
+
+@Composable
 fun NotesTabContent() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.White),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "笔记内容",
             fontSize = 16.sp,
-            color = Color.Gray
+            color = Color.Gray,
         )
     }
 }
@@ -450,8 +518,7 @@ fun PreviewCommentScreen() {
                                     it["songName"] = "甜蜜蜜"
                                     it["artist"] = "鄧麗君"
                                 },
-                            PreviewDiscoveryModule.previewDiscoveryListUseCase,
-                            UiEventManager(),
+                            uiEventManager = UiEventManager(),
                         )
                     },
             )

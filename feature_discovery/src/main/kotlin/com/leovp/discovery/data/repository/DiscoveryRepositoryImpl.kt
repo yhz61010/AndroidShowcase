@@ -31,60 +31,67 @@ class DiscoveryRepositoryImpl
         /** 首页-发现 */
         override suspend fun getHomePageBlock(): Result<ApiResponseModel<HomePageBlockModel>> =
             result {
-                val respResult = Get<HomePageBlockResponse>(
-                    GlobalConst.HTTP_GET_HOMEPAGE_BLOCK_PAGE,
-                ).await()
+                val respResult =
+                    Get<HomePageBlockResponse>(
+                        GlobalConst.HTTP_GET_HOMEPAGE_BLOCK_PAGE,
+                    ).await()
 
                 ApiResponseModel(
                     code = respResult.code,
                     message = respResult.message,
-                    result = respResult.result.toDomainModel()
+                    result = respResult.result.toDomainModel(),
                 )
             }
 
         /** 获取独家放送 */
         override suspend fun getPrivateContent(): Result<ApiResponseModel<List<PrivateContentModel>>> =
             result {
-                val respResult = Get<PrivateContentResponse>(
-                    GlobalConst.HTTP_GET_PRIVATE_CONTENT,
-                ).await()
+                val respResult =
+                    Get<PrivateContentResponse>(
+                        GlobalConst.HTTP_GET_PRIVATE_CONTENT,
+                    ).await()
 
                 ApiResponseModel(
                     code = respResult.code,
                     message = respResult.message,
-                    result = respResult.result.map { it.toDomainModel(respResult.name) }
+                    result = respResult.result.map { it.toDomainModel(respResult.name) },
                 )
             }
 
         /** 获取推荐歌单 */
         override suspend fun getRecommendPlaylist(): Result<ApiResponseModel<List<PlaylistModel>>> =
             result {
-                val respResult = Get<RecommendPlaylistResponse>(
-                    GlobalConst.HTTP_GET_PERSONALIZED,
-                ) {
-                    param("limit", PLAYLIST_SONG_SIZE)
-                }.await()
+                val respResult =
+                    Get<RecommendPlaylistResponse>(
+                        GlobalConst.HTTP_GET_PERSONALIZED,
+                    ) {
+                        param("limit", PLAYLIST_SONG_SIZE)
+                    }.await()
 
                 ApiResponseModel(
                     code = respResult.code,
                     message = respResult.message,
-                    result = respResult.result.map { it.toDomainModel() }
+                    result = respResult.result.map { it.toDomainModel() },
                 )
             }
 
         /** 新歌速递 */
-        override suspend fun getTopSongs(type: Int): Result<ApiResponseModel<List<TopSongModel>>> =
+        override suspend fun getTopSongs(
+            type: Int,
+        ): Result<ApiResponseModel<List<TopSongModel>>> =
             result {
-                val respResult = Get<TopSongResponse>(GlobalConst.HTTP_GET_TOP_SONG) {
-                    param("type", type)
-                }.await()
+                val respResult =
+                    Get<TopSongResponse>(GlobalConst.HTTP_GET_TOP_SONG) {
+                        param("type", type)
+                    }.await()
 
                 ApiResponseModel(
                     code = respResult.code,
                     message = respResult.message,
-                    result = respResult.result
-                        .take(PLAYLIST_SONG_SIZE)
-                        .map { it.toDomainModel() }
+                    result =
+                        respResult.result
+                            .take(PLAYLIST_SONG_SIZE)
+                            .map { it.toDomainModel() },
                 )
             }
     }

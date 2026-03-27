@@ -75,89 +75,99 @@ open class ApiResponseModel<T>(
         ): ResultBiz<T> =
             when (responseApiResult) {
                 // The network encounters exception
-                is Result.Failure -> {
-                    e(TAG, responseApiResult.exception) {
-                        val ex = responseApiResult.exception
-                        val rawRespString = if (ex is ResultConvertException) {
-                            ex.responseBodyString ?: ""
-                        } else {
-                            ""
-                        }
-                        val extraRaw = if (rawRespString.isBlank()) {
-                            ""
-                        } else {
-                            ". Raw: $rawRespString"
-                        }
-                        "Http exception$extraRaw"
-                    }
-                    ResultBiz.Failure(responseApiResult.exception)
-                }
+                is Result.Failure -> handleHttpFailure(responseApiResult)
 
                 // Successfully receive network result
-                is Result.Success -> {
-                    // Get `ApiResponseModel` api result not the real data result.
-                    val responseDataResult = responseApiResult.getOrNull()
-                    d {
-                        tag = TAG
-                        fullOutput = true
-                        block =
-                            { "-----> Response=${responseDataResult?.toJsonString()}" }
+                is Result.Success -> handleApiResponseSuccess(responseApiResult)
+            }
+
+        private fun <T, R : ApiResponseModel<T>> handleHttpFailure(
+            responseApiResult: Result.Failure,
+        ): ResultBiz<T> {
+            e(TAG, responseApiResult.exception) {
+                val ex = responseApiResult.exception
+                val rawRespString =
+                    if (ex is ResultConvertException) {
+                        ex.responseBodyString ?: ""
+                    } else {
+                        ""
                     }
+                val extraRaw =
+                    if (rawRespString.isBlank()) {
+                        ""
+                    } else {
+                        ". Raw: $rawRespString"
+                    }
+                "Http exception$extraRaw"
+            }
+            return ResultBiz.Failure(responseApiResult.exception)
+        }
 
-                    when {
-                        // This means `ApiResponseModel` itself is null,
-                        // not the real data is null.
-                        responseDataResult == null -> {
-                            w(TAG) { "Response is failure." }
-                            ResultBiz.Failure(EmptyResponseException())
-                        }
+        private fun <T, R : ApiResponseModel<T>> handleApiResponseSuccess(
+            responseApiResult: Result.Success<R>,
+        ): ResultBiz<T> {
+            // Get `ApiResponseModel` api result not the real data result.
+            val responseDataResult = responseApiResult.getOrNull()
+            d {
+                tag = TAG
+                fullOutput = true
+                block =
+                    { "-----> Response=${responseDataResult?.toJsonString()}" }
+            }
 
-                        !responseDataResult.isBizSuccess() -> {
-                            val bizErr =
-                                checkNotNull(getOnlyBizException(responseDataResult))
-                            w(TAG) { "Found business error. BizErr=$bizErr" }
+            return when {
+                // This means `ApiResponseModel` itself is null,
+                // not the real data is null.
+                responseDataResult == null -> {
+                    w(TAG) { "Response is failure." }
+                    ResultBiz.Failure(EmptyResponseException())
+                }
 
-                            // val needRelogin = responseDataResult.shouldRelogin()
-                            if (bizErr is ReloginException) {
-                                ResultBiz.Relogin(
-                                    exception = bizErr,
-                                    data = responseDataResult.result,
-                                )
-                            } else {
-                                ResultBiz.BusinessError(
-                                    exception = bizErr,
-                                    data = responseDataResult.result,
-                                )
-                            }
-                        }
+                !responseDataResult.isBizSuccess() -> {
+                    val bizErr =
+                        checkNotNull(getOnlyBizException(responseDataResult))
+                    w(TAG) { "Found business error. BizErr=$bizErr" }
 
-                        responseDataResult.result == null -> {
-                            if (responseDataResult.isBizSuccess()) {
-                                // For APIs that only need success status without data (e.g., delete, update)
-                                // Return Unit as the data placeholder
-                                d(TAG) {
-                                    "Response result is null but business success. " +
-                                        "Returning Unit as placeholder."
-                                }
-                                @Suppress("UNCHECKED_CAST")
-                                (ResultBiz.Success(data = Unit) as ResultBiz<T>)
-                            } else {
-                                w(TAG) {
-                                    "Response result property is null. " +
-                                        "Response=${responseDataResult.toJsonString()}"
-                                }
-                                ResultBiz.Failure(DataNotFoundException())
-                            }
-                        }
-
-                        else -> {
-                            val dataResult = responseDataResult.result
-                            // val pagination = responseDataResult.pagination
-                            ResultBiz.Success(data = dataResult, extraData = null)
-                        }
+                    // val needRelogin = responseDataResult.shouldRelogin()
+                    if (bizErr is ReloginException) {
+                        ResultBiz.Relogin(
+                            exception = bizErr,
+                            data = responseDataResult.result,
+                        )
+                    } else {
+                        ResultBiz.BusinessError(
+                            exception = bizErr,
+                            data = responseDataResult.result,
+                        )
                     }
                 }
+
+                responseDataResult.result == null -> {
+                    if (responseDataResult.isBizSuccess()) {
+                        // For APIs that only need success status without data (e.g., delete, update)
+                        // Return Unit as the data placeholder
+                        d(TAG) {
+                            "Response result is null but business success. " +
+                                "Returning Unit as placeholder."
+                        }
+                        @Suppress("UNCHECKED_CAST")
+                        (ResultBiz.Success(data = Unit) as ResultBiz<T>)
+                    } else {
+                        w(TAG) {
+                            "Response result property is null. " +
+                                "Response=${responseDataResult.toJsonString()}"
+                        }
+                        ResultBiz.Failure(DataNotFoundException())
+                    }
+                }
+
+                else -> {
+                    val dataResult = responseDataResult.result
+                    // val pagination = responseDataResult.pagination
+                    ResultBiz.Success(data = dataResult, extraData = null)
+                }
             }
+        }
 
         @Suppress("unused")
         fun areAllBizSuccess(vararg apiResults: Result<ApiResponseModel<*>>): Boolean {
@@ -197,7 +207,6 @@ open class ApiResponseModel<T>(
             }
         }
 
-        fun isReloginCode(@Suppress("UNUSED_PARAMETER") code: Int): Boolean = false
+        fun isReloginCode(code: Int): Boolean = false
     }
-
 }

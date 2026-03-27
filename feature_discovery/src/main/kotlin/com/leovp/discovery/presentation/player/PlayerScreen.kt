@@ -85,12 +85,7 @@ fun PlayerScreen(
 
     val uiStateFlow by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     val uiState = uiStateFlow as PlayerUiState.Content
-    LaunchedEffect(uiState.exception) {
-        uiState.exception?.let { resultException ->
-            val message = resultException.cause?.cause?.message ?: resultException.message
-            ctx.toast(message, error = true, longDuration = true)
-        }
-    }
+    HandleException(uiState, ctx)
 
     val topAppBarState = rememberTopAppBarState()
     // val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
@@ -101,48 +96,15 @@ fun PlayerScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = containerBg,
         topBar = {
-            CenterAlignedTopAppBar(
-                // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                //     containerColor = Color.Cyan
-                // ),
-                // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
-                // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
-                title = {
-                    TitleContent(
-                        uiState = uiState,
-                        defArtist = viewModel.playSongParam.artist,
-                        defTrack = viewModel.playSongParam.track,
-                    )
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors().copy(
-                        containerColor = containerBg,
-                    ),
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            modifier = Modifier.requiredSize(32.dp),
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onShareAction) {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    id = R.drawable.dis_share_circle_fill,
-                                ),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                },
+            PlayerTopBar(
+                uiState = uiState,
+                viewModel = viewModel,
+                navController = navController,
+                onShareAction = onShareAction,
+                containerBg = containerBg,
                 scrollBehavior = scrollBehavior,
-            ) // end of CenterAlignedTopAppBar
-        }, // end of topBar
+            )
+        },
     ) { contentPadding ->
         PlayerScreenContent(
             viewModel = viewModel,
@@ -153,6 +115,72 @@ fun PlayerScreen(
                     .padding(contentPadding),
         )
     }
+}
+
+@Composable
+private fun HandleException(
+    uiState: PlayerUiState.Content,
+    ctx: android.content.Context,
+) {
+    LaunchedEffect(uiState.exception) {
+        uiState.exception?.let { resultException ->
+            val message = resultException.cause?.cause?.message ?: resultException.message
+            ctx.toast(message, error = true, longDuration = true)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PlayerTopBar(
+    uiState: PlayerUiState.Content,
+    viewModel: PlayerViewModel,
+    navController: com.leovp.compose.ui.AppNavigation,
+    onShareAction: () -> Unit,
+    containerBg: androidx.compose.ui.graphics.Color,
+    scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,
+) {
+    CenterAlignedTopAppBar(
+        // colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        //     containerColor = Color.Cyan
+        // ),
+        // WindowInsets.waterfall // WindowInsets.displayCutout // or all 0.dp
+        // windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+        title = {
+            TitleContent(
+                uiState = uiState,
+                defArtist = viewModel.playSongParam.artist,
+                defTrack = viewModel.playSongParam.track,
+            )
+        },
+        colors =
+            TopAppBarDefaults.topAppBarColors().copy(
+                containerColor = containerBg,
+            ),
+        navigationIcon = {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    modifier = Modifier.requiredSize(32.dp),
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = onShareAction) {
+                Icon(
+                    painter =
+                        painterResource(
+                            id = R.drawable.dis_share_circle_fill,
+                        ),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        },
+        scrollBehavior = scrollBehavior,
+    ) // end of CenterAlignedTopAppBar
 }
 
 @Composable

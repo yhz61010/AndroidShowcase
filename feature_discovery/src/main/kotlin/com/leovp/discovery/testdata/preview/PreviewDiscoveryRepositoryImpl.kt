@@ -15,43 +15,45 @@ import javax.inject.Inject
  * Date: 2023/9/4 13:55
  */
 class PreviewDiscoveryRepositoryImpl
-@Inject
-constructor(
-    private val dataSource: LocalDiscoveryDataSource,
-) : DiscoveryRepository {
-    override suspend fun getHomePageBlock(): Result<ApiResponseModel<HomePageBlockModel>> =
-        Result.Success(
-            ApiResponseModel(
-                code = 200,
-                message = "",
-                result = dataSource.getHomePageBlock()
+    @Inject
+    constructor(
+        private val dataSource: LocalDiscoveryDataSource,
+    ) : DiscoveryRepository {
+        override suspend fun getHomePageBlock(): Result<ApiResponseModel<HomePageBlockModel>> =
+            Result.Success(
+                ApiResponseModel(
+                    code = 200,
+                    message = "",
+                    result = dataSource.getHomePageBlock(),
+                ),
             )
-        )
 
-    override suspend fun getPrivateContent(): Result<ApiResponseModel<List<PrivateContentModel>>> =
-        Result.Success(
-            ApiResponseModel(
-                code = 200,
-                message = "",
-                result = dataSource.getPrivateContent()
+        override suspend fun getPrivateContent(): Result<ApiResponseModel<List<PrivateContentModel>>> =
+            Result.Success(
+                ApiResponseModel(
+                    code = 200,
+                    message = "",
+                    result = dataSource.getPrivateContent(),
+                ),
             )
-        )
 
-    override suspend fun getRecommendPlaylist(): Result<ApiResponseModel<List<PlaylistModel>>> =
-        Result.Success(
-            ApiResponseModel(
-                code = 200,
-                message = "",
-                result = dataSource.getRecommendPlaylist()
+        override suspend fun getRecommendPlaylist(): Result<ApiResponseModel<List<PlaylistModel>>> =
+            Result.Success(
+                ApiResponseModel(
+                    code = 200,
+                    message = "",
+                    result = dataSource.getRecommendPlaylist(),
+                ),
             )
-        )
 
-    override suspend fun getTopSongs(type: Int): Result<ApiResponseModel<List<TopSongModel>>> =
-        Result.Success(
-            ApiResponseModel(
-                code = 200,
-                message = "",
-                result = dataSource.getTopSong(type)
+        override suspend fun getTopSongs(
+            type: Int,
+        ): Result<ApiResponseModel<List<TopSongModel>>> =
+            Result.Success(
+                ApiResponseModel(
+                    code = 200,
+                    message = "",
+                    result = dataSource.getTopSong(type),
+                ),
             )
-        )
-}
+    }

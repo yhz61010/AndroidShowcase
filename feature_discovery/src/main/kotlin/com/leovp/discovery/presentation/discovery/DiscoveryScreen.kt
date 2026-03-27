@@ -53,7 +53,6 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.leovp.android.exts.toast
-import com.leovp.compose.composable.event.base.GenericEventHandler
 import com.leovp.compose.composable.pager.DefaultPagerIndicator
 import com.leovp.compose.composable.pager.HorizontalAutoPager
 import com.leovp.compose.ui.LocalNavigationActions
@@ -139,7 +138,12 @@ fun DiscoveryScreen(
         DiscoveryContent(
             listState = listState,
             uiState = uiState,
-            onEvent = remember { { event: DiscoveryUiEvent -> viewModel.onEvent(event) } },
+            onEvent =
+                remember {
+                    { event: DiscoveryUiEvent ->
+                        viewModel.onEvent(event)
+                    }
+                },
         )
     } // end PullToRefreshBox
 }
@@ -281,8 +285,7 @@ fun RecommendsPlaylistContent(
                                 onItemClick(
                                     DiscoveryUiEvent.RecommendsItemClick(playlist),
                                 )
-                            }
-                            .size(cardWidth),
+                            }.size(cardWidth),
                     shape = MaterialTheme.shapes.large,
                 ) {
                     Box {
@@ -417,8 +420,7 @@ fun CarouselItem(
                                 .background(
                                     Color.White,
                                     RoundedCornerShape(4.dp),
-                                )
-                                .padding(4.dp, 2.dp),
+                                ).padding(4.dp, 2.dp),
                         text = currentItem.typeName,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,

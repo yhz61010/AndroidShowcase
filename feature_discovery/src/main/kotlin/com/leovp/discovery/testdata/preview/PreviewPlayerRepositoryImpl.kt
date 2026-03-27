@@ -16,7 +16,9 @@ class PreviewPlayerRepositoryImpl
     constructor(
         private val dataSource: LocalPlayerDataSource,
     ) : PlayerRepository {
-        override suspend fun getSongInfo(vararg ids: Long): Result<ApiResponseModel<List<SongModel>>> =
+        override suspend fun getSongInfo(
+            vararg ids: Long,
+        ): Result<ApiResponseModel<List<SongModel>>> =
             Result.Success(ApiResponseModel(result = dataSource.getSongInfo(*ids)))
 
         override suspend fun getMusicComment(
@@ -26,15 +28,18 @@ class PreviewPlayerRepositoryImpl
         ): Result<ApiResponseModel<SongModel.CommentsModel>> =
             Result.Success(
                 ApiResponseModel(
-                    result = dataSource.getMusicComment(
-                        id = id,
-                        limit = limit,
-                        offset = offset,
-                    ),
+                    result =
+                        dataSource.getMusicComment(
+                            id = id,
+                            limit = limit,
+                            offset = offset,
+                        ),
                 ),
             )
 
-        override suspend fun getSongRedCount(id: Long): Result<ApiResponseModel<SongModel.RedCountModel>> =
+        override suspend fun getSongRedCount(
+            id: Long,
+        ): Result<ApiResponseModel<SongModel.RedCountModel>> =
             Result.Success(ApiResponseModel(result = dataSource.getSongRedCount(id)))
 
         override suspend fun getSongUrlV1(

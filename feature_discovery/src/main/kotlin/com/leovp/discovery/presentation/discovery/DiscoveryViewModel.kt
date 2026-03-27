@@ -30,133 +30,135 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoveryViewModel
-@Inject
-constructor(
-    private val useCase: GetDiscoveryListUseCase,
-    uiEventManager: UiEventManager,
-) : BaseViewModel<DiscoveryUiState, DiscoveryAction>(
-    initialState = DiscoveryUiState.Content(),
-    uiEventManager = uiEventManager,
-) {
-    override fun getTagName() = "DisVM"
+    @Inject
+    constructor(
+        private val useCase: GetDiscoveryListUseCase,
+        uiEventManager: UiEventManager,
+    ) : BaseViewModel<DiscoveryUiState, DiscoveryAction>(
+            initialState = DiscoveryUiState.Content(),
+            uiEventManager = uiEventManager,
+        ) {
+        override fun getTagName() = "DisVM"
 
-    // Avoid recompose when pop back to this screen.
-    // Because when pop back to this screen,
-    // the NavGraphBuilder.composable() will be called again.
-    init {
-        onEvent(DiscoveryUiEvent.Refresh)
-    }
+        // Avoid recompose when pop back to this screen.
+        // Because when pop back to this screen,
+        // the NavGraphBuilder.composable() will be called again.
+        init {
+            onEvent(DiscoveryUiEvent.Refresh)
+        }
 
-    fun onEvent(event: DiscoveryUiEvent) {
-        viewModelScope.launch {
-            when (event) {
-                DiscoveryUiEvent.Refresh -> loadData(forceRefresh = true)
+        fun onEvent(event: DiscoveryUiEvent) {
+            viewModelScope.launch {
+                when (event) {
+                    DiscoveryUiEvent.Refresh -> loadData(forceRefresh = true)
 
-                is DiscoveryUiEvent.CarouselItemClick -> {
-                    showToast("Carousel recommend clickedItem: ${event.data}")
-                }
-
-                is DiscoveryUiEvent.PersonalItemClick -> {
-                    val songId = event.data.id
-                    val artist = event.data.getDefaultArtistName()
-                    val track = event.data.name
-                    i(tag) {
-                        "Click [Personal Item] song[$songId]=$track artist=$artist"
+                    is DiscoveryUiEvent.CarouselItemClick -> {
+                        showToast("Carousel recommend clickedItem: ${event.data}")
                     }
-                    val songParam = Screen.Player(
-                        id = songId,
-                        artist = artist,
-                        track = track
-                    )
-                    navigate(songParam)
-                }
 
-                is DiscoveryUiEvent.RecommendsItemClick -> {
-                    showToast("Everyday recommend clickedItem: ${event.data}")
+                    is DiscoveryUiEvent.PersonalItemClick -> {
+                        val songId = event.data.id
+                        val artist = event.data.getDefaultArtistName()
+                        val track = event.data.name
+                        i(tag) {
+                            "Click [Personal Item] song[$songId]=$track artist=$artist"
+                        }
+                        val songParam =
+                            Screen.Player(
+                                id = songId,
+                                artist = artist,
+                                track = track,
+                            )
+                        navigate(songParam)
+                    }
+
+                    is DiscoveryUiEvent.RecommendsItemClick -> {
+                        showToast("Everyday recommend clickedItem: ${event.data}")
+                    }
                 }
             }
         }
-    }
 
-    @Suppress("SameParameterValue")
-    private fun loadData(forceRefresh: Boolean = false) {
-        val uiState = uiStateFlow.value as DiscoveryUiState.Content
-        i(tag) {
-            "loadData(forceRefresh=$forceRefresh) uiState.isLoading=${uiState.isLoading}"
+        @Suppress("SameParameterValue")
+        private fun loadData(forceRefresh: Boolean = false) {
+            val uiState = uiStateFlow.value as DiscoveryUiState.Content
+            i(tag) {
+                "loadData(forceRefresh=$forceRefresh) uiState.isLoading=${uiState.isLoading}"
+            }
+            if (!forceRefresh && uiState.isLoading) {
+                w(tag) { "The data is loading now. Ignore loading." }
+                return
+            }
+
+            sendAction(DiscoveryAction.ShowLoading)
+            viewModelScope.launch {
+                try {
+                    val (privateContentResult, recommendPlaylistResult, topSongsResult) =
+                        coroutineScope {
+                            val private = async { useCase.getPrivateContent() }
+                            val playlist = async { useCase.getRecommendPlaylist() }
+                            val songs = async { useCase.getTopSongs() }
+                            Triple(private.await(), playlist.await(), songs.await())
+                        }
+
+                    val privateContent =
+                        extractData(privateContentResult) ?: return@launch
+                    val recommendPlaylist =
+                        extractData(recommendPlaylistResult) ?: return@launch
+                    val topSongs = extractData(topSongsResult) ?: return@launch
+
+                    sendAction(
+                        DiscoveryAction.LoadSuccess(
+                            privateContent = privateContent,
+                            recommendPlaylist = recommendPlaylist,
+                            topSongs = topSongs,
+                        ),
+                    )
+                } finally {
+                    hideLoading()
+                }
+            }
         }
-        if (!forceRefresh && uiState.isLoading) {
-            w(tag) { "The data is loading now. Ignore loading." }
-            return
-        }
 
-        sendAction(DiscoveryAction.ShowLoading)
-        viewModelScope.launch {
-            try {
-                val (privateContentResult, recommendPlaylistResult, topSongsResult) =
-                    coroutineScope {
-                        val private = async { useCase.getPrivateContent() }
-                        val playlist = async { useCase.getRecommendPlaylist() }
-                        val songs = async { useCase.getTopSongs() }
-                        Triple(private.await(), playlist.await(), songs.await())
-                    }
+        private suspend fun <T> extractData(bizResult: ResultBiz<T>): T? =
+            extractBizData(uiEventManager, bizResult) { err, _ ->
+                sendAction(DiscoveryAction.LoadFailure(err))
+            }
 
-                val privateContent = extractData(privateContentResult) ?: return@launch
-                val recommendPlaylist =
-                    extractData(recommendPlaylistResult) ?: return@launch
-                val topSongs = extractData(topSongsResult) ?: return@launch
+        // ==============================
 
-                sendAction(
-                    DiscoveryAction.LoadSuccess(
+        sealed interface DiscoveryAction : BaseAction.Simple<DiscoveryUiState> {
+            data object ShowLoading : DiscoveryAction {
+                override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
+                    val uiState = state as DiscoveryUiState.Content
+                    return uiState.copy(isLoading = true)
+                }
+            }
+
+            data class LoadSuccess(
+                val privateContent: List<PrivateContentModel> = emptyList(),
+                val recommendPlaylist: List<PlaylistModel> = emptyList(),
+                val topSongs: List<TopSongModel> = emptyList(),
+            ) : DiscoveryAction {
+                override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
+                    val uiState = state as DiscoveryUiState.Content
+                    return uiState.copy(
                         privateContent = privateContent,
                         recommendPlaylist = recommendPlaylist,
                         topSongs = topSongs,
+                        isLoading = false,
+                        exception = null,
                     )
-                )
-            } finally {
-                hideLoading()
+                }
+            }
+
+            data class LoadFailure(
+                private val err: ResultException,
+            ) : DiscoveryAction {
+                override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
+                    val discoveryUiState = state as DiscoveryUiState.Content
+                    return discoveryUiState.copy(isLoading = false, exception = err)
+                }
             }
         }
     }
-
-    private suspend fun <T> extractData(bizResult: ResultBiz<T>): T? =
-        extractBizData(uiEventManager, bizResult) { err, _ ->
-            sendAction(DiscoveryAction.LoadFailure(err))
-        }
-
-    // ==============================
-
-    sealed interface DiscoveryAction : BaseAction.Simple<DiscoveryUiState> {
-        data object ShowLoading : DiscoveryAction {
-            override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
-                val uiState = state as DiscoveryUiState.Content
-                return uiState.copy(isLoading = true)
-            }
-        }
-
-        data class LoadSuccess(
-            val privateContent: List<PrivateContentModel> = emptyList(),
-            val recommendPlaylist: List<PlaylistModel> = emptyList(),
-            val topSongs: List<TopSongModel> = emptyList(),
-        ) : DiscoveryAction {
-            override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
-                val uiState = state as DiscoveryUiState.Content
-                return uiState.copy(
-                    privateContent = privateContent,
-                    recommendPlaylist = recommendPlaylist,
-                    topSongs = topSongs,
-                    isLoading = false,
-                    exception = null,
-                )
-            }
-        }
-
-        data class LoadFailure(
-            private val err: ResultException,
-        ) : DiscoveryAction {
-            override fun reduce(state: DiscoveryUiState): DiscoveryUiState {
-                val discoveryUiState = state as DiscoveryUiState.Content
-                return discoveryUiState.copy(isLoading = false, exception = err)
-            }
-        }
-    }
-}

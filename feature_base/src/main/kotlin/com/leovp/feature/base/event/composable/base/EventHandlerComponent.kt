@@ -50,21 +50,23 @@ import com.leovp.mvvm.event.base.UiEvent
 @Composable
 fun EventLoadingDialogContent() {
     Column(
-        modifier = Modifier
-            .background(Color.Transparent)
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+        modifier =
+            Modifier
+                .background(Color.Transparent)
+                .fillMaxSize()
+                .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
     ) {
         Dialog(
             onDismissRequest = { },
-            properties = DialogProperties(
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true,
-                // Use custom width
-                usePlatformDefaultWidth = false,
-                decorFitsSystemWindows = false,
-            )
+            properties =
+                DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                    // Use custom width
+                    usePlatformDefaultWidth = false,
+                    decorFitsSystemWindows = false,
+                ),
         ) {
             // The following lines will remove the dimmed background.
             val window = (LocalView.current.parent as DialogWindowProvider).window
@@ -80,36 +82,40 @@ fun EventLoadingDialogContent() {
 private fun LoadingDialogContent() {
     // Transparent background
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Transparent)
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { /* Click on background. */ },
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Transparent)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                ) { /* Click on background. */ },
+        contentAlignment = Alignment.Center,
     ) {
         // AlertDialog content
         Card(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(0.5f)
-                // .size(112.dp)
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { /* Prevent event popup. */ },
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(0.5f)
+                    // .size(112.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) { /* Prevent event popup. */ },
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.cardColors().copy(
-                containerColor = Color.White
-            ),
+            colors =
+                CardDefaults.cardColors().copy(
+                    containerColor = Color.White,
+                ),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // Icon(
                 //     Icons.Default.Info,
@@ -163,9 +169,7 @@ private fun LoadingDialogContent() {
 }
 
 @Composable
-fun EventDialogContent(
-    dialogState: MutableState<UiEvent.ShowDialog?>,
-) {
+fun EventDialogContent(dialogState: MutableState<UiEvent.ShowDialog?>) {
     val dialog = dialogState.value ?: return
 
     val titleRef = dialog.title ?: dialog.titleResId?.let { stringResource(it) }
@@ -178,8 +182,9 @@ fun EventDialogContent(
         title = { titleRef?.let { Text(it) } },
         text = { Text(messageRef) },
         confirmButton = {
-            val positiveButtonTextRef = dialog.positiveButtonText
-                ?: dialog.positiveButtonTextResId?.let { stringResource(it) }
+            val positiveButtonTextRef =
+                dialog.positiveButtonText
+                    ?: dialog.positiveButtonTextResId?.let { stringResource(it) }
             requireNotNull(positiveButtonTextRef) {
                 "Dialog positive button text can't be null."
             }
@@ -193,8 +198,9 @@ fun EventDialogContent(
             }
         },
         dismissButton = {
-            val negativeButtonTextRef = dialog.negativeButtonText
-                ?: dialog.negativeButtonTextResId?.let { stringResource(it) }
+            val negativeButtonTextRef =
+                dialog.negativeButtonText
+                    ?: dialog.negativeButtonTextResId?.let { stringResource(it) }
             negativeButtonTextRef?.let { negBtnText ->
                 TextButton(
                     onClick = {
