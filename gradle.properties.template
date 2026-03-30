@@ -54,7 +54,7 @@ android.nonFinalResIds=true
 # https://www.last.fm/api
 # https://www.last.fm/api/accounts
 # Values may be overridden in CI using gradlew "-Pname=value" param
-# Server IP
+# Server IP. Example: "http://10.10.13.114:3000"
 apiBaseUrl="your-server-url"
 
 # Keystore configuration for release signing

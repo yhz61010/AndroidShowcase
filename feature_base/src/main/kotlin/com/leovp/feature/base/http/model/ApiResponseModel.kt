@@ -34,7 +34,8 @@ open class ApiResponseModel<T>(
 ) {
     open fun isBizSuccess(): Boolean = code == 200
 
-    open fun shouldRelogin(): Boolean = isReloginCode(code)
+    // isReloginCode()
+    open fun shouldRelogin(): Boolean = false
 
     fun getBizErrorPair(): Pair<Int, String>? =
         if (this.isBizSuccess()) {
@@ -207,6 +208,6 @@ open class ApiResponseModel<T>(
             }
         }
 
-        fun isReloginCode(code: Int): Boolean = false
+        // fun isReloginCode(): Boolean = false
     }
 }

@@ -140,7 +140,8 @@ fun DiscoveryScreen(
             uiState = uiState,
             onEvent =
                 remember {
-                    { event: DiscoveryUiEvent ->
+                    {
+                        event: DiscoveryUiEvent ->
                         viewModel.onEvent(event)
                     }
                 },

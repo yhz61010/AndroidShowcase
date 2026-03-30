@@ -38,6 +38,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leovp.android.exts.toast
+import com.leovp.compose.composable.nav.AppNavigation
 import com.leovp.compose.ui.LocalNavigationActions
 import com.leovp.discovery.R
 import com.leovp.discovery.domain.model.SongModel
@@ -135,7 +136,7 @@ private fun HandleException(
 private fun PlayerTopBar(
     uiState: PlayerUiState.Content,
     viewModel: PlayerViewModel,
-    navController: com.leovp.compose.ui.AppNavigation,
+    navController: AppNavigation,
     onShareAction: () -> Unit,
     containerBg: androidx.compose.ui.graphics.Color,
     scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,

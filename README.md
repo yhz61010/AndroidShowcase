@@ -1,6 +1,6 @@
 [![Leo Version](https://jitpack.io/v/com.leovp/android.svg)](https://jitpack.io/#com.leovp/android)
 [![Kotlin Version](https://img.shields.io/badge/Kotlin-2.3.10-blue)](https://kotlinlang.org)
-[![AGP](https://img.shields.io/badge/AGP-9.0.1-orange)](https://developer.android.com/studio/releases/gradle-plugin)
+[![AGP](https://img.shields.io/badge/AGP-9.1.0-orange)](https://developer.android.com/studio/releases/gradle-plugin)
 [![Gradle](https://img.shields.io/badge/Gradle-9.4.0-green)](https://gradle.org)
 
 [![Android Studio](https://img.shields.io/badge/Android_Studio_Panda_2_|_2025.3.2-green)](https://developer.android.com/studio)

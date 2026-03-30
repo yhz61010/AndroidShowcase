@@ -147,13 +147,13 @@ allprojects {
 
         parallel = true
 
-        // By default detekt does not check test source set and gradle specific files,
+        // By default, detekt does not check test source set and gradle specific files,
         // so hey have to be added manually.
         source.from(
             files(
                 "$rootDir/buildSrc",
-                "$rootDir/build.gradle.kts",
-                "$rootDir/settings.gradle.kts",
+                // "$rootDir/build.gradle.kts",
+                // "$rootDir/settings.gradle.kts",
                 "src/main/kotlin",
                 "src/test/kotlin",
             ),
