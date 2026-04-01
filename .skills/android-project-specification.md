@@ -59,7 +59,7 @@ skill_metadata:
 | **架构模式** | MVI | - | Model-View-Intent |
 | **依赖注入** | Hilt | 2.59.2 | Dagger 简化版 |
 | **异步处理** | Kotlin Coroutines | 1.10.2 | 协程 + Flow |
-| **网络请求** | OkHttp + Retrofit | 4.12.0 | HTTP 客户端 |
+| **网络请求** | [Net](https://github.com/liangjingkanji/Net)（基于 OkHttp） + Lib-Network | 4.12.0 | HTTP 客户端 |
 | **本地存储** | DataStore / SharedPreferences | - | 键值对存储 |
 | **图片加载** | Coil | 3.3.0 | Kotlin 图片库 |
 | **序列化** | Kotlinx Serialization | 1.10.0 | JSON 序列化 |

@@ -30,7 +30,7 @@ AndroidShowcase 是一个基于 **Jetpack Compose + Kotlin + Clean Architecture*
 - ✅ 静态代码分析 (Detekt + Ktlint)
 
 ### SDK 版本
-- `minSdk`: 25 (Android 7.1.1)
+- `minSdk`: 24 (Android 7.0)
 - `targetSdk`: 36 (Android 16)
 - `compileSdk`: 36
 
@@ -42,7 +42,7 @@ AndroidShowcase 是一个基于 **Jetpack Compose + Kotlin + Clean Architecture*
 ```toml
 [versions]
 kotlin = "2.3.10"
-agp = "9.0.1"
+agp = "9.1.0"
 compose-bom = "2026.02.01"
 hilt = "2.59.2"
 coroutines = "1.10.2"
@@ -51,9 +51,11 @@ lifecycle = "2.10.0"
 
 ### 主要库
 - **UI 框架**: Jetpack Compose + Material 3
+- **架构模式**：MVI (Model-View-Intent)
 - **架构组件**: Lifecycle, ViewModel, Navigation
 - **依赖注入**: Hilt
-- **网络请求**: OkHttp + Lib-Network
+- **网络请求**: [Net](https://github.com/liangjingkanji/Net)（基于 OkHttp） + Lib-Network
+- **异步处理**：Kotlin Coroutines + Flow
 - **图片加载**: Coil 3
 - **序列化**: Kotlinx Serialization
 - **日志**: Leo Log Library
