@@ -193,9 +193,19 @@ androidComponents {
         )
 
         // Disable lintVital for variants with K2 compatibility issues
-        if (variant.name == "devRelease") {
+        if (variant.name.endsWith("Release")) {
             tasks.configureEach {
-                if (name.contains("lintVital") && name.contains("DevRelease")) {
+                // `name` examples:
+                // lintVitalDevRelease
+                // lintVitalReportDevRelease
+                // lintVitalAnalyzeDevRelease
+                // generateDevReleaseLintVitalReportModel
+                // Other examples:
+                // mergeDevReleaseNativeDebugMetadata
+                // packageDevRelease
+                // mergeDevDebugNativeLibs
+                // assembleDevRelease
+                if (name.contains("lintVital") && name.contains("Release")) {
                     enabled = false
                 }
             }
